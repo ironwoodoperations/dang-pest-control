@@ -110,6 +110,10 @@ const Navbar = () => {
               className="w-44 h-auto drop-shadow-lg"
             />
           </Link>
+
+          {/* Right side: phone + CTA */}
+          <div className="hidden md:flex items-center gap-6">
+            <a href="tel:9038710550" className="flex items-center gap-2 text-foreground font-bold text-sm">
               <Phone className="w-5 h-5" />
               <div className="leading-tight">
                 <div className="text-xs font-semibold">Call us</div>
