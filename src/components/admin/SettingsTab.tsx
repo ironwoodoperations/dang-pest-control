@@ -127,17 +127,18 @@ const SettingsTab = () => {
       setLoading(false);
     };
     fetchAll();
-  }, []);
+  }, [tenantId]);
 
   const saveConfig = async (key: string, value: Record<string, unknown>) => {
+    if (!tenantId) return false;
     const jsonValue = JSON.parse(JSON.stringify(value));
-    const { data: existing } = await supabase.from("site_config").select("id").eq("key", key);
+    const { data: existing } = await supabase.from("site_config").select("id").eq("key", key).eq("tenant_id", tenantId);
     let err: unknown = null;
     if (existing && existing.length > 0) {
-      const { error } = await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", key);
+      const { error } = await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", key).eq("tenant_id", tenantId);
       err = error;
     } else {
-      const { error } = await supabase.from("site_config").insert({ key, value: jsonValue });
+      const { error } = await supabase.from("site_config").insert({ key, value: jsonValue, tenant_id: tenantId });
       err = error;
     }
     return !err;
