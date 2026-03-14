@@ -7,6 +7,7 @@ import SettingsBranding from "./settings/SettingsBranding";
 import SettingsHeroMedia from "./settings/SettingsHeroMedia";
 import SettingsCampaigns from "./settings/SettingsCampaigns";
 import SettingsContact from "./settings/SettingsContact";
+import SettingsMediaLibrary from "./settings/SettingsMediaLibrary";
 
 export interface SettingsData {
   // Branding
@@ -67,6 +68,7 @@ const defaultSettings: SettingsData = {
 const sections = [
   { id: "branding", label: "Branding" },
   { id: "hero-media", label: "Hero Media" },
+  { id: "media-library", label: "Media Library" },
   { id: "campaigns", label: "Campaigns" },
   { id: "contact", label: "Contact Info" },
 ] as const;
@@ -179,8 +181,8 @@ const SettingsTab = () => {
                   activeSection === s.id ? "font-semibold" : "hover:bg-muted/50"
                 )}
                 style={{
-                  background: activeSection === s.id ? "hsl(var(--admin-accent-light))" : undefined,
-                  color: activeSection === s.id ? "hsl(var(--admin-accent))" : "hsl(var(--admin-text-muted))",
+                  background: activeSection === s.id ? "hsla(185, 100%, 35%, 0.1)" : undefined,
+                  color: activeSection === s.id ? "hsl(var(--admin-teal))" : "hsl(var(--admin-orange))",
                 }}
               >
                 {s.label}
@@ -203,8 +205,8 @@ const SettingsTab = () => {
                 activeSection === s.id ? "font-semibold" : ""
               )}
               style={{
-                background: activeSection === s.id ? "hsl(var(--admin-accent-light))" : "hsl(var(--admin-card-bg))",
-                color: activeSection === s.id ? "hsl(var(--admin-accent))" : "hsl(var(--admin-text-muted))",
+                background: activeSection === s.id ? "hsla(185, 100%, 35%, 0.1)" : "hsl(var(--admin-card-bg))",
+                color: activeSection === s.id ? "hsl(var(--admin-teal))" : "hsl(var(--admin-orange))",
               }}
             >
               {s.label}
@@ -214,6 +216,7 @@ const SettingsTab = () => {
 
         {activeSection === "branding" && <SettingsBranding settings={settings} update={update} />}
         {activeSection === "hero-media" && <SettingsHeroMedia settings={settings} update={update} />}
+        {activeSection === "media-library" && <SettingsMediaLibrary />}
         {activeSection === "campaigns" && <SettingsCampaigns settings={settings} update={update} />}
         {activeSection === "contact" && <SettingsContact settings={settings} update={update} />}
 

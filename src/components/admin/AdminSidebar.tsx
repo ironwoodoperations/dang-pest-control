@@ -45,16 +45,18 @@ const NavGroup = ({
   activeTab,
   onTabChange,
   collapsed,
-  accentColor,
-  accentLightColor,
+  activeColor,
+  inactiveColor,
+  activeBgColor,
 }: {
   label: string;
   items: typeof mainNav;
   activeTab: string;
   onTabChange: (tab: string) => void;
   collapsed: boolean;
-  accentColor: string;
-  accentLightColor: string;
+  activeColor: string;
+  inactiveColor: string;
+  activeBgColor: string;
 }) => (
   <SidebarGroup>
     {!collapsed && (
@@ -75,8 +77,8 @@ const NavGroup = ({
                 onClick={() => onTabChange(item.value)}
                 className="font-body text-[13px] rounded-md mx-1 px-2.5 py-1.5 h-8 transition-all duration-150"
                 style={{
-                  background: isActive ? accentLightColor : "transparent",
-                  color: isActive ? accentColor : "hsl(var(--admin-sidebar-text))",
+                  background: isActive ? activeBgColor : "transparent",
+                  color: isActive ? activeColor : inactiveColor,
                   fontWeight: isActive ? 600 : 400,
                 }}
               >
@@ -96,9 +98,10 @@ export function AdminSidebar({ activeTab, onTabChange, userEmail, onLogout }: Ad
   const collapsed = state === "collapsed";
   const { enabled: holidayOn } = useHolidayMode();
 
-  // When holiday mode is on, shift accent to festive red
-  const accentColor = holidayOn ? "hsl(0, 80%, 55%)" : "hsl(var(--admin-accent))";
-  const accentLightColor = holidayOn ? "hsla(0, 80%, 55%, 0.15)" : "hsla(150, 40%, 93%, 0.15)";
+  // Teal when selected, orange when not. Holiday → festive red for active.
+  const activeColor = holidayOn ? "hsl(0, 80%, 55%)" : "hsl(var(--admin-teal))";
+  const activeBgColor = holidayOn ? "hsla(0, 80%, 55%, 0.15)" : "hsla(185, 100%, 35%, 0.15)";
+  const inactiveColor = "hsl(var(--admin-orange))";
 
   return (
     <Sidebar
@@ -109,23 +112,18 @@ export function AdminSidebar({ activeTab, onTabChange, userEmail, onLogout }: Ad
         borderColor: "hsl(var(--admin-sidebar-border))",
       }}
     >
-      {/* Logo header */}
+      {/* Logo header — bigger logo, no text */}
       <div
-        className="h-14 flex items-center gap-2.5 px-3 border-b shrink-0"
+        className="h-14 flex items-center justify-center px-3 border-b shrink-0"
         style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}
       >
-        <img src={dangLogo} alt="DANG!" className="w-8 h-8 object-contain shrink-0" />
-        {!collapsed && (
-          <span className="font-display text-lg tracking-wide uppercase" style={{ color: "hsl(var(--admin-sidebar-text))" }}>
-            DANG!
-          </span>
-        )}
+        <img src={dangLogo} alt="DANG!" className={collapsed ? "w-9 h-9 object-contain" : "w-12 h-12 object-contain"} />
       </div>
 
       <SidebarContent className="py-1">
-        <NavGroup label="Overview" items={mainNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} accentColor={accentColor} accentLightColor={accentLightColor} />
-        <NavGroup label="Content" items={contentNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} accentColor={accentColor} accentLightColor={accentLightColor} />
-        <NavGroup label="System" items={systemNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} accentColor={accentColor} accentLightColor={accentLightColor} />
+        <NavGroup label="Overview" items={mainNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} activeColor={activeColor} inactiveColor={inactiveColor} activeBgColor={activeBgColor} />
+        <NavGroup label="Content" items={contentNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} activeColor={activeColor} inactiveColor={inactiveColor} activeBgColor={activeBgColor} />
+        <NavGroup label="System" items={systemNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} activeColor={activeColor} inactiveColor={inactiveColor} activeBgColor={activeBgColor} />
       </SidebarContent>
 
       <SidebarFooter className="border-t px-3 py-3" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
@@ -133,7 +131,7 @@ export function AdminSidebar({ activeTab, onTabChange, userEmail, onLogout }: Ad
           <div className="flex items-center gap-2 mb-2 px-1">
             <div
               className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold font-body text-white shrink-0"
-              style={{ background: accentColor }}
+              style={{ background: activeColor }}
             >
               {(userEmail || "A")[0].toUpperCase()}
             </div>

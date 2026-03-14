@@ -125,8 +125,8 @@ const ContentTab = () => {
               onClick={() => handleEdit(page)}
             >
               <CardHeader className="pb-2">
-                <CardTitle className="font-body text-sm flex items-center gap-2" style={{ color: "hsl(var(--admin-text))" }}>
-                  <FileText className="w-4 h-4" style={{ color: "hsl(var(--admin-indigo))" }} />
+                <CardTitle className="font-body text-sm flex items-center gap-2" style={{ color: "hsl(var(--admin-orange))" }}>
+                  <FileText className="w-4 h-4" style={{ color: "hsl(var(--admin-orange))" }} />
                   {defaultData?.subtitle || page.slug}
                 </CardTitle>
               </CardHeader>
