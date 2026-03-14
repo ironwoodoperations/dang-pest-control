@@ -31,20 +31,9 @@ const Navbar = () => {
 
   return (
     <header className="hero-bg relative z-50 pt-4 pb-0">
-      {/* Logo centered above navbar */}
-      <div className="flex justify-center -mb-6 relative z-10">
-        <Link to="/">
-          <img
-            src={dangLogo}
-            alt="Dang Pest Control"
-            className="w-40 md:w-52 h-auto drop-shadow-lg"
-          />
-        </Link>
-      </div>
-
-      {/* Yellow pill navbar */}
+      {/* Yellow pill navbar with logo inline */}
       <div className="container mx-auto px-4">
-        <nav className="navbar-pill flex items-center justify-between px-4 md:px-8 py-3 mx-4 md:mx-8 relative z-0">
+        <nav className="navbar-pill flex items-center justify-between px-4 md:px-8 py-2 mx-4 md:mx-8 relative z-0">
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-1">
             {/* Pests dropdown */}
