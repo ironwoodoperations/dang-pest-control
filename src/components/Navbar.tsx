@@ -58,7 +58,7 @@ const Navbar = () => {
             </div>
 
             {/* Mosquitos link */}
-            <Link to="/services/mosquito-control" className="navbar-link">
+            <Link to="/mosquito-control" className="navbar-link">
               Mosquitos
             </Link>
 
