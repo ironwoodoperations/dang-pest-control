@@ -27,8 +27,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <FloatingTextUs />
       <BrowserRouter>
+        <FloatingTextUs />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/quote" element={<QuotePage />} />
