@@ -3,6 +3,7 @@ import { Phone, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HolidayBanner from "@/components/HolidayBanner";
+import SEO from "@/components/SEO";
 import ServiceProcess from "@/components/service/ServiceProcess";
 import ServiceWhyChoose from "@/components/service/ServiceWhyChoose";
 import ServiceExtraSection from "@/components/service/ServiceExtraSection";

@@ -89,6 +89,11 @@ const QuotePage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Get a Free Quote"
+        description="Request a free pest control quote from Dang Pest Control in Tyler, TX. Fast response, family & pet safe treatments, Super Powered Guarantee."
+        canonical="/quote"
+      />
       <Navbar />
 
       {/* Header */}
