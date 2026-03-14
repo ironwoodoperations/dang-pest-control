@@ -68,6 +68,8 @@ const SettingsTab = () => {
             setBiz({ ...defaultBiz, ...(val as unknown as BusinessInfo) });
           } else if (row.key === "notification_email") {
             setNotifyEmail((val.email as string) || "");
+          } else if (row.key === "social_links") {
+            setSocial({ facebook: "", instagram: "", google: "", yelp: "", ...(val as Record<string, string>) });
           }
         }
       }
