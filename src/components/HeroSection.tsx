@@ -3,9 +3,18 @@ import { Link } from "react-router-dom";
 import { Play } from "lucide-react";
 import HolidayVideoWrapper from "@/components/HolidayVideoWrapper";
 
-const HeroSection = () => {
+const DEFAULT_VIDEO = "https://www.dangpestcontrol.com/wp-content/uploads/2025/04/dang-pest-homepage.mp4";
+
+interface HeroSectionProps {
+  dynamicVideoUrl?: string;
+  dynamicVideoType?: string;
+}
+
+const HeroSection = ({ dynamicVideoUrl, dynamicVideoType }: HeroSectionProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  const videoSrc = dynamicVideoUrl || DEFAULT_VIDEO;
 
   const handlePlay = () => {
     setIsPlaying(true);
@@ -54,7 +63,7 @@ const HeroSection = () => {
                   playsInline
                   poster="/video-poster.webp"
                 >
-                  <source src="https://www.dangpestcontrol.com/wp-content/uploads/2025/04/dang-pest-homepage.mp4" type="video/mp4" />
+                  <source src={videoSrc} type="video/mp4" />
                 </video>
               )}
             </div>
