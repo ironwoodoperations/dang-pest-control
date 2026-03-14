@@ -63,6 +63,7 @@ export type Database = {
           phone: string | null
           service: string | null
           status: string
+          tenant_id: string | null
         }
         Insert: {
           created_at?: string
@@ -73,6 +74,7 @@ export type Database = {
           phone?: string | null
           service?: string | null
           status?: string
+          tenant_id?: string | null
         }
         Update: {
           created_at?: string
@@ -83,8 +85,17 @@ export type Database = {
           phone?: string | null
           service?: string | null
           status?: string
+          tenant_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "leads_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       location_data: {
         Row: {
@@ -161,24 +172,88 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          full_name: string | null
+          id: string
+          role: string | null
+          tenant_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          full_name?: string | null
+          id: string
+          role?: string | null
+          tenant_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          full_name?: string | null
+          id?: string
+          role?: string | null
+          tenant_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_config: {
         Row: {
           id: string
           key: string
+          tenant_id: string | null
           updated_at: string
           value: Json
         }
         Insert: {
           id?: string
           key: string
+          tenant_id?: string | null
           updated_at?: string
           value?: Json
         }
         Update: {
           id?: string
           key?: string
+          tenant_id?: string | null
           updated_at?: string
           value?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_config_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenants: {
+        Row: {
+          company_name: string
+          created_at: string | null
+          id: string
+          owner_id: string | null
+        }
+        Insert: {
+          company_name: string
+          created_at?: string | null
+          id?: string
+          owner_id?: string | null
+        }
+        Update: {
+          company_name?: string
+          created_at?: string | null
+          id?: string
+          owner_id?: string | null
         }
         Relationships: []
       }
