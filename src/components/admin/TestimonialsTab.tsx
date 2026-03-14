@@ -70,7 +70,7 @@ const TestimonialsTab = () => {
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
       else toast({ title: "Testimonial updated" });
     } else {
-      const { error } = await supabase.from("testimonials").insert(form);
+      const { error } = await supabase.from("testimonials").insert({ ...form, tenant_id: tenantId });
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
       else toast({ title: "Testimonial added" });
     }
