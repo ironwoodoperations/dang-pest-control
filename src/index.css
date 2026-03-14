@@ -54,6 +54,17 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Admin / Elstar tokens */
+    --admin-indigo: 234 85% 60%;
+    --admin-indigo-light: 234 85% 95%;
+    --admin-bg: 220 14% 96%;
+    --admin-sidebar-bg: 0 0% 100%;
+    --admin-sidebar-border: 220 13% 91%;
+    --admin-header-bg: 0 0% 100%;
+    --admin-text: 220 13% 18%;
+    --admin-text-muted: 220 9% 46%;
+    --admin-card-bg: 0 0% 100%;
   }
 
   .dark {
