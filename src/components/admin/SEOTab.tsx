@@ -13,7 +13,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Search, Globe, Plus, Trash2, Save, ExternalLink, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import KeywordPowerBox from "./KeywordPowerBox";
+import KeywordPowerBox from "@/components/admin/KeywordPowerBox";
 
 interface Keyword {
   keyword: string;
