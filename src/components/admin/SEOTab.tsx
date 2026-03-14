@@ -121,16 +121,17 @@ const SEOTab = () => {
       setLoading(false);
     };
     fetchSEO();
-  }, []);
+  }, [tenantId]);
 
   const saveToConfig = async (key: string, value: unknown) => {
+    if (!tenantId) return;
     setSaving(true);
     const jsonValue = JSON.parse(JSON.stringify(value));
-    const { data: existing } = await supabase.from("site_config").select("id").eq("key", key);
+    const { data: existing } = await supabase.from("site_config").select("id").eq("key", key).eq("tenant_id", tenantId);
     if (existing && existing.length > 0) {
-      await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", key);
+      await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", key).eq("tenant_id", tenantId);
     } else {
-      await supabase.from("site_config").insert({ key, value: jsonValue });
+      await supabase.from("site_config").insert({ key, value: jsonValue, tenant_id: tenantId });
     }
     toast({ title: "Saved!" });
     setSaving(false);
