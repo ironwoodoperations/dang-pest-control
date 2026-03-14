@@ -18,6 +18,7 @@ const navItems = [
   { title: "Leads", value: "leads", icon: Users },
   { title: "SEO", value: "seo", icon: Search },
   { title: "Site Settings", value: "settings", icon: Settings },
+  { title: "Team", value: "team", icon: UserCog },
 ];
 
 interface AdminSidebarProps {
