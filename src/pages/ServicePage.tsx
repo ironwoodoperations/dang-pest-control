@@ -64,7 +64,7 @@ const ServicePage = () => {
       <SEO
         title={`${title} in Tyler, TX`}
         description={`${intro.slice(0, 155)}…`}
-        canonical={`/services/${slug}`}
+        canonical={`/${slug}`}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Service",
