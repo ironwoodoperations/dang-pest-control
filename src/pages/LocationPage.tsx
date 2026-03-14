@@ -169,6 +169,19 @@ const LocationPage = () => {
         </div>
       </section>
 
+      {/* Local Testimonial */}
+      {location.local_testimonial_quote && (
+        <section className="py-16 bg-muted">
+          <div className="container mx-auto px-4 max-w-2xl text-center">
+            <h2 className="text-comic text-2xl mb-6">What {location.city} Residents Say</h2>
+            <blockquote className="text-lg italic text-muted-foreground leading-relaxed">
+              "{location.local_testimonial_quote}"
+            </blockquote>
+            <p className="mt-4 text-sm font-semibold text-foreground">— A {location.city} Customer</p>
+          </div>
+        </section>
+      )}
+
       {/* Local Pest Description CTA */}
       <section className="section-dark text-primary-foreground py-16 text-center">
         <div className="container mx-auto px-4">
