@@ -66,7 +66,7 @@ export const useSiteConfig = (): SiteConfig => {
         }
       }
 
-      setConfig({ heroVideoUrl, heroVideoType, meetKirkYoutubeId, seoTitle, seoDescription, loading: false });
+      setConfig({ heroVideoUrl, heroVideoType, heroVideoStart, heroVideoEnd, meetKirkYoutubeId, seoTitle, seoDescription, loading: false });
     };
     fetch();
   }, []);
