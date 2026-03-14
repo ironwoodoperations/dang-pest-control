@@ -17,7 +17,7 @@ interface PageSEO {
 interface Props {
   tenantId: string | null;
   pages: PageSEO[];
-  toast: (opts: { title: string; description?: string; variant?: string }) => void;
+  toast: (opts: { title: string; description?: string; variant?: "default" | "destructive" }) => void;
 }
 
 const KeywordPowerBox = ({ tenantId, pages, toast }: Props) => {
