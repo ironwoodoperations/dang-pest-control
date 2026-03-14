@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit } from "lucide-react";
+import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit, MessageSquareQuote } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
