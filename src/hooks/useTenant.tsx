@@ -70,7 +70,11 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
+    let initialSessionLoaded = false;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      // Skip auth state changes until we've loaded the initial session
+      if (!initialSessionLoaded) return;
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
@@ -83,6 +87,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      initialSessionLoaded = true;
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
