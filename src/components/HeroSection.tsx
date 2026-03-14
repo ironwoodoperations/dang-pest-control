@@ -14,7 +14,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="hero-bg text-primary-foreground py-16 md:py-24">
+    <section className="hero-bg text-primary-foreground py-12 md:py-20">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
@@ -25,21 +25,21 @@ const HeroSection = () => {
             <p className="text-lg md:text-xl mb-8 font-body opacity-90 leading-relaxed">
               We are a hands-on, personable, relationship-based company. We live, work, worship, and play in the Tyler community. Our innovative pest control practices make us stand out amongst our competitors. Our goal is to be an active part in making our community and the lives of our clients better. We stand by our work and guarantee satisfaction.
             </p>
-            <Link to="/quote" className="btn-cta">
+            <Link to="/quote" className="btn-cta-white">
               Get Your Quote
             </Link>
           </div>
 
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-video">
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-video cyan-border">
             {!isPlaying ? (
               <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
                 <img
                   src="/video-poster.webp"
-                  alt="Dang Pest Control Video"
+                  alt="Meet Kirk - Dang Pest Control"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
-                  <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center shadow-lg">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                  <div className="w-16 h-16 rounded-full bg-secondary/80 flex items-center justify-center shadow-lg">
                     <Play className="w-8 h-8 text-secondary-foreground ml-1" />
                   </div>
                 </div>
@@ -52,7 +52,7 @@ const HeroSection = () => {
                 playsInline
                 poster="/video-poster.webp"
               >
-                <source src="https://www.dangpestcontrol.com/wp-content/uploads/2024/12/Dang-Pest-Control-Final-Video-Web.mp4" type="video/mp4" />
+                <source src="https://www.dangpestcontrol.com/wp-content/uploads/2025/04/dang-pest-homepage.mp4" type="video/mp4" />
               </video>
             )}
           </div>
