@@ -91,31 +91,54 @@ const SEOTab = () => {
   useEffect(() => {
     if (!tenantId) return;
     const fetchSEO = async () => {
-      const { data } = await supabase.from("site_config").select("key, value").eq("tenant_id", tenantId);
-      const savedPages: PageSEO[] = [];
+      const { data } = await supabase
+        .from("site_config")
+        .select("key, value, seo_title, seo_description")
+        .eq("tenant_id", tenantId);
+
+      const savedPageMap: Record<string, { seo_title: string; seo_description: string; status: string }> = {};
       let savedKeywords: Keyword[] = [];
+      let savedStatuses: Record<string, string> = {};
+
       if (data) {
         for (const row of data) {
           if (row.key === "seo_keywords") savedKeywords = (row.value as unknown as Keyword[]) || [];
+          if (row.key === "seo_statuses") savedStatuses = (row.value as unknown as Record<string, string>) || {};
+          if (row.key.startsWith("seo:")) {
+            const slug = row.key.replace("seo:", "");
+            savedPageMap[slug] = {
+              seo_title: row.seo_title || "",
+              seo_description: row.seo_description || "",
+              status: "draft",
+            };
+          }
+          // Migrate from legacy seo_pages blob
           if (row.key === "seo_pages") {
             const raw = (row.value as unknown as PageSEO[]) || [];
-            savedPages.push(...raw);
+            for (const p of raw) {
+              if (!savedPageMap[p.slug]) {
+                savedPageMap[p.slug] = {
+                  seo_title: p.meta_title || "",
+                  seo_description: p.meta_description || "",
+                  status: p.status || "draft",
+                };
+              }
+            }
           }
         }
       }
-      // Merge defaults with saved, migrating old ranking_status to status
+
       const merged = allSitePages.map((p) => {
-        const found = savedPages.find((s) => s.slug === p.slug);
-        if (found) {
-          // Migrate old ranking_status field if present
-          const legacy = found as PageSEO & { ranking_status?: string };
-          if (!found.status && legacy.ranking_status) {
-            return { ...found, status: legacy.ranking_status === "indexed" ? "live" as const : "draft" as const };
-          }
-          return found;
-        }
-        return { ...p, meta_title: "", meta_description: "", status: "draft" as const };
+        const found = savedPageMap[p.slug];
+        const status = savedStatuses[p.slug] || found?.status || "draft";
+        return {
+          ...p,
+          meta_title: found?.seo_title || "",
+          meta_description: found?.seo_description || "",
+          status: status as "live" | "draft",
+        };
       });
+
       setPages(merged);
       setKeywords(savedKeywords);
       setLoading(false);
@@ -133,7 +156,6 @@ const SEOTab = () => {
     } else {
       await supabase.from("site_config").insert({ key, value: jsonValue, tenant_id: tenantId });
     }
-    toast({ title: "Saved!" });
     setSaving(false);
   };
 
@@ -152,11 +174,47 @@ const SEOTab = () => {
     saveToConfig("seo_keywords", updated);
   };
 
-  const savePageSEO = () => {
-    if (!editingPage) return;
+  const savePageSEO = async () => {
+    if (!editingPage || !tenantId) return;
+    setSaving(true);
+
+    const seoKey = `seo:${editingPage.slug}`;
+
+    // Upsert the per-page row with seo_title and seo_description columns
+    const { data: existing } = await supabase
+      .from("site_config")
+      .select("id")
+      .eq("key", seoKey)
+      .eq("tenant_id", tenantId);
+
+    if (existing && existing.length > 0) {
+      await supabase
+        .from("site_config")
+        .update({
+          seo_title: editingPage.meta_title,
+          seo_description: editingPage.meta_description,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("key", seoKey)
+        .eq("tenant_id", tenantId);
+    } else {
+      await supabase.from("site_config").insert({
+        key: seoKey,
+        value: {},
+        seo_title: editingPage.meta_title,
+        seo_description: editingPage.meta_description,
+        tenant_id: tenantId,
+      });
+    }
+
+    // Save statuses as a separate lightweight blob
     const updated = pages.map((p) => (p.slug === editingPage.slug ? editingPage : p));
     setPages(updated);
-    saveToConfig("seo_pages", updated);
+    const statuses = Object.fromEntries(updated.map((p) => [p.slug, p.status]));
+    await saveToConfig("seo_statuses", statuses);
+
+    toast({ title: "SEO metadata saved!", description: `Updated meta tags for ${editingPage.label}.` });
+    setSaving(false);
     setEditingPage(null);
   };
 
