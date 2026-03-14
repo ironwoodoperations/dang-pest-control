@@ -59,6 +59,26 @@ const SettingsHeroMedia = ({ settings, update }: Props) => {
             </SelectContent>
           </Select>
         </div>
+        <div className="space-y-1.5">
+          <Label className="font-body text-xs font-medium" style={{ color: "hsl(var(--admin-text))" }}>Start Time (seconds)</Label>
+          <Input
+            value={settings.hero_video_start}
+            onChange={(e) => update({ hero_video_start: e.target.value.replace(/[^0-9]/g, "") })}
+            placeholder="e.g. 5"
+            className="font-body text-sm h-9"
+          />
+          <p className="text-[11px] font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Video starts at this second</p>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="font-body text-xs font-medium" style={{ color: "hsl(var(--admin-text))" }}>End Time (seconds)</Label>
+          <Input
+            value={settings.hero_video_end}
+            onChange={(e) => update({ hero_video_end: e.target.value.replace(/[^0-9]/g, "") })}
+            placeholder="e.g. 30"
+            className="font-body text-sm h-9"
+          />
+          <p className="text-[11px] font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Video stops at this second</p>
+        </div>
         <div className="space-y-1.5 md:col-span-2">
           <Label className="font-body text-xs font-medium" style={{ color: "hsl(var(--admin-text))" }}>Meet Kirk YouTube ID</Label>
           <Input value={settings.meet_kirk_youtube_id} onChange={(e) => update({ meet_kirk_youtube_id: e.target.value })} placeholder="e.g. dQw4w9WgXcQ" className="font-body text-sm h-9" />

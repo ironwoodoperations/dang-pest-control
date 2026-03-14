@@ -17,6 +17,8 @@ export interface SettingsData {
   // Hero Media
   hero_video_url: string;
   hero_video_type: string;
+  hero_video_start: string;
+  hero_video_end: string;
   meet_kirk_youtube_id: string;
   // Campaigns / Holiday
   holiday_enabled: boolean;
@@ -46,6 +48,8 @@ const defaultSettings: SettingsData = {
   favicon_url: "",
   hero_video_url: "",
   hero_video_type: "youtube",
+  hero_video_start: "",
+  hero_video_end: "",
   meet_kirk_youtube_id: "",
   holiday_enabled: false,
   holiday_key: "",
@@ -119,6 +123,8 @@ const SettingsTab = () => {
           } else if (row.key === "hero_media") {
             s.hero_video_url = (val.hero_video_url as string) || "";
             s.hero_video_type = (val.hero_video_type as string) || "youtube";
+            s.hero_video_start = (val.hero_video_start as string) || "";
+            s.hero_video_end = (val.hero_video_end as string) || "";
             s.meet_kirk_youtube_id = (val.meet_kirk_youtube_id as string) || "";
           }
         }
@@ -148,7 +154,7 @@ const SettingsTab = () => {
     setSaving(true);
     const results = await Promise.all([
       saveConfig("branding", { logo_url: settings.logo_url, favicon_url: settings.favicon_url }),
-      saveConfig("hero_media", { hero_video_url: settings.hero_video_url, hero_video_type: settings.hero_video_type, meet_kirk_youtube_id: settings.meet_kirk_youtube_id }),
+      saveConfig("hero_media", { hero_video_url: settings.hero_video_url, hero_video_type: settings.hero_video_type, hero_video_start: settings.hero_video_start, hero_video_end: settings.hero_video_end, meet_kirk_youtube_id: settings.meet_kirk_youtube_id }),
       saveConfig("holiday_mode", { enabled: settings.holiday_enabled, holiday: settings.holiday_key, greeting: settings.holiday_greeting }),
       saveConfig("business_info", { company_name: settings.company_name, phone: settings.phone, email: settings.email, address: settings.address, city: settings.city, state: settings.state, zip: settings.zip, hours: settings.hours, service_area: settings.service_area }),
       saveConfig("social_links", { facebook: settings.facebook, instagram: settings.instagram, google: settings.google, yelp: settings.yelp }),

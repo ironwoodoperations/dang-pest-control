@@ -6,6 +6,8 @@ interface SiteConfig {
   seoDescription: string;
   heroVideoUrl: string;
   heroVideoType: string;
+  heroVideoStart: string;
+  heroVideoEnd: string;
   meetKirkYoutubeId: string;
   loading: boolean;
 }
@@ -20,6 +22,8 @@ export const useSiteConfig = (): SiteConfig => {
     seoDescription: "",
     heroVideoUrl: "",
     heroVideoType: "youtube",
+    heroVideoStart: "",
+    heroVideoEnd: "",
     meetKirkYoutubeId: "",
     loading: true,
   });
@@ -35,6 +39,8 @@ export const useSiteConfig = (): SiteConfig => {
 
       let heroVideoUrl = "";
       let heroVideoType = "youtube";
+      let heroVideoStart = "";
+      let heroVideoEnd = "";
       let meetKirkYoutubeId = "";
       let seoTitle = "";
       let seoDescription = "";
@@ -44,6 +50,8 @@ export const useSiteConfig = (): SiteConfig => {
         if (row.key === "hero_media") {
           heroVideoUrl = (val.hero_video_url as string) || "";
           heroVideoType = (val.hero_video_type as string) || "youtube";
+          heroVideoStart = (val.hero_video_start as string) || "";
+          heroVideoEnd = (val.hero_video_end as string) || "";
           meetKirkYoutubeId = (val.meet_kirk_youtube_id as string) || "";
         }
         if (row.key === "seo_pages") {
@@ -58,7 +66,7 @@ export const useSiteConfig = (): SiteConfig => {
         }
       }
 
-      setConfig({ heroVideoUrl, heroVideoType, meetKirkYoutubeId, seoTitle, seoDescription, loading: false });
+      setConfig({ heroVideoUrl, heroVideoType, heroVideoStart, heroVideoEnd, meetKirkYoutubeId, seoTitle, seoDescription, loading: false });
     };
     fetch();
   }, []);
