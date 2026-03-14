@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { Phone, Shield, Heart, Award, Users, Settings } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 
 const locationsData: Record<string, { city: string; intro: string; localNote: string }> = {
   "longview-tx": {
@@ -66,9 +67,20 @@ const LocationPage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title={`Pest Control in ${location.city}, TX`}
+        description={`Professional pest control services in ${location.city}, TX. Family-owned, licensed & insured. Call (903) 871-0550 for a free quote.`}
+        canonical={`/locations/${slug}`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "PestControlService",
+          name: `Dang Pest Control - ${location.city}`,
+          telephone: "+19038710550",
+          areaServed: { "@type": "City", name: location.city, addressRegion: "TX" },
+        }}
+      />
       <Navbar />
 
-      {/* Hero */}
       <section className="hero-bg text-primary-foreground py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-comic text-4xl md:text-5xl mb-4">Pest Control Services in {location.city}, TX</h1>

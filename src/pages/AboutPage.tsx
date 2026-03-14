@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Phone, Users, Award, Shield, Heart, Clock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import dangSeal from "@/assets/dang-seal.png";
 
 const values = [
@@ -40,9 +41,13 @@ const values = [
 const AboutPage = () => {
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <SEO
+        title="About Us"
+        description="Learn about Dang Pest Control — a family-owned, community-driven pest control company serving Tyler, TX for over 15 years."
+        canonical="/about"
+      />
 
-      {/* Hero */}
+      <Navbar />
       <section className="hero-bg text-primary-foreground py-20 text-center">
         <div className="container mx-auto px-4">
           <h1 className="text-comic text-4xl md:text-6xl mb-4">About Us</h1>

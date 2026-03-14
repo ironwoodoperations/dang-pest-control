@@ -3,6 +3,7 @@ import { Phone, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HolidayBanner from "@/components/HolidayBanner";
+import SEO from "@/components/SEO";
 import ServiceProcess from "@/components/service/ServiceProcess";
 import ServiceWhyChoose from "@/components/service/ServiceWhyChoose";
 import ServiceExtraSection from "@/components/service/ServiceExtraSection";
@@ -60,6 +61,19 @@ const ServicePage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title={`${title} in Tyler, TX`}
+        description={`${intro.slice(0, 155)}…`}
+        canonical={`/services/${slug}`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: title,
+          description: intro,
+          provider: { "@type": "LocalBusiness", name: "Dang Pest Control" },
+          areaServed: { "@type": "City", name: "Tyler", addressRegion: "TX" },
+        }}
+      />
       <HolidayBanner />
       <Navbar />
 
