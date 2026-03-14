@@ -14,11 +14,13 @@ const areas = [
   { name: "Whitehouse, TX", slug: "whitehouse-tx", description: "Reliable pest protection for Whitehouse families year-round." },
 ];
 
-const ServiceAreaPage = () => (
+const ServiceAreaPage = () => {
+  const { seoTitle, seoDescription } = useSiteConfig("/service-area");
+  return (
   <div className="min-h-screen">
     <SEO
-      title="Service Area"
-      description="Dang Pest Control serves Tyler, Longview, Jacksonville, Lindale, Bullard, Whitehouse, and surrounding East Texas communities."
+      title={seoTitle || "Service Area"}
+      description={seoDescription || "Dang Pest Control serves Tyler, Longview, Jacksonville, Lindale, Bullard, Whitehouse, and surrounding East Texas communities."}
       canonical="/service-area"
     />
     <Navbar />
