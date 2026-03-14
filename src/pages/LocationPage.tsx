@@ -4,31 +4,36 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 
-const locationsData: Record<string, { city: string; intro: string; localNote: string }> = {
+const locationsData: Record<string, { city: string; intro: string; localNote: string; mapQuery: string }> = {
   "longview-tx": {
     city: "Longview",
     intro: "Your home should feel like a safe haven—but pests make that hard to achieve. At Dang Pest Control, we offer expert pest control solutions tailored to your needs, ensuring health, comfort, and the protection of your loved ones. Serving Longview, TX, and surrounding areas, our family-owned, local business is committed to making your life easier with services you can trust.",
     localNote: "The environment in Longview provides the perfect conditions for pests like termites, rodents, and mosquitos to thrive. Protecting your property from these nuisances means maintaining your family's comfort and health.",
+    mapQuery: "Longview,TX",
   },
   "jacksonville-tx": {
     city: "Jacksonville",
     intro: "Pests are a common challenge for homeowners in Jacksonville, TX. At Dang Pest Control, we provide comprehensive pest management solutions designed for the unique conditions of East Texas. Our family-owned team delivers reliable, professional service you can count on.",
     localNote: "Jacksonville's warm, humid climate makes it a hotspot for a variety of pests. Our tailored treatment plans address the specific pest pressures in your area.",
+    mapQuery: "Jacksonville,TX",
   },
   "lindale-tx": {
     city: "Lindale",
     intro: "Keep your Lindale home pest-free with professional pest control services from Dang Pest Control. We serve Lindale and surrounding communities with customized solutions that eliminate pests and prevent their return.",
     localNote: "Lindale's residential communities deserve the best in pest protection. We provide targeted treatments that address the local pest challenges unique to your neighborhood.",
+    mapQuery: "Lindale,TX",
   },
   "bullard-tx": {
     city: "Bullard",
     intro: "Bullard homeowners trust Dang Pest Control for dependable, thorough pest management. Our licensed technicians deliver personalized service that targets pests at their source.",
     localNote: "From wooded properties to lakeside homes, Bullard's diverse landscapes present unique pest challenges. Our team has the expertise to handle them all.",
+    mapQuery: "Bullard,TX",
   },
   "whitehouse-tx": {
     city: "Whitehouse",
     intro: "Protect your Whitehouse home and family from unwanted pests. Dang Pest Control offers expert pest control services with a personal touch, ensuring your property stays safe and comfortable year-round.",
     localNote: "Whitehouse families deserve peace of mind when it comes to pest control. Our integrated approach provides long-term solutions tailored to your home's specific needs.",
+    mapQuery: "Whitehouse,TX",
   },
 };
 
