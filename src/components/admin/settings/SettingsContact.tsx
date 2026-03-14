@@ -22,7 +22,7 @@ const Field = ({ label, value, onChange, placeholder, icon: Icon }: {
 const SettingsContact = ({ settings, update }: Props) => (
   <div className="space-y-5">
     <div>
-      <h3 className="font-body text-base font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Contact Info</h3>
+      <h3 className="font-display text-lg tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>Contact Info</h3>
       <p className="font-body text-xs mt-0.5" style={{ color: "hsl(var(--admin-text-muted))" }}>Business details and social links shown on the website.</p>
     </div>
 

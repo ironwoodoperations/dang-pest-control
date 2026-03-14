@@ -10,7 +10,7 @@ interface Props {
 const SettingsBranding = ({ settings, update }: Props) => (
   <div className="space-y-5">
     <div>
-      <h3 className="font-body text-base font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Branding</h3>
+      <h3 className="font-display text-lg tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>Branding</h3>
       <p className="font-body text-xs mt-0.5" style={{ color: "hsl(var(--admin-text-muted))" }}>Logo and favicon URLs used across the site.</p>
     </div>
     <div className="grid grid-cols-1 gap-4">
