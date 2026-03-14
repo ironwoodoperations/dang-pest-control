@@ -50,6 +50,8 @@ export const useSiteConfig = (): SiteConfig => {
         if (row.key === "hero_media") {
           heroVideoUrl = (val.hero_video_url as string) || "";
           heroVideoType = (val.hero_video_type as string) || "youtube";
+          heroVideoStart = (val.hero_video_start as string) || "";
+          heroVideoEnd = (val.hero_video_end as string) || "";
           meetKirkYoutubeId = (val.meet_kirk_youtube_id as string) || "";
         }
         if (row.key === "seo_pages") {
