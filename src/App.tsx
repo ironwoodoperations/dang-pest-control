@@ -40,6 +40,7 @@ const App = () => (
           <Route path="/accessibility" element={<AccessibilityPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/onboarding" element={<AdminOnboarding />} />
           {/* Legacy redirects: /services/:slug → /:slug, /locations/:slug → /:slug */}
           <Route path="/services/:slug" element={<RedirectLegacy />} />
           <Route path="/locations/:slug" element={<RedirectLegacy />} />

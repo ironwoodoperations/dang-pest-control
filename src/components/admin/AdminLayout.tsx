@@ -93,45 +93,10 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
     );
   }
 
-  // No tenant — show onboarding
+  // No tenant — redirect to onboarding wizard
   if (!tenantId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "hsl(var(--admin-bg))" }}>
-        <div className="text-center space-y-6 max-w-md px-6">
-          <div className="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: "hsl(var(--admin-accent-light))", color: "hsl(var(--admin-accent))" }}>
-            <Building2 className="w-8 h-8" />
-          </div>
-          <div>
-            <h2 className="font-display text-3xl tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>
-              Welcome!
-            </h2>
-            <p className="font-body text-sm mt-2" style={{ color: "hsl(var(--admin-text-muted))" }}>
-              Create your organization to get started managing your pest control business.
-            </p>
-          </div>
-          <div className="space-y-3">
-            <Input
-              value={orgName}
-              onChange={(e) => setOrgName(e.target.value)}
-              placeholder="Your Company Name"
-              className="text-center font-body text-lg h-12"
-              onKeyDown={(e) => e.key === "Enter" && handleCreateOrg()}
-            />
-            <Button
-              onClick={handleCreateOrg}
-              disabled={creatingOrg || !orgName.trim()}
-              className="w-full h-11 font-body text-sm font-semibold text-white"
-              style={{ background: "hsl(var(--admin-accent))" }}
-            >
-              {creatingOrg ? "Creating..." : "Create New Organization"}
-            </Button>
-          </div>
-          <button onClick={handleLogout} className="font-body text-xs underline" style={{ color: "hsl(var(--admin-text-muted))" }}>
-            Sign out
-          </button>
-        </div>
-      </div>
-    );
+    navigate("/admin/onboarding");
+    return null;
   }
 
   return (
