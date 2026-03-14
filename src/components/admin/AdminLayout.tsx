@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminSidebar } from "./AdminSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { ShieldAlert } from "lucide-react";
+import { ShieldAlert, Building2 } from "lucide-react";
 import { useHolidayMode } from "@/hooks/useHolidayMode";
-import type { User } from "@supabase/supabase-js";
+import { useTenant } from "@/hooks/useTenant";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -14,59 +17,54 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, tenantId, companyName, profileLoading, createOrganization } = useTenant();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [orgName, setOrgName] = useState("");
+  const [creatingOrg, setCreatingOrg] = useState(false);
   const navigate = useNavigate();
   const { enabled: holidayOn } = useHolidayMode();
+  const { toast } = useToast();
 
   const accentColor = holidayOn ? "hsl(0, 80%, 55%)" : "hsl(var(--admin-accent))";
 
   useEffect(() => {
-    const checkRole = async (userId: string) => {
-      const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
-      if (isAdmin) return true;
-      const { data: isEditor } = await supabase.rpc("has_role", { _user_id: userId, _role: "editor" });
-      return !!isEditor;
+    if (profileLoading) return;
+    if (!user) {
+      setAuthorized(false);
+      setAuthLoading(false);
+      navigate("/admin/login");
+      return;
+    }
+
+    const checkRole = async () => {
+      const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" });
+      if (isAdmin) { setAuthorized(true); setAuthLoading(false); return; }
+      const { data: isEditor } = await supabase.rpc("has_role", { _user_id: user.id, _role: "editor" });
+      setAuthorized(!!isEditor);
+      setAuthLoading(false);
     };
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      if (!currentUser) {
-        setLoading(false);
-        setAuthorized(false);
-        navigate("/admin/login");
-        return;
-      }
-      const hasAccess = await checkRole(currentUser.id);
-      setAuthorized(hasAccess);
-      setLoading(false);
-    });
-
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      if (!currentUser) {
-        setLoading(false);
-        setAuthorized(false);
-        navigate("/admin/login");
-        return;
-      }
-      const hasAccess = await checkRole(currentUser.id);
-      setAuthorized(hasAccess);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    checkRole();
+  }, [user, profileLoading, navigate]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/admin/login");
   };
 
-  if (loading) {
+  const handleCreateOrg = async () => {
+    if (!orgName.trim()) return;
+    setCreatingOrg(true);
+    const ok = await createOrganization(orgName.trim());
+    setCreatingOrg(false);
+    if (ok) {
+      toast({ title: "Organization created!", description: `Welcome to ${orgName}` });
+    } else {
+      toast({ title: "Error", description: "Failed to create organization.", variant: "destructive" });
+    }
+  };
+
+  if (profileLoading || authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: "hsl(var(--admin-bg))" }}>
         <p className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>Loading...</p>
@@ -95,6 +93,47 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
     );
   }
 
+  // No tenant — show onboarding
+  if (!tenantId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "hsl(var(--admin-bg))" }}>
+        <div className="text-center space-y-6 max-w-md px-6">
+          <div className="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: "hsl(var(--admin-accent-light))", color: "hsl(var(--admin-accent))" }}>
+            <Building2 className="w-8 h-8" />
+          </div>
+          <div>
+            <h2 className="font-display text-3xl tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>
+              Welcome!
+            </h2>
+            <p className="font-body text-sm mt-2" style={{ color: "hsl(var(--admin-text-muted))" }}>
+              Create your organization to get started managing your pest control business.
+            </p>
+          </div>
+          <div className="space-y-3">
+            <Input
+              value={orgName}
+              onChange={(e) => setOrgName(e.target.value)}
+              placeholder="Your Company Name"
+              className="text-center font-body text-lg h-12"
+              onKeyDown={(e) => e.key === "Enter" && handleCreateOrg()}
+            />
+            <Button
+              onClick={handleCreateOrg}
+              disabled={creatingOrg || !orgName.trim()}
+              className="w-full h-11 font-body text-sm font-semibold text-white"
+              style={{ background: "hsl(var(--admin-accent))" }}
+            >
+              {creatingOrg ? "Creating..." : "Create New Organization"}
+            </Button>
+          </div>
+          <button onClick={handleLogout} className="font-body text-xs underline" style={{ color: "hsl(var(--admin-text-muted))" }}>
+            Sign out
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full" style={{ background: "hsl(var(--admin-bg))" }}>
@@ -102,6 +141,7 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
           activeTab={activeTab}
           onTabChange={onTabChange}
           userEmail={user.email || ""}
+          companyName={companyName || "Dashboard"}
           onLogout={handleLogout}
         />
         <div className="flex-1 flex flex-col min-w-0">
@@ -119,6 +159,9 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
               </span>
             </div>
             <div className="flex items-center gap-2">
+              <span className="text-[11px] font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                {companyName}
+              </span>
               <div
                 className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold font-body text-white"
                 style={{ background: accentColor }}

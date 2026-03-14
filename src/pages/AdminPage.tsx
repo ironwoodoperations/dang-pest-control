@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { TenantProvider } from "@/hooks/useTenant";
 import AdminLayout from "@/components/admin/AdminLayout";
 import DashboardTab from "@/components/admin/DashboardTab";
 import LeadsTab from "@/components/admin/LeadsTab";
@@ -14,17 +15,19 @@ const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
 
   return (
-    <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
-      {activeTab === "dashboard" && <DashboardTab />}
-      {activeTab === "leads" && <LeadsTab />}
-      {activeTab === "content" && <ContentTab />}
-      {activeTab === "blog" && <BlogTab />}
-      {activeTab === "locations" && <LocationsTab />}
-      {activeTab === "testimonials" && <TestimonialsTab />}
-      {activeTab === "seo" && <SEOTab />}
-      {activeTab === "settings" && <SettingsTab />}
-      {activeTab === "team" && <TeamTab />}
-    </AdminLayout>
+    <TenantProvider>
+      <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
+        {activeTab === "dashboard" && <DashboardTab />}
+        {activeTab === "leads" && <LeadsTab />}
+        {activeTab === "content" && <ContentTab />}
+        {activeTab === "blog" && <BlogTab />}
+        {activeTab === "locations" && <LocationsTab />}
+        {activeTab === "testimonials" && <TestimonialsTab />}
+        {activeTab === "seo" && <SEOTab />}
+        {activeTab === "settings" && <SettingsTab />}
+        {activeTab === "team" && <TeamTab />}
+      </AdminLayout>
+    </TenantProvider>
   );
 };
 
