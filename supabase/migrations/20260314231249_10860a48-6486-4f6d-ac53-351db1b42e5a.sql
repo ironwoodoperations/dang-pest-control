@@ -1,0 +1,35 @@
+
+-- Bulk upsert SEO metadata for pest service pages (Dang tenant)
+INSERT INTO site_config (key, tenant_id, seo_title, seo_description, value) VALUES
+  ('seo:termite-control', '1282b822-825b-4713-9dc9-6d14a2094d06',
+   'Termite Treatment & Inspections | Dang Pest Control',
+   'Protect your biggest investment. Our certified termite inspections and treatment plans eliminate colonies fast. WDI reports, liquid barriers, and bait systems available.',
+   '{}'::jsonb),
+  ('seo:mosquito-control', '1282b822-825b-4713-9dc9-6d14a2094d06',
+   'Professional Mosquito Control & Seasonal Spraying',
+   'Reclaim your backyard! Our seasonal mosquito fogging and barrier sprays reduce populations by up to 90%. Pet-safe and effective options available.',
+   '{}'::jsonb),
+  ('seo:ant-control', '1282b822-825b-4713-9dc9-6d14a2094d06',
+   'Ant Control & Extermination Services | Jacksonville, TX',
+   'Stop ant invasions at the source. We treat fire ants, carpenter ants, and sugar ants with targeted baiting and perimeter defense. Fast results guaranteed.',
+   '{}'::jsonb),
+  ('seo:rodent-control', '1282b822-825b-4713-9dc9-6d14a2094d06',
+   'Rat & Mouse Extermination | Rodent Proofing TX',
+   'Don''t let rodents take over. We offer professional trapping, baiting, and full-home exclusion services to keep rats and mice out for good.',
+   '{}'::jsonb),
+  ('seo:bed-bug-control', '1282b822-825b-4713-9dc9-6d14a2094d06',
+   'Emergency Bed Bug Removal | Fast & Discreet Service',
+   'Wake up bug-free. Our multi-step bed bug treatments are thorough and fast-acting. Discreet service to protect your privacy. Call for an emergency visit.',
+   '{}'::jsonb),
+  ('seo:spider-control', '1282b822-825b-4713-9dc9-6d14a2094d06',
+   'Spider & Scorpion Control | Safe Home Protection',
+   'Clear out the creepy crawlies. Targeted treatments for East Texas scorpions and venomous spiders. Seasonal barrier protection included.',
+   '{}'::jsonb),
+  ('seo:scorpion-control', '1282b822-825b-4713-9dc9-6d14a2094d06',
+   'Scorpion Control & Prevention | Dang Pest Control',
+   'Keep scorpions out of your home with professional barrier treatments. Safe for pets and families. Serving East Texas with fast response times.',
+   '{}'::jsonb)
+ON CONFLICT (key, tenant_id) DO UPDATE SET
+  seo_title = EXCLUDED.seo_title,
+  seo_description = EXCLUDED.seo_description,
+  updated_at = now();

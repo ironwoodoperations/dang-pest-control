@@ -11,6 +11,7 @@ import ServiceFAQs from "@/components/service/ServiceFAQs";
 import { servicesData, serviceKeys } from "@/data/servicesData";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 interface PageOverride {
   title?: string | null;
@@ -30,6 +31,7 @@ const ServicePage = () => {
   const { slug } = useParams<{ slug: string }>();
   const service = slug ? servicesData[slug] : null;
   const [override, setOverride] = useState<PageOverride | null>(null);
+  const { seoTitle: dbTitle, seoDescription: dbDesc } = useSiteConfig(slug || "/");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -62,8 +64,8 @@ const ServicePage = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title={`${title} in Tyler, TX`}
-        description={`${intro.slice(0, 155)}…`}
+        title={dbTitle || `${title} in Tyler, TX`}
+        description={dbDesc || `${intro.slice(0, 155)}…`}
         canonical={`/${slug}`}
         jsonLd={{
           "@context": "https://schema.org",
