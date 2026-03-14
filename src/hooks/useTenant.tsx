@@ -26,13 +26,28 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   const [companyName, setCompanyName] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
 
-  const loadProfile = useCallback(async (userId: string) => {
-    // Fetch profile
-    const { data: profile } = await supabase
+  const loadProfile = useCallback(async (currentUser: User) => {
+    // Try to fetch profile
+    let { data: profile } = await supabase
       .from("profiles")
       .select("tenant_id")
-      .eq("id", userId)
+      .eq("id", currentUser.id)
       .single();
+
+    // Auto-create profile if missing (existing users before trigger was added)
+    if (!profile) {
+      await supabase.from("profiles").upsert({
+        id: currentUser.id,
+        full_name: currentUser.user_metadata?.full_name || currentUser.email?.split("@")[0] || "",
+      });
+      // Re-fetch
+      const { data: newProfile } = await supabase
+        .from("profiles")
+        .select("tenant_id")
+        .eq("id", currentUser.id)
+        .single();
+      profile = newProfile;
+    }
 
     if (!profile?.tenant_id) {
       setTenantId(null);
@@ -59,7 +74,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
-        await loadProfile(u.id);
+        await loadProfile(u);
       } else {
         setTenantId(null);
         setCompanyName(null);
@@ -71,7 +86,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
-        await loadProfile(u.id);
+        await loadProfile(u);
       } else {
         setProfileLoading(false);
       }
@@ -92,8 +107,13 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (tenantErr || !tenant) return false;
 
-    // Ensure profile exists, then update with tenant_id
-    await supabase.from("profiles").upsert({ id: user.id, tenant_id: tenant.id });
+    // Update profile with tenant_id
+    const { error: profileErr } = await supabase
+      .from("profiles")
+      .update({ tenant_id: tenant.id })
+      .eq("id", user.id);
+
+    if (profileErr) return false;
 
     setTenantId(tenant.id);
     setCompanyName(name);
