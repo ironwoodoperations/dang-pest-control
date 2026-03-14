@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Phone, Mail, MapPin, Clock, Facebook, Instagram } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Star, ExternalLink } from "lucide-react";
 import dangLogo from "@/assets/dang-logo.png";
 
 interface BusinessInfo {
@@ -14,6 +14,13 @@ interface BusinessInfo {
   zip?: string;
   hours?: string;
   service_area?: string;
+}
+
+interface SocialLinks {
+  facebook?: string;
+  instagram?: string;
+  google?: string;
+  yelp?: string;
 }
 
 const serviceLinks = [
@@ -32,15 +39,20 @@ const serviceLinks = [
 
 const Footer = () => {
   const [biz, setBiz] = useState<BusinessInfo>({});
+  const [social, setSocial] = useState<SocialLinks>({});
 
   useEffect(() => {
     supabase
       .from("site_config")
-      .select("value")
-      .eq("key", "business_info")
-      .single()
+      .select("key, value")
+      .in("key", ["business_info", "social_links"])
       .then(({ data }) => {
-        if (data) setBiz(data.value as unknown as BusinessInfo);
+        if (data) {
+          for (const row of data) {
+            if (row.key === "business_info") setBiz(row.value as unknown as BusinessInfo);
+            if (row.key === "social_links") setSocial(row.value as unknown as SocialLinks);
+          }
+        }
       });
   }, []);
 
@@ -61,12 +73,32 @@ const Footer = () => {
               Professional pest control services protecting your home and family. Licensed, insured, and locally owned.
             </p>
             <div className="flex gap-3">
-              <a href="#" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors">
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors">
-                <Instagram className="w-4 h-4" />
-              </a>
+              {social.facebook && (
+                <a href={social.facebook} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors">
+                  <Facebook className="w-4 h-4" />
+                </a>
+              )}
+              {social.instagram && (
+                <a href={social.instagram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors">
+                  <Instagram className="w-4 h-4" />
+                </a>
+              )}
+              {social.google && (
+                <a href={social.google} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors">
+                  <Star className="w-4 h-4" />
+                </a>
+              )}
+              {social.yelp && (
+                <a href={social.yelp} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors">
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              )}
+              {!social.facebook && !social.instagram && !social.google && !social.yelp && (
+                <>
+                  <span className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center opacity-40"><Facebook className="w-4 h-4" /></span>
+                  <span className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center opacity-40"><Instagram className="w-4 h-4" /></span>
+                </>
+              )}
             </div>
           </div>
 
