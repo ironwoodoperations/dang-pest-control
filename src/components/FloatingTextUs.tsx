@@ -1,10 +1,13 @@
 import { MessageCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLocation } from "react-router-dom";
 
 const FloatingTextUs = () => {
   const isMobile = useIsMobile();
+  const location = useLocation();
 
-  if (!isMobile) return null;
+  // Hide on admin pages
+  if (!isMobile || location.pathname.startsWith("/admin")) return null;
 
   return (
     <a
