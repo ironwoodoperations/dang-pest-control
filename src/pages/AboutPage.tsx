@@ -3,6 +3,7 @@ import { Phone, Users, Award, Shield, Heart, Clock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 import dangSeal from "@/assets/dang-seal.png";
 
 const values = [
