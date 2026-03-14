@@ -8,8 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, Globe, Plus, Trash2, Save, ArrowLeft, ExternalLink, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Search, Globe, Plus, Trash2, Save, ExternalLink, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Keyword {
@@ -24,10 +25,10 @@ interface PageSEO {
   label: string;
   meta_title: string;
   meta_description: string;
-  ranking_status: "indexed" | "not_indexed" | "pending";
+  status: "live" | "draft";
 }
 
-const allSitePages: Omit<PageSEO, "meta_title" | "meta_description" | "ranking_status">[] = [
+const allSitePages: Omit<PageSEO, "meta_title" | "meta_description" | "status">[] = [
   { slug: "/", label: "Home" },
   { slug: "/about", label: "About Us" },
   { slug: "/quote", label: "Get a Quote" },
@@ -57,16 +58,14 @@ const allSitePages: Omit<PageSEO, "meta_title" | "meta_description" | "ranking_s
   { slug: "/whitehouse-tx", label: "Whitehouse, TX" },
 ];
 
-const rankingColors: Record<string, string> = {
-  indexed: "bg-[hsl(160,70%,92%)] text-[hsl(160,70%,35%)]",
-  not_indexed: "bg-destructive/15 text-destructive",
-  pending: "bg-[hsl(40,100%,92%)] text-[hsl(40,100%,35%)]",
+const statusColors: Record<string, string> = {
+  live: "bg-[hsl(160,70%,92%)] text-[hsl(160,70%,35%)]",
+  draft: "bg-[hsl(40,100%,92%)] text-[hsl(40,100%,35%)]",
 };
 
-const rankingLabels: Record<string, string> = {
-  indexed: "Indexed",
-  not_indexed: "Not Indexed",
-  pending: "Pending",
+const statusLabels: Record<string, string> = {
+  live: "Live",
+  draft: "Draft",
 };
 
 const difficultyColors: Record<string, string> = {
@@ -101,10 +100,18 @@ const SEOTab = () => {
           }
         }
       }
-      // Merge defaults with saved
+      // Merge defaults with saved, migrating old ranking_status to status
       const merged = allSitePages.map((p) => {
         const found = savedPages.find((s) => s.slug === p.slug);
-        return found || { ...p, meta_title: "", meta_description: "", ranking_status: "pending" as const };
+        if (found) {
+          // Migrate old ranking_status field if present
+          const legacy = found as PageSEO & { ranking_status?: string };
+          if (!found.status && legacy.ranking_status) {
+            return { ...found, status: legacy.ranking_status === "indexed" ? "live" as const : "draft" as const };
+          }
+          return found;
+        }
+        return { ...p, meta_title: "", meta_description: "", status: "draft" as const };
       });
       setPages(merged);
       setKeywords(savedKeywords);
@@ -151,141 +158,14 @@ const SEOTab = () => {
 
   const filteredPages = pages.filter((p) => {
     const matchesSearch = p.label.toLowerCase().includes(searchQuery.toLowerCase()) || p.slug.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || p.ranking_status === statusFilter;
+    const matchesStatus = statusFilter === "all" || p.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const indexedCount = pages.filter((p) => p.ranking_status === "indexed").length;
+  const liveCount = pages.filter((p) => p.status === "live").length;
   const configuredCount = pages.filter((p) => p.meta_title || p.meta_description).length;
 
   if (loading) return <p className="font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Loading...</p>;
-
-  // Detail view when editing a page
-  if (editingPage) {
-    return (
-      <div className="space-y-6">
-        <button
-          onClick={() => setEditingPage(null)}
-          className="flex items-center gap-2 text-sm font-body hover:underline"
-          style={{ color: "hsl(var(--admin-indigo))" }}
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to All Pages
-        </button>
-
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="font-body text-2xl font-bold" style={{ color: "hsl(var(--admin-text))" }}>{editingPage.label}</h2>
-            <p className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>
-              dangpestcontrol.com{editingPage.slug}
-            </p>
-          </div>
-          <Badge className={`font-body border-0 text-xs ${rankingColors[editingPage.ranking_status]}`}>
-            {rankingLabels[editingPage.ranking_status]}
-          </Badge>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main form */}
-          <div className="lg:col-span-2 space-y-6">
-            <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
-              <CardHeader>
-                <CardTitle className="font-body text-lg" style={{ color: "hsl(var(--admin-text))" }}>Meta Tags</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Meta Title</Label>
-                  <Input
-                    value={editingPage.meta_title}
-                    onChange={(e) => setEditingPage({ ...editingPage, meta_title: e.target.value })}
-                    placeholder="Page title for search engines (max 60 chars)"
-                    maxLength={60}
-                    className="font-body"
-                  />
-                  <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                    {editingPage.meta_title.length}/60 characters
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Meta Description</Label>
-                  <Textarea
-                    value={editingPage.meta_description}
-                    onChange={(e) => setEditingPage({ ...editingPage, meta_description: e.target.value })}
-                    placeholder="Page description for search results (max 160 chars)"
-                    maxLength={160}
-                    className="font-body"
-                    rows={3}
-                  />
-                  <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                    {editingPage.meta_description.length}/160 characters
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Ranking Status</Label>
-                  <Select value={editingPage.ranking_status} onValueChange={(v) => setEditingPage({ ...editingPage, ranking_status: v as PageSEO["ranking_status"] })}>
-                    <SelectTrigger className="font-body"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="indexed">Indexed</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="not_indexed">Not Indexed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button onClick={savePageSEO} className="w-full gap-2 font-body" style={{ background: "hsl(var(--admin-indigo))" }} disabled={saving}>
-                  <Save className="w-4 h-4" /> Save Changes
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar preview */}
-          <div className="space-y-6">
-            <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
-              <CardHeader>
-                <CardTitle className="font-body text-sm" style={{ color: "hsl(var(--admin-text))" }}>Google Preview</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-1">
-                <p className="text-sm font-body" style={{ color: "hsl(234, 85%, 50%)" }}>
-                  {editingPage.meta_title || "Page Title"}
-                </p>
-                <p className="text-xs font-body" style={{ color: "hsl(160, 70%, 35%)" }}>
-                  dangpestcontrol.com{editingPage.slug}
-                </p>
-                <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                  {editingPage.meta_description || "No description set."}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
-              <CardHeader>
-                <CardTitle className="font-body text-sm" style={{ color: "hsl(var(--admin-text))" }}>Page Info</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                <div className="flex justify-between">
-                  <span>URL</span>
-                  <span className="font-medium" style={{ color: "hsl(var(--admin-text))" }}>{editingPage.slug}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Status</span>
-                  <Badge className={`border-0 text-xs ${rankingColors[editingPage.ranking_status]}`}>
-                    {rankingLabels[editingPage.ranking_status]}
-                  </Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span>Title Set</span>
-                  <span>{editingPage.meta_title ? "✓" : "✗"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Description Set</span>
-                  <span>{editingPage.meta_description ? "✓" : "✗"}</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -306,13 +186,13 @@ const SEOTab = () => {
         </Card>
         <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-body font-medium" style={{ color: "hsl(var(--admin-text-muted))" }}>Indexed</CardTitle>
+            <CardTitle className="text-sm font-body font-medium" style={{ color: "hsl(var(--admin-text-muted))" }}>Live</CardTitle>
             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "hsl(160, 70%, 92%)", color: "hsl(160, 70%, 40%)" }}>
               <CheckCircle2 className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>{indexedCount} / {pages.length}</div>
+            <div className="text-3xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>{liveCount} / {pages.length}</div>
           </CardContent>
         </Card>
         <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
@@ -328,7 +208,7 @@ const SEOTab = () => {
         </Card>
       </div>
 
-      {/* Pages Table - Elstar Customers Style */}
+      {/* Pages Table */}
       <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -347,9 +227,8 @@ const SEOTab = () => {
                 <SelectTrigger className="w-36 font-body"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="indexed">Indexed</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="not_indexed">Not Indexed</SelectItem>
+                  <SelectItem value="live">Live</SelectItem>
+                  <SelectItem value="draft">Draft</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -377,17 +256,15 @@ const SEOTab = () => {
                       >
                         {page.label.charAt(0)}
                       </div>
-                      <div>
-                        <p className="font-body font-medium text-sm" style={{ color: "hsl(var(--admin-text))" }}>{page.label}</p>
-                      </div>
+                      <p className="font-body font-medium text-sm" style={{ color: "hsl(var(--admin-text))" }}>{page.label}</p>
                     </div>
                   </TableCell>
                   <TableCell>
                     <span className="font-body text-xs font-mono" style={{ color: "hsl(var(--admin-text-muted))" }}>{page.slug}</span>
                   </TableCell>
                   <TableCell>
-                    <Badge className={`font-body border-0 text-xs ${rankingColors[page.ranking_status]}`}>
-                      {rankingLabels[page.ranking_status]}
+                    <Badge className={`font-body border-0 text-xs ${statusColors[page.status]}`}>
+                      {statusLabels[page.status]}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -406,7 +283,7 @@ const SEOTab = () => {
                       className="gap-1.5 font-body text-xs"
                       onClick={(e) => { e.stopPropagation(); setEditingPage({ ...page }); }}
                     >
-                      <ExternalLink className="w-3 h-3" /> Edit SEO
+                      <ExternalLink className="w-3 h-3" /> Edit Meta Tags
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -420,6 +297,88 @@ const SEOTab = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Side Drawer for editing SEO */}
+      <Sheet open={!!editingPage} onOpenChange={(open) => { if (!open) setEditingPage(null); }}>
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto" style={{ background: "hsl(var(--admin-bg))" }}>
+          {editingPage && (
+            <div className="space-y-6 py-4">
+              <SheetHeader>
+                <SheetTitle className="font-body text-xl" style={{ color: "hsl(var(--admin-text))" }}>
+                  {editingPage.label}
+                </SheetTitle>
+                <p className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                  dangpestcontrol.com{editingPage.slug}
+                </p>
+              </SheetHeader>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Meta Title</Label>
+                  <Input
+                    value={editingPage.meta_title}
+                    onChange={(e) => setEditingPage({ ...editingPage, meta_title: e.target.value })}
+                    placeholder="Page title for search engines (max 60 chars)"
+                    maxLength={60}
+                    className="font-body"
+                  />
+                  <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                    {editingPage.meta_title.length}/60 characters
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Meta Description</Label>
+                  <Textarea
+                    value={editingPage.meta_description}
+                    onChange={(e) => setEditingPage({ ...editingPage, meta_description: e.target.value })}
+                    placeholder="Page description for search results (max 160 chars)"
+                    maxLength={160}
+                    className="font-body"
+                    rows={3}
+                  />
+                  <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                    {editingPage.meta_description.length}/160 characters
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Status</Label>
+                  <Select value={editingPage.status} onValueChange={(v) => setEditingPage({ ...editingPage, status: v as PageSEO["status"] })}>
+                    <SelectTrigger className="font-body"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="live">Live</SelectItem>
+                      <SelectItem value="draft">Draft</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Google Preview */}
+              <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="font-body text-sm" style={{ color: "hsl(var(--admin-text))" }}>Google Preview</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-1">
+                  <p className="text-sm font-body" style={{ color: "hsl(234, 85%, 50%)" }}>
+                    {editingPage.meta_title || "Page Title"}
+                  </p>
+                  <p className="text-xs font-body" style={{ color: "hsl(160, 70%, 35%)" }}>
+                    dangpestcontrol.com{editingPage.slug}
+                  </p>
+                  <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                    {editingPage.meta_description || "No description set."}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Button onClick={savePageSEO} className="w-full gap-2 font-body" style={{ background: "hsl(var(--admin-indigo))" }} disabled={saving}>
+                <Save className="w-4 h-4" /> Save Changes
+              </Button>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
 
       {/* Keyword Tracker */}
       <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
@@ -442,20 +401,20 @@ const SEOTab = () => {
                   <TableHead className="font-body">Volume</TableHead>
                   <TableHead className="font-body">Difficulty</TableHead>
                   <TableHead className="font-body">Notes</TableHead>
-                  <TableHead></TableHead>
+                  <TableHead className="font-body w-10"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {keywords.map((kw, idx) => (
                   <TableRow key={idx}>
                     <TableCell className="font-body font-medium" style={{ color: "hsl(var(--admin-text))" }}>{kw.keyword}</TableCell>
-                    <TableCell className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>{kw.volume || "—"}</TableCell>
+                    <TableCell className="font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{kw.volume || "—"}</TableCell>
                     <TableCell>
-                      <Badge className={`font-body border-0 text-xs ${difficultyColors[kw.difficulty] || ""}`}>{kw.difficulty}</Badge>
+                      <Badge className={`border-0 text-xs font-body ${difficultyColors[kw.difficulty] || ""}`}>{kw.difficulty}</Badge>
                     </TableCell>
-                    <TableCell className="font-body text-sm max-w-[200px] truncate" style={{ color: "hsl(var(--admin-text-muted))" }}>{kw.notes || "—"}</TableCell>
+                    <TableCell className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>{kw.notes || "—"}</TableCell>
                     <TableCell>
-                      <Button variant="ghost" size="icon" onClick={() => removeKeyword(idx)}>
+                      <Button size="icon" variant="ghost" onClick={() => removeKeyword(idx)}>
                         <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
                     </TableCell>
@@ -469,22 +428,22 @@ const SEOTab = () => {
 
       {/* Add Keyword Dialog */}
       <Dialog open={showAddKeyword} onOpenChange={setShowAddKeyword}>
-        <DialogContent className="max-w-md">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Add Keyword Target</DialogTitle>
+            <DialogTitle className="font-body">Add Keyword Target</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Keyword *</Label>
-              <Input value={newKw.keyword} onChange={(e) => setNewKw({ ...newKw, keyword: e.target.value })} placeholder="e.g. pest control near me" className="font-body" />
+              <Label className="font-body">Keyword</Label>
+              <Input value={newKw.keyword} onChange={(e) => setNewKw({ ...newKw, keyword: e.target.value })} className="font-body" placeholder="e.g. pest control tyler tx" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Monthly Volume</Label>
-                <Input value={newKw.volume} onChange={(e) => setNewKw({ ...newKw, volume: e.target.value })} placeholder="e.g. 8,100" className="font-body" />
+                <Label className="font-body">Monthly Volume</Label>
+                <Input value={newKw.volume} onChange={(e) => setNewKw({ ...newKw, volume: e.target.value })} className="font-body" placeholder="e.g. 1,200" />
               </div>
               <div className="space-y-2">
-                <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Difficulty</Label>
+                <Label className="font-body">Difficulty</Label>
                 <Select value={newKw.difficulty} onValueChange={(v) => setNewKw({ ...newKw, difficulty: v })}>
                   <SelectTrigger className="font-body"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -496,8 +455,8 @@ const SEOTab = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Notes</Label>
-              <Input value={newKw.notes} onChange={(e) => setNewKw({ ...newKw, notes: e.target.value })} placeholder="Optional notes" className="font-body" />
+              <Label className="font-body">Notes</Label>
+              <Textarea value={newKw.notes} onChange={(e) => setNewKw({ ...newKw, notes: e.target.value })} className="font-body" rows={2} />
             </div>
             <Button onClick={addKeyword} className="w-full gap-2 font-body" style={{ background: "hsl(var(--admin-indigo))" }}>
               <Plus className="w-4 h-4" /> Add Keyword
