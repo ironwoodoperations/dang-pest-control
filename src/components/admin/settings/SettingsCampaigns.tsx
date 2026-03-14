@@ -17,7 +17,7 @@ const SettingsCampaigns = ({ settings, update }: Props) => {
   return (
     <div className="space-y-5">
       <div>
-        <h3 className="font-body text-base font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Campaigns</h3>
+        <h3 className="font-display text-lg tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>Campaigns</h3>
         <p className="font-body text-xs mt-0.5" style={{ color: "hsl(var(--admin-text-muted))" }}>Holiday decorations and seasonal promotions.</p>
       </div>
 

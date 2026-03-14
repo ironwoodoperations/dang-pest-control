@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminSidebar } from "./AdminSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ShieldAlert } from "lucide-react";
+import { useHolidayMode } from "@/hooks/useHolidayMode";
 import type { User } from "@supabase/supabase-js";
 
 interface AdminLayoutProps {
@@ -17,6 +18,9 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const navigate = useNavigate();
+  const { enabled: holidayOn } = useHolidayMode();
+
+  const accentColor = holidayOn ? "hsl(0, 80%, 55%)" : "hsl(var(--admin-accent))";
 
   useEffect(() => {
     const checkRole = async (userId: string) => {
@@ -79,11 +83,11 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
           <div className="mx-auto w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: "hsl(0, 80%, 95%)", color: "hsl(0, 80%, 55%)" }}>
             <ShieldAlert className="w-6 h-6" />
           </div>
-          <h2 className="font-body text-lg font-bold" style={{ color: "hsl(var(--admin-text))" }}>Access Denied</h2>
+          <h2 className="font-display text-2xl tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>Access Denied</h2>
           <p className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>
             Your account doesn't have admin or editor permissions.
           </p>
-          <button onClick={handleLogout} className="font-body text-sm underline" style={{ color: "hsl(var(--admin-indigo))" }}>
+          <button onClick={handleLogout} className="font-body text-sm underline" style={{ color: accentColor }}>
             Sign out and try a different account
           </button>
         </div>
@@ -101,7 +105,6 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
           onLogout={handleLogout}
         />
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Slim top bar */}
           <header
             className="h-12 flex items-center justify-between border-b px-4 shrink-0"
             style={{
@@ -111,14 +114,14 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
           >
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-7 w-7" />
-              <span className="text-[11px] font-body uppercase tracking-widest font-medium" style={{ color: "hsl(var(--admin-text-muted))" }}>
+              <span className="text-[11px] font-display uppercase tracking-widest" style={{ color: "hsl(var(--admin-text-muted))" }}>
                 {activeTab}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <div
                 className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold font-body text-white"
-                style={{ background: "hsl(var(--admin-indigo))" }}
+                style={{ background: accentColor }}
               >
                 {(user.email || "A")[0].toUpperCase()}
               </div>

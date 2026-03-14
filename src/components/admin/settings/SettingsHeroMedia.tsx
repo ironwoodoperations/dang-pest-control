@@ -11,7 +11,7 @@ interface Props {
 const SettingsHeroMedia = ({ settings, update }: Props) => (
   <div className="space-y-5">
     <div>
-      <h3 className="font-body text-base font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Hero Media</h3>
+      <h3 className="font-display text-lg tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>Hero Media</h3>
       <p className="font-body text-xs mt-0.5" style={{ color: "hsl(var(--admin-text-muted))" }}>Background video and promotional video settings.</p>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

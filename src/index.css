@@ -55,15 +55,18 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Admin / Elstar tokens */
-    --admin-indigo: 234 85% 60%;
-    --admin-indigo-light: 234 85% 95%;
-    --admin-bg: 220 14% 96%;
-    --admin-sidebar-bg: 0 0% 100%;
-    --admin-sidebar-border: 220 13% 91%;
+    /* Admin branded tokens */
+    --admin-accent: 150 45% 30%;
+    --admin-accent-light: 150 40% 93%;
+    --admin-accent-fg: 0 0% 100%;
+    --admin-bg: 210 20% 98%;
+    --admin-sidebar-bg: 150 35% 12%;
+    --admin-sidebar-border: 150 25% 18%;
+    --admin-sidebar-text: 150 15% 85%;
+    --admin-sidebar-text-muted: 150 10% 55%;
     --admin-header-bg: 0 0% 100%;
-    --admin-text: 220 13% 18%;
-    --admin-text-muted: 220 9% 46%;
+    --admin-text: 150 15% 15%;
+    --admin-text-muted: 150 8% 46%;
     --admin-card-bg: 0 0% 100%;
   }
 

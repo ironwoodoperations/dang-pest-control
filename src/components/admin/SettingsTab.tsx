@@ -166,7 +166,7 @@ const SettingsTab = () => {
     <div className="flex gap-6">
       {/* Left nav */}
       <nav className="w-44 shrink-0 hidden md:block">
-        <p className="text-[10px] font-body uppercase tracking-widest font-medium mb-3" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.6 }}>
+        <p className="text-[10px] font-display uppercase tracking-widest mb-3" style={{ color: "hsl(var(--admin-text-muted))" }}>
           Settings
         </p>
         <ul className="space-y-0.5">
@@ -179,8 +179,8 @@ const SettingsTab = () => {
                   activeSection === s.id ? "font-semibold" : "hover:bg-muted/50"
                 )}
                 style={{
-                  background: activeSection === s.id ? "hsl(var(--admin-indigo-light))" : undefined,
-                  color: activeSection === s.id ? "hsl(var(--admin-indigo))" : "hsl(var(--admin-text-muted))",
+                  background: activeSection === s.id ? "hsl(var(--admin-accent-light))" : undefined,
+                  color: activeSection === s.id ? "hsl(var(--admin-accent))" : "hsl(var(--admin-text-muted))",
                 }}
               >
                 {s.label}
@@ -203,8 +203,8 @@ const SettingsTab = () => {
                 activeSection === s.id ? "font-semibold" : ""
               )}
               style={{
-                background: activeSection === s.id ? "hsl(var(--admin-indigo-light))" : "hsl(var(--admin-card-bg))",
-                color: activeSection === s.id ? "hsl(var(--admin-indigo))" : "hsl(var(--admin-text-muted))",
+                background: activeSection === s.id ? "hsl(var(--admin-accent-light))" : "hsl(var(--admin-card-bg))",
+                color: activeSection === s.id ? "hsl(var(--admin-accent))" : "hsl(var(--admin-text-muted))",
               }}
             >
               {s.label}
@@ -221,7 +221,7 @@ const SettingsTab = () => {
           onClick={handleSave}
           disabled={saving}
           className="font-body text-sm font-medium px-5 py-2 rounded-lg text-white transition-opacity disabled:opacity-50"
-          style={{ background: "hsl(var(--admin-indigo))" }}
+          style={{ background: "hsl(var(--admin-accent))" }}
         >
           {saving ? "Saving..." : "Save All Settings"}
         </button>
