@@ -3,12 +3,15 @@ import { Phone, Star } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
-const ReviewsPage = () => (
+const ReviewsPage = () => {
+  const { seoTitle, seoDescription } = useSiteConfig("/reviews");
+  return (
   <div className="min-h-screen">
     <SEO
-      title="Reviews"
-      description="See what our customers say about Dang Pest Control. Read real reviews from Tyler, TX homeowners."
+      title={seoTitle || "Reviews"}
+      description={seoDescription || "See what our customers say about Dang Pest Control. Read real reviews from Tyler, TX homeowners."}
       canonical="/reviews"
     />
     <Navbar />
