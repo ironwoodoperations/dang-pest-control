@@ -16,6 +16,13 @@ interface BusinessInfo {
   service_area?: string;
 }
 
+interface SocialLinks {
+  facebook?: string;
+  instagram?: string;
+  google?: string;
+  yelp?: string;
+}
+
 const serviceLinks = [
   { label: "General Pest Control", slug: "pest-control" },
   { label: "Termite Control", slug: "termite-control" },
