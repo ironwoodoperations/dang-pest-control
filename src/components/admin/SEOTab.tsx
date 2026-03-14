@@ -13,6 +13,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Search, Globe, Plus, Trash2, Save, ExternalLink, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import KeywordPowerBox from "./KeywordPowerBox";
 
 interface Keyword {
   keyword: string;
@@ -487,6 +488,9 @@ const SEOTab = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Keyword Power-Box */}
+      <KeywordPowerBox tenantId={tenantId} pages={pages} toast={toast} />
 
       {/* Add Keyword Dialog */}
       <Dialog open={showAddKeyword} onOpenChange={setShowAddKeyword}>

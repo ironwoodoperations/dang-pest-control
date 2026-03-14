@@ -2,3 +2,6 @@ project_id = "bqavwwqebcsshsdrvczz"
 
 [functions.notify-new-lead]
 verify_jwt = false
+
+[functions.weekly-seo-report]
+verify_jwt = false

@@ -18,6 +18,7 @@ import FAQPage from "./pages/FAQPage";
 import ContactPage from "./pages/ContactPage";
 import AccessibilityPage from "./pages/AccessibilityPage";
 import AdminOnboarding from "./pages/AdminOnboarding";
+import FloatingTextUs from "./components/FloatingTextUs";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <FloatingTextUs />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
