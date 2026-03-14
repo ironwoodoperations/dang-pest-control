@@ -3,48 +3,60 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { TreePine, Sparkles } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { TreePine, Sparkles, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { HOLIDAYS } from "@/hooks/useHolidayMode";
 
 const SettingsTab = () => {
-  const [holidayMode, setHolidayMode] = useState(false);
+  const [holidayEnabled, setHolidayEnabled] = useState(false);
+  const [selectedHoliday, setSelectedHoliday] = useState("");
+  const [greeting, setGreeting] = useState("");
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchConfig = async () => {
       const { data } = await supabase
         .from("site_config")
         .select("value")
         .eq("key", "holiday_mode")
         .single();
       if (data) {
-        setHolidayMode((data.value as { enabled: boolean }).enabled);
+        const val = data.value as Record<string, unknown>;
+        setHolidayEnabled(!!val.enabled);
+        setSelectedHoliday((val.holiday as string) || "");
+        setGreeting((val.greeting as string) || "");
       }
       setLoading(false);
     };
-    fetch();
+    fetchConfig();
   }, []);
 
-  const toggleHolidayMode = async (enabled: boolean) => {
-    setHolidayMode(enabled);
+  const saveHolidayConfig = async () => {
+    setSaving(true);
+    const value = {
+      enabled: holidayEnabled,
+      holiday: selectedHoliday,
+      greeting,
+    };
     const { error } = await supabase
       .from("site_config")
-      .update({ value: { enabled }, updated_at: new Date().toISOString() })
+      .update({ value, updated_at: new Date().toISOString() })
       .eq("key", "holiday_mode");
 
     if (error) {
-      setHolidayMode(!enabled);
-      toast({ title: "Error", description: "Failed to update holiday mode", variant: "destructive" });
+      toast({ title: "Error", description: "Failed to save holiday settings", variant: "destructive" });
     } else {
-      toast({
-        title: enabled ? "🎄 Holiday Mode ON" : "Holiday Mode OFF",
-        description: enabled
-          ? "The homepage now uses festive red accents!"
-          : "The homepage is back to normal green accents.",
-      });
+      toast({ title: "Saved!", description: "Holiday settings updated successfully." });
     }
+    setSaving(false);
   };
+
+  const activeTheme = HOLIDAYS.find((h) => h.key === selectedHoliday);
 
   return (
     <div className="space-y-6">
@@ -62,32 +74,78 @@ const SettingsTab = () => {
             <div>
               <CardTitle className="font-body text-lg" style={{ color: "hsl(var(--admin-text))" }}>Holiday Mode</CardTitle>
               <CardDescription className="font-body">
-                Switch the homepage from green accents to red/festive accents
+                Add themed decorations around the header and hero video with a greeting banner
               </CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-5">
+          {/* Toggle */}
           <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
             <div className="flex items-center gap-3">
-              <Sparkles className={`w-5 h-5 ${holidayMode ? "text-destructive" : ""}`} style={{ color: holidayMode ? undefined : "hsl(var(--admin-text-muted))" }} />
-              <Label htmlFor="holiday-mode" className="font-body font-medium cursor-pointer" style={{ color: "hsl(var(--admin-text))" }}>
-                {holidayMode ? "Holiday Mode is ON" : "Holiday Mode is OFF"}
+              <Sparkles className="w-5 h-5" style={{ color: holidayEnabled ? activeTheme?.borderColor : "hsl(var(--admin-text-muted))" }} />
+              <Label htmlFor="holiday-toggle" className="font-body font-medium cursor-pointer" style={{ color: "hsl(var(--admin-text))" }}>
+                {holidayEnabled ? "Holiday Mode is ON" : "Holiday Mode is OFF"}
               </Label>
             </div>
             <Switch
-              id="holiday-mode"
-              checked={holidayMode}
-              onCheckedChange={toggleHolidayMode}
+              id="holiday-toggle"
+              checked={holidayEnabled}
+              onCheckedChange={setHolidayEnabled}
               disabled={loading}
             />
           </div>
-          {holidayMode && (
-            <p className="mt-3 text-sm text-destructive font-body flex items-center gap-2">
-              <TreePine className="w-4 h-4" />
-              The homepage is currently displaying festive red accents.
-            </p>
+
+          {/* Holiday Selector */}
+          {holidayEnabled && (
+            <div className="space-y-4 p-4 rounded-lg border" style={{ borderColor: activeTheme?.borderColor || "hsl(var(--border))" }}>
+              <div className="space-y-2">
+                <Label className="font-body font-medium" style={{ color: "hsl(var(--admin-text))" }}>Select Holiday</Label>
+                <Select value={selectedHoliday} onValueChange={setSelectedHoliday}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a holiday..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {HOLIDAYS.map((h) => (
+                      <SelectItem key={h.key} value={h.key}>
+                        {h.emoji} {h.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="font-body font-medium" style={{ color: "hsl(var(--admin-text))" }}>Holiday Greeting</Label>
+                <Input
+                  value={greeting}
+                  onChange={(e) => setGreeting(e.target.value)}
+                  placeholder={activeTheme ? `e.g. ${activeTheme.emoji} ${activeTheme.name} from Dang Pest Control!` : "Enter a greeting message..."}
+                />
+                <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                  This text appears in a banner above the navigation bar.
+                </p>
+              </div>
+
+              {/* Preview */}
+              {activeTheme && (
+                <div className="space-y-2">
+                  <Label className="font-body font-medium" style={{ color: "hsl(var(--admin-text))" }}>Preview</Label>
+                  <div
+                    className="rounded-lg p-3 text-center text-sm font-body font-semibold text-white"
+                    style={{ background: activeTheme.bannerBg }}
+                  >
+                    {greeting || `${activeTheme.emoji} ${activeTheme.name} from Dang Pest Control!`}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
+
+          <Button onClick={saveHolidayConfig} disabled={saving || loading} className="gap-2 font-body" style={{ background: "hsl(var(--admin-indigo))" }}>
+            <Save className="w-4 h-4" />
+            {saving ? "Saving..." : "Save Holiday Settings"}
+          </Button>
         </CardContent>
       </Card>
 

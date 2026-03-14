@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Play } from "lucide-react";
+import HolidayVideoWrapper from "@/components/HolidayVideoWrapper";
 
 const HeroSection = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -30,32 +31,34 @@ const HeroSection = () => {
             </Link>
           </div>
 
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-video cyan-border">
-            {!isPlaying ? (
-              <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
-                <img
-                  src="/video-poster.webp"
-                  alt="Meet Kirk - Dang Pest Control"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
-                  <div className="w-16 h-16 rounded-full bg-secondary/80 flex items-center justify-center shadow-lg">
-                    <Play className="w-8 h-8 text-secondary-foreground ml-1" />
+          <HolidayVideoWrapper>
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-video cyan-border">
+              {!isPlaying ? (
+                <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
+                  <img
+                    src="/video-poster.webp"
+                    alt="Meet Kirk - Dang Pest Control"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                    <div className="w-16 h-16 rounded-full bg-secondary/80 flex items-center justify-center shadow-lg">
+                      <Play className="w-8 h-8 text-secondary-foreground ml-1" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                controls
-                playsInline
-                poster="/video-poster.webp"
-              >
-                <source src="https://www.dangpestcontrol.com/wp-content/uploads/2025/04/dang-pest-homepage.mp4" type="video/mp4" />
-              </video>
-            )}
-          </div>
+              ) : (
+                <video
+                  ref={videoRef}
+                  className="w-full h-full object-cover"
+                  controls
+                  playsInline
+                  poster="/video-poster.webp"
+                >
+                  <source src="https://www.dangpestcontrol.com/wp-content/uploads/2025/04/dang-pest-homepage.mp4" type="video/mp4" />
+                </video>
+              )}
+            </div>
+          </HolidayVideoWrapper>
         </div>
       </div>
     </section>

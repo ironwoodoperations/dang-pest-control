@@ -47,6 +47,42 @@ export type Database = {
         }
         Relationships: []
       }
+      page_content: {
+        Row: {
+          custom_content: Json | null
+          id: string
+          intro: string | null
+          slug: string
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+          video_type: string | null
+          video_url: string | null
+        }
+        Insert: {
+          custom_content?: Json | null
+          id?: string
+          intro?: string | null
+          slug: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+          video_type?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          custom_content?: Json | null
+          id?: string
+          intro?: string | null
+          slug?: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+          video_type?: string | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       site_config: {
         Row: {
           id: string
