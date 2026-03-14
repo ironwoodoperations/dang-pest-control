@@ -70,7 +70,7 @@ const LocationPage = () => {
       <SEO
         title={`Pest Control in ${location.city}, TX`}
         description={`Professional pest control services in ${location.city}, TX. Family-owned, licensed & insured. Call (903) 871-0550 for a free quote.`}
-        canonical={`/locations/${slug}`}
+        canonical={`/${slug}`}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "PestControlService",
