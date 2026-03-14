@@ -3,11 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminSidebar } from "./AdminSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { ShieldAlert, Building2 } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 import { useHolidayMode } from "@/hooks/useHolidayMode";
 import { useTenant } from "@/hooks/useTenant";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 interface AdminLayoutProps {
@@ -17,11 +15,9 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => {
-  const { user, tenantId, companyName, profileLoading, createOrganization } = useTenant();
+  const { user, tenantId, companyName, profileLoading } = useTenant();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [orgName, setOrgName] = useState("");
-  const [creatingOrg, setCreatingOrg] = useState(false);
   const navigate = useNavigate();
   const { enabled: holidayOn } = useHolidayMode();
   const { toast } = useToast();
@@ -47,21 +43,16 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
     checkRole();
   }, [user, profileLoading, navigate]);
 
+  // Redirect to onboarding if no tenant
+  useEffect(() => {
+    if (!profileLoading && !authLoading && authorized && !tenantId) {
+      navigate("/admin/onboarding");
+    }
+  }, [profileLoading, authLoading, authorized, tenantId, navigate]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/admin/login");
-  };
-
-  const handleCreateOrg = async () => {
-    if (!orgName.trim()) return;
-    setCreatingOrg(true);
-    const ok = await createOrganization(orgName.trim());
-    setCreatingOrg(false);
-    if (ok) {
-      toast({ title: "Organization created!", description: `Welcome to ${orgName}` });
-    } else {
-      toast({ title: "Error", description: "Failed to create organization.", variant: "destructive" });
-    }
   };
 
   if (profileLoading || authLoading) {
@@ -93,9 +84,7 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
     );
   }
 
-  // No tenant — redirect to onboarding wizard
   if (!tenantId) {
-    navigate("/admin/onboarding");
     return null;
   }
 
