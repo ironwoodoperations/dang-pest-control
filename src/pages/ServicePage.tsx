@@ -61,6 +61,19 @@ const ServicePage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title={`${title} in Tyler, TX`}
+        description={`${intro.slice(0, 155)}…`}
+        canonical={`/services/${slug}`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: title,
+          description: intro,
+          provider: { "@type": "LocalBusiness", name: "Dang Pest Control" },
+          areaServed: { "@type": "City", name: "Tyler", addressRegion: "TX" },
+        }}
+      />
       <HolidayBanner />
       <Navbar />
 

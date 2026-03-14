@@ -67,7 +67,18 @@ const LocationPage = () => {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <SEO
+        title={`Pest Control in ${location.city}, TX`}
+        description={`Professional pest control services in ${location.city}, TX. Family-owned, licensed & insured. Call (903) 871-0550 for a free quote.`}
+        canonical={`/locations/${slug}`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "PestControlService",
+          name: `Dang Pest Control - ${location.city}`,
+          telephone: "+19038710550",
+          areaServed: { "@type": "City", name: location.city, addressRegion: "TX" },
+        }}
+      />
 
       {/* Hero */}
       <section className="hero-bg text-primary-foreground py-20">
