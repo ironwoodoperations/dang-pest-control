@@ -249,3 +249,15 @@
     color: hsl(var(--primary-foreground));
   }
 }
+
+/* Holiday Mode overrides */
+.holiday {
+  --primary: 0 80% 45%;
+  --primary-foreground: 0 0% 100%;
+  --orange-dark: 0 70% 35%;
+  --orange-light: 0 85% 55%;
+  --cyan-accent: 140 60% 35%;
+  --ring: 0 80% 45%;
+  --accent: 140 60% 35%;
+  --accent-foreground: 0 0% 100%;
+}

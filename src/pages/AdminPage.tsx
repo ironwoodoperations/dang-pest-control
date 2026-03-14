@@ -1,0 +1,21 @@
+import { useState } from "react";
+import AdminLayout from "@/components/admin/AdminLayout";
+import DashboardTab from "@/components/admin/DashboardTab";
+import LeadsTab from "@/components/admin/LeadsTab";
+import SEOTab from "@/components/admin/SEOTab";
+import SettingsTab from "@/components/admin/SettingsTab";
+
+const AdminPage = () => {
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  return (
+    <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      {activeTab === "dashboard" && <DashboardTab />}
+      {activeTab === "leads" && <LeadsTab />}
+      {activeTab === "seo" && <SEOTab />}
+      {activeTab === "settings" && <SettingsTab />}
+    </AdminLayout>
+  );
+};
+
+export default AdminPage;
