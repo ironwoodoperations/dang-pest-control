@@ -120,6 +120,28 @@ const LocationPage = () => {
         </div>
       </section>
 
+      {/* Service Area Map */}
+      <section className="py-16 bg-muted">
+        <div className="container mx-auto px-4">
+          <h2 className="text-comic text-3xl md:text-4xl text-center mb-4">Our Service Area in {location.city}</h2>
+          <p className="text-center text-muted-foreground mb-8">
+            We proudly serve {location.city} and the surrounding East Texas communities.
+          </p>
+          <div className="rounded-xl overflow-hidden shadow-lg max-w-4xl mx-auto aspect-video">
+            <iframe
+              title={`Map of ${location.city}, TX service area`}
+              src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d100000!2d-95.3!3d32.3!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s${encodeURIComponent(location.mapQuery)}!5e0!3m2!1sen!2sus!4v1`}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Why Choose Us */}
       <section className="section-orange text-primary-foreground py-16">
         <div className="container mx-auto px-4">
