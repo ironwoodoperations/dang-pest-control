@@ -6,6 +6,8 @@ interface SiteConfig {
   seoDescription: string;
   heroVideoUrl: string;
   heroVideoType: string;
+  heroVideoStart: string;
+  heroVideoEnd: string;
   meetKirkYoutubeId: string;
   loading: boolean;
 }
