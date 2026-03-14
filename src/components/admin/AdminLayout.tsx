@@ -94,8 +94,13 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
   }
 
   // No tenant — redirect to onboarding wizard
+  useEffect(() => {
+    if (!profileLoading && authorized && !tenantId) {
+      navigate("/admin/onboarding");
+    }
+  }, [profileLoading, authorized, tenantId, navigate]);
+
   if (!tenantId) {
-    navigate("/admin/onboarding");
     return null;
   }
 
