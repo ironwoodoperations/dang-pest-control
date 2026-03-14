@@ -286,6 +286,54 @@ const SettingsTab = () => {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Social Media Links */}
+      <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "hsl(234, 85%, 95%)", color: "hsl(234, 85%, 60%)" }}>
+              <Share2 className="w-5 h-5" />
+            </div>
+            <div>
+              <CardTitle className="font-body text-lg" style={{ color: "hsl(var(--admin-text))" }}>Social Media</CardTitle>
+              <CardDescription className="font-body">Links displayed in the website footer</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="font-body font-medium flex items-center gap-1" style={{ color: "hsl(var(--admin-text))" }}>
+                <Facebook className="w-3 h-3" /> Facebook
+              </Label>
+              <Input value={social.facebook} onChange={(e) => setSocial({ ...social, facebook: e.target.value })} placeholder="https://facebook.com/yourpage" className="font-body" />
+            </div>
+            <div className="space-y-2">
+              <Label className="font-body font-medium flex items-center gap-1" style={{ color: "hsl(var(--admin-text))" }}>
+                <Instagram className="w-3 h-3" /> Instagram
+              </Label>
+              <Input value={social.instagram} onChange={(e) => setSocial({ ...social, instagram: e.target.value })} placeholder="https://instagram.com/yourpage" className="font-body" />
+            </div>
+            <div className="space-y-2">
+              <Label className="font-body font-medium" style={{ color: "hsl(var(--admin-text))" }}>Google Business</Label>
+              <Input value={social.google} onChange={(e) => setSocial({ ...social, google: e.target.value })} placeholder="https://g.page/yourbusiness" className="font-body" />
+            </div>
+            <div className="space-y-2">
+              <Label className="font-body font-medium" style={{ color: "hsl(var(--admin-text))" }}>Yelp</Label>
+              <Input value={social.yelp} onChange={(e) => setSocial({ ...social, yelp: e.target.value })} placeholder="https://yelp.com/biz/yourbusiness" className="font-body" />
+            </div>
+          </div>
+          <Button
+            onClick={() => saveConfig("social_links", social as unknown as Record<string, unknown>)}
+            disabled={saving === "social_links" || loading}
+            className="gap-2 font-body"
+            style={{ background: "hsl(var(--admin-indigo))" }}
+          >
+            <Save className="w-4 h-4" />
+            {saving === "social_links" ? "Saving..." : "Save Social Links"}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };
