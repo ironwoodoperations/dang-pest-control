@@ -8,6 +8,8 @@ import QuotePage from "./pages/QuotePage";
 import ServicePage from "./pages/ServicePage";
 import AboutPage from "./pages/AboutPage";
 import LocationPage from "./pages/LocationPage";
+import AdminPage from "./pages/AdminPage";
+import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
