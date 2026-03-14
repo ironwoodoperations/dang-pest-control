@@ -123,6 +123,8 @@ const SettingsTab = () => {
           } else if (row.key === "hero_media") {
             s.hero_video_url = (val.hero_video_url as string) || "";
             s.hero_video_type = (val.hero_video_type as string) || "youtube";
+            s.hero_video_start = (val.hero_video_start as string) || "";
+            s.hero_video_end = (val.hero_video_end as string) || "";
             s.meet_kirk_youtube_id = (val.meet_kirk_youtube_id as string) || "";
           }
         }
