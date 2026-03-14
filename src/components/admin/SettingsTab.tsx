@@ -47,6 +47,9 @@ const SettingsTab = () => {
   // Notification state
   const [notifyEmail, setNotifyEmail] = useState("");
 
+  // Social media state
+  const [social, setSocial] = useState({ facebook: "", instagram: "", google: "", yelp: "" });
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const { toast } = useToast();
