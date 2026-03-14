@@ -17,6 +17,8 @@ export interface SettingsData {
   // Hero Media
   hero_video_url: string;
   hero_video_type: string;
+  hero_video_start: string;
+  hero_video_end: string;
   meet_kirk_youtube_id: string;
   // Campaigns / Holiday
   holiday_enabled: boolean;
