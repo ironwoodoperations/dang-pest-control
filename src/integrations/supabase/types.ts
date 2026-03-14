@@ -24,6 +24,7 @@ export type Database = {
           id: string
           published: boolean
           slug: string
+          tenant_id: string | null
           title: string
           updated_at: string
         }
@@ -36,6 +37,7 @@ export type Database = {
           id?: string
           published?: boolean
           slug: string
+          tenant_id?: string | null
           title: string
           updated_at?: string
         }
@@ -48,10 +50,19 @@ export type Database = {
           id?: string
           published?: boolean
           slug?: string
+          tenant_id?: string | null
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       leads: {
         Row: {
@@ -108,6 +119,7 @@ export type Database = {
           local_testimonial_quote: string
           map_embed_url: string
           slug: string
+          tenant_id: string | null
           updated_at: string
         }
         Insert: {
@@ -120,6 +132,7 @@ export type Database = {
           local_testimonial_quote?: string
           map_embed_url?: string
           slug: string
+          tenant_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -132,9 +145,18 @@ export type Database = {
           local_testimonial_quote?: string
           map_embed_url?: string
           slug?: string
+          tenant_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "location_data_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       page_content: {
         Row: {
@@ -143,6 +165,7 @@ export type Database = {
           intro: string | null
           slug: string
           subtitle: string | null
+          tenant_id: string | null
           title: string | null
           updated_at: string
           video_type: string | null
@@ -154,6 +177,7 @@ export type Database = {
           intro?: string | null
           slug: string
           subtitle?: string | null
+          tenant_id?: string | null
           title?: string | null
           updated_at?: string
           video_type?: string | null
@@ -165,12 +189,21 @@ export type Database = {
           intro?: string | null
           slug?: string
           subtitle?: string | null
+          tenant_id?: string | null
           title?: string | null
           updated_at?: string
           video_type?: string | null
           video_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "page_content_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -265,6 +298,7 @@ export type Database = {
           name: string
           rating: number
           sort_order: number
+          tenant_id: string | null
           text: string
           title: string
         }
@@ -275,6 +309,7 @@ export type Database = {
           name: string
           rating?: number
           sort_order?: number
+          tenant_id?: string | null
           text: string
           title?: string
         }
@@ -285,10 +320,19 @@ export type Database = {
           name?: string
           rating?: number
           sort_order?: number
+          tenant_id?: string | null
           text?: string
           title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "testimonials_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
