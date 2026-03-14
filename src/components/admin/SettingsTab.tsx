@@ -7,6 +7,7 @@ import SettingsBranding from "./settings/SettingsBranding";
 import SettingsHeroMedia from "./settings/SettingsHeroMedia";
 import SettingsCampaigns from "./settings/SettingsCampaigns";
 import SettingsContact from "./settings/SettingsContact";
+import SettingsMediaLibrary from "./settings/SettingsMediaLibrary";
 
 export interface SettingsData {
   // Branding
