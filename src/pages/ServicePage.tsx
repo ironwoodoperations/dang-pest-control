@@ -179,7 +179,7 @@ const ServicePage = () => {
               .map((key) => {
                 const s = servicesData[key];
                 return (
-                  <Link key={key} to={`/services/${key}`} className="card-service">
+                  <Link key={key} to={`/${key}`} className="card-service">
                     <h3 className="text-comic text-sm">{s.title}</h3>
                   </Link>
                 );

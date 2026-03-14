@@ -155,7 +155,7 @@ const LocationPage = () => {
             {Object.entries(locationsData)
               .filter(([key]) => key !== slug)
               .map(([key, loc]) => (
-                <Link key={key} to={`/locations/${key}`} className="text-primary font-semibold hover:underline">
+                <Link key={key} to={`/${key}`} className="text-primary font-semibold hover:underline">
                   {loc.city}, TX
                 </Link>
               ))}
