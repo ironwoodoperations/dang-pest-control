@@ -1,0 +1,1 @@
+UPDATE public.profiles SET tenant_id = NULL WHERE id = 'a0dec346-a558-4064-b49e-b0cd4b4d059d';
