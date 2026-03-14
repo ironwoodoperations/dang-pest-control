@@ -36,18 +36,21 @@ const BlogTab = () => {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   const fetchPosts = async () => {
+    if (!tenantId) return;
     setLoading(true);
     const { data } = await supabase
       .from("blog_posts")
       .select("*")
+      .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false });
     if (data) setPosts(data as BlogPost[]);
     setLoading(false);
   };
 
-  useEffect(() => { fetchPosts(); }, []);
+  useEffect(() => { fetchPosts(); }, [tenantId]);
 
   const generateSlug = (title: string) =>
     title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
