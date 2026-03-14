@@ -578,6 +578,45 @@ export const servicesData: Record<string, ServiceData> = {
       text: "Don't take chances with venomous snakes on your property. Dang Pest Control provides expert services throughout East Texas.",
     },
   },
+  "termite-control": {
+    title: "Termite Control & Treatment Services",
+    subtitle: "Termite Control",
+    heroImage: termiteHero,
+    heroAlt: "Termite Control and Treatment Services in Tyler TX",
+    intro: "Termites cause billions of dollars in damage every year. At Dang Pest Control, we provide comprehensive termite treatment solutions to protect your home and investment. Our licensed technicians use proven methods to eliminate active infestations and prevent future colonies from taking hold.",
+    processTitle: "Our Termite Treatment Process",
+    processIntro: "We use a multi-step approach to ensure complete termite elimination and long-term prevention.",
+    steps: [
+      { title: "Step 1", subtitle: "Comprehensive Inspection", icon: processStep1, description: "Our licensed inspectors conduct a thorough evaluation of your property, identifying signs of termite activity, damage, and conditions conducive to infestation." },
+      { title: "Step 2", subtitle: "Customized Treatment Plan", icon: processStep2, description: "Based on our findings, we develop a targeted treatment plan using the most effective methods for your specific termite species and situation." },
+      { title: "Step 3", subtitle: "Professional Treatment", icon: processStep3, description: "Our technicians apply professional-grade treatments including liquid barriers, bait systems, or a combination approach to eliminate the colony." },
+      { title: "Step 4", subtitle: "Monitoring & Prevention", icon: processStep4, description: "We implement ongoing monitoring to ensure complete elimination and prevent re-infestation. Regular follow-ups keep your home protected year-round." },
+    ],
+    extraSections: [
+      {
+        title: "Understanding Termite Damage",
+        content: [
+          "Termites are often called \"silent destroyers\" because they can cause extensive damage before homeowners even realize they're present.",
+          "Subterranean termites are the most common and destructive species in East Texas, building mud tubes to travel between their underground colonies and your home's wood structures.",
+          "Without professional treatment, termite colonies can grow to millions of individuals, consuming wood 24 hours a day, 7 days a week.",
+        ],
+        image: antsVsTermitesImg,
+        imageAlt: "Termite damage identification and control",
+      },
+    ],
+    whyChooseUs: [
+      { icon: provenResults, title: "Licensed Termite Experts", description: "Our technicians are specifically licensed and trained in termite biology, identification, and treatment methods." },
+      { icon: comprehensive, title: "Comprehensive Treatment Options", description: "We offer liquid treatments, bait systems, and combination approaches tailored to your property." },
+      { icon: safety, title: "Environmentally Responsible", description: "Our Integrated Pest Management approach ensures effective treatment while minimizing environmental impact." },
+      { icon: guarantee, title: "Protection Guarantee", description: "We stand behind our termite treatments with a satisfaction guarantee and follow-up service." },
+      { icon: localExperts, title: "Local East Texas Expertise", description: "We understand the specific termite species and conditions in our region." },
+    ],
+    whyChooseIntro: "Termite control requires specialized knowledge and professional-grade treatment methods.",
+    bottomCTA: {
+      title: "Protect Your Home from Termites",
+      text: "Don't wait until termites cause costly structural damage. Call Dang Pest Control today for a professional termite inspection and treatment plan.",
+    },
+  },
 };
 
 export const serviceKeys = Object.keys(servicesData);

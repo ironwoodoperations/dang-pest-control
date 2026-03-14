@@ -64,7 +64,7 @@ const ServicePage = () => {
       <SEO
         title={`${title} in Tyler, TX`}
         description={`${intro.slice(0, 155)}…`}
-        canonical={`/services/${slug}`}
+        canonical={`/${slug}`}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Service",
@@ -179,7 +179,7 @@ const ServicePage = () => {
               .map((key) => {
                 const s = servicesData[key];
                 return (
-                  <Link key={key} to={`/services/${key}`} className="card-service">
+                  <Link key={key} to={`/${key}`} className="card-service">
                     <h3 className="text-comic text-sm">{s.title}</h3>
                   </Link>
                 );

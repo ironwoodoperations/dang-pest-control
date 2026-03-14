@@ -4,20 +4,21 @@ import { Phone, Menu, X, ChevronDown } from "lucide-react";
 import dangLogo from "@/assets/dang-logo.png";
 
 const pestLinks = [
-  { label: "General Pest Control", href: "/services/pest-control" },
-  { label: "Ant Control", href: "/services/ant-control" },
-  { label: "Spider Control", href: "/services/spider-control" },
-  { label: "Roach Control", href: "/services/roach-control" },
-  { label: "Scorpion Control", href: "/services/scorpion-control" },
-  { label: "Wasp & Hornet Control", href: "/services/wasp-hornet-control" },
-  { label: "Rodent Control", href: "/services/rodent-control" },
-  { label: "Flea & Tick Control", href: "/services/flea-tick-control" },
-  { label: "Bed Bug Control", href: "/services/bed-bug-control" },
-  { label: "Snake Control", href: "/services/snake-control" },
+  { label: "General Pest Control", href: "/pest-control" },
+  { label: "Ant Control", href: "/ant-control" },
+  { label: "Spider Control", href: "/spider-control" },
+  { label: "Roach Control", href: "/roach-control" },
+  { label: "Scorpion Control", href: "/scorpion-control" },
+  { label: "Wasp & Hornet Control", href: "/wasp-hornet-control" },
+  { label: "Rodent Control", href: "/rodent-control" },
+  { label: "Flea & Tick Control", href: "/flea-tick-control" },
+  { label: "Bed Bug Control", href: "/bed-bug-control" },
+  { label: "Snake Control", href: "/snake-control" },
 ];
 
 const termiteLinks = [
-  { label: "Termite Inspections", href: "/services/termite-inspections" },
+  { label: "Termite Inspections", href: "/termite-inspections" },
+  { label: "Termite Control", href: "/termite-control" },
 ];
 
 const aboutLinks = [
@@ -57,7 +58,7 @@ const Navbar = () => {
             </div>
 
             {/* Mosquitos link */}
-            <Link to="/services/mosquito-control" className="navbar-link">
+            <Link to="/mosquito-control" className="navbar-link">
               Mosquitos
             </Link>
 
@@ -153,8 +154,8 @@ const Navbar = () => {
               ))}
             </div>
           )}
-          <Link to="/services/mosquito-control" className="block py-2 text-sm font-semibold" onClick={() => setMobileOpen(false)}>Mosquitos</Link>
-          <Link to="/services/termite-inspections" className="block py-2 text-sm font-semibold" onClick={() => setMobileOpen(false)}>Termites</Link>
+          <Link to="/mosquito-control" className="block py-2 text-sm font-semibold" onClick={() => setMobileOpen(false)}>Mosquitos</Link>
+          <Link to="/termite-inspections" className="block py-2 text-sm font-semibold" onClick={() => setMobileOpen(false)}>Termites</Link>
           <Link to="/about" className="block py-2 text-sm font-semibold" onClick={() => setMobileOpen(false)}>About</Link>
           <Link to="/quote" className="block py-2 text-sm font-semibold text-primary" onClick={() => setMobileOpen(false)}>Get Your Quote</Link>
           <a href="tel:9038710550" className="flex items-center gap-1.5 py-2 text-sm font-bold text-primary">

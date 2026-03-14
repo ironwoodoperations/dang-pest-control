@@ -26,7 +26,7 @@ const ServicesSection = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {services.map((service) => (
-            <Link key={service.slug} to={`/services/${service.slug}`} className="card-service group">
+            <Link key={service.slug} to={`/${service.slug}`} className="card-service group">
               <div className="text-4xl mb-3">{service.icon}</div>
               <h3 className="text-comic text-sm md:text-base">{service.name}</h3>
             </Link>

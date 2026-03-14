@@ -70,7 +70,7 @@ const LocationPage = () => {
       <SEO
         title={`Pest Control in ${location.city}, TX`}
         description={`Professional pest control services in ${location.city}, TX. Family-owned, licensed & insured. Call (903) 871-0550 for a free quote.`}
-        canonical={`/locations/${slug}`}
+        canonical={`/${slug}`}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "PestControlService",
@@ -103,7 +103,7 @@ const LocationPage = () => {
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {servicesList.map((service) => (
-              <Link key={service.slug} to={`/services/${service.slug}`} className="card-service text-left">
+              <Link key={service.slug} to={`/${service.slug}`} className="card-service text-left">
                 <h3 className="text-comic text-lg mb-2">{service.name}</h3>
                 <p className="text-sm text-muted-foreground">{service.description}</p>
               </Link>
@@ -155,7 +155,7 @@ const LocationPage = () => {
             {Object.entries(locationsData)
               .filter(([key]) => key !== slug)
               .map(([key, loc]) => (
-                <Link key={key} to={`/locations/${key}`} className="text-primary font-semibold hover:underline">
+                <Link key={key} to={`/${key}`} className="text-primary font-semibold hover:underline">
                   {loc.city}, TX
                 </Link>
               ))}

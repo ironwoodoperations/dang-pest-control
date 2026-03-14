@@ -26,14 +26,16 @@ interface SocialLinks {
 const serviceLinks = [
   { label: "General Pest Control", slug: "pest-control" },
   { label: "Termite Control", slug: "termite-control" },
+  { label: "Termite Inspections", slug: "termite-inspections" },
   { label: "Ant Control", slug: "ant-control" },
   { label: "Spider Control", slug: "spider-control" },
   { label: "Scorpion Control", slug: "scorpion-control" },
   { label: "Rodent Control", slug: "rodent-control" },
+  { label: "Mosquito Control", slug: "mosquito-control" },
   { label: "Bed Bug Control", slug: "bed-bug-control" },
   { label: "Roach Control", slug: "roach-control" },
   { label: "Flea & Tick", slug: "flea-tick-control" },
-  { label: "Wasp Control", slug: "wasp-control" },
+  { label: "Wasp & Hornet Control", slug: "wasp-hornet-control" },
   { label: "Snake Control", slug: "snake-control" },
 ];
 
@@ -108,7 +110,7 @@ const Footer = () => {
             <ul className="space-y-2">
               {serviceLinks.map((s) => (
                 <li key={s.slug}>
-                  <Link to={`/services/${s.slug}`} className="text-sm opacity-70 hover:opacity-100 transition-opacity">
+                  <Link to={`/${s.slug}`} className="text-sm opacity-70 hover:opacity-100 transition-opacity">
                     {s.label}
                   </Link>
                 </li>
@@ -123,6 +125,11 @@ const Footer = () => {
               <li><Link to="/" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Home</Link></li>
               <li><Link to="/about" className="text-sm opacity-70 hover:opacity-100 transition-opacity">About Us</Link></li>
               <li><Link to="/quote" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Get a Quote</Link></li>
+              <li><Link to="/contact" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Contact</Link></li>
+              <li><Link to="/service-area" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Service Area</Link></li>
+              <li><Link to="/reviews" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Reviews</Link></li>
+              <li><Link to="/blog" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Blog</Link></li>
+              <li><Link to="/faq" className="text-sm opacity-70 hover:opacity-100 transition-opacity">FAQ</Link></li>
             </ul>
           </div>
 
