@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit, MessageSquareQuote, BookOpen } from "lucide-react";
+import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit, MessageSquareQuote, BookOpen, MapPin } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +18,7 @@ const navItems = [
   { title: "Leads", value: "leads", icon: Users },
   { title: "Page Content", value: "content", icon: FileEdit },
   { title: "Blog", value: "blog", icon: BookOpen },
+  { title: "Locations", value: "locations", icon: MapPin },
   { title: "Testimonials", value: "testimonials", icon: MessageSquareQuote },
   { title: "SEO", value: "seo", icon: Search },
   { title: "Site Settings", value: "settings", icon: Settings },
