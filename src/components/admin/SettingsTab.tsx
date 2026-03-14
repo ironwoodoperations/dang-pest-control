@@ -179,8 +179,8 @@ const SettingsTab = () => {
                   activeSection === s.id ? "font-semibold" : "hover:bg-muted/50"
                 )}
                 style={{
-                  background: activeSection === s.id ? "hsl(var(--admin-accent-light))" : undefined,
-                  color: activeSection === s.id ? "hsl(var(--admin-accent))" : "hsl(var(--admin-text-muted))",
+                  background: activeSection === s.id ? "hsla(185, 100%, 35%, 0.1)" : undefined,
+                  color: activeSection === s.id ? "hsl(var(--admin-teal))" : "hsl(var(--admin-orange))",
                 }}
               >
                 {s.label}
