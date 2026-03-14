@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTenant } from "@/hooks/useTenant";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,18 +34,21 @@ const TestimonialsTab = () => {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   const fetch = async () => {
+    if (!tenantId) return;
     setLoading(true);
     const { data } = await supabase
       .from("testimonials")
       .select("*")
+      .eq("tenant_id", tenantId)
       .order("sort_order", { ascending: true });
     if (data) setTestimonials(data as Testimonial[]);
     setLoading(false);
   };
 
-  useEffect(() => { fetch(); }, []);
+  useEffect(() => { fetch(); }, [tenantId]);
 
   const openNew = () => {
     setEditing(null);
@@ -66,7 +70,7 @@ const TestimonialsTab = () => {
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
       else toast({ title: "Testimonial updated" });
     } else {
-      const { error } = await supabase.from("testimonials").insert(form);
+      const { error } = await supabase.from("testimonials").insert({ ...form, tenant_id: tenantId });
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
       else toast({ title: "Testimonial added" });
     }

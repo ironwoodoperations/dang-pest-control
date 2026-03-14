@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTenant } from "@/hooks/useTenant";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -85,10 +86,12 @@ const SEOTab = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [newKw, setNewKw] = useState<Keyword>({ keyword: "", volume: "", difficulty: "Medium", notes: "" });
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   useEffect(() => {
+    if (!tenantId) return;
     const fetchSEO = async () => {
-      const { data } = await supabase.from("site_config").select("key, value");
+      const { data } = await supabase.from("site_config").select("key, value").eq("tenant_id", tenantId);
       const savedPages: PageSEO[] = [];
       let savedKeywords: Keyword[] = [];
       if (data) {
@@ -118,16 +121,17 @@ const SEOTab = () => {
       setLoading(false);
     };
     fetchSEO();
-  }, []);
+  }, [tenantId]);
 
   const saveToConfig = async (key: string, value: unknown) => {
+    if (!tenantId) return;
     setSaving(true);
     const jsonValue = JSON.parse(JSON.stringify(value));
-    const { data: existing } = await supabase.from("site_config").select("id").eq("key", key);
+    const { data: existing } = await supabase.from("site_config").select("id").eq("key", key).eq("tenant_id", tenantId);
     if (existing && existing.length > 0) {
-      await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", key);
+      await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", key).eq("tenant_id", tenantId);
     } else {
-      await supabase.from("site_config").insert({ key, value: jsonValue });
+      await supabase.from("site_config").insert({ key, value: jsonValue, tenant_id: tenantId });
     }
     toast({ title: "Saved!" });
     setSaving(false);

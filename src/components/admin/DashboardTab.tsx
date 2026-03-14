@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, TrendingUp, TreePine, Clock } from "lucide-react";
 import { useHolidayMode } from "@/hooks/useHolidayMode";
+import { useTenant } from "@/hooks/useTenant";
 
 const Sparkline = ({ data, color }: { data: number[]; color: string }) => {
   const max = Math.max(...data, 1);
@@ -58,20 +59,22 @@ const DashboardTab = () => {
   const [newLeads, setNewLeads] = useState(0);
   const [holidayMode, setHolidayMode] = useState(false);
   const { enabled: holidayOn } = useHolidayMode();
+  const { tenantId } = useTenant();
 
   const accent = holidayOn ? "hsl(0, 80%, 55%)" : "hsl(150, 45%, 30%)";
 
   useEffect(() => {
+    if (!tenantId) return;
     const fetchData = async () => {
-      const { count: total } = await supabase.from("leads").select("*", { count: "exact", head: true });
+      const { count: total } = await supabase.from("leads").select("*", { count: "exact", head: true }).eq("tenant_id", tenantId);
       setLeadCount(total || 0);
-      const { count: newCount } = await supabase.from("leads").select("*", { count: "exact", head: true }).eq("status", "new");
+      const { count: newCount } = await supabase.from("leads").select("*", { count: "exact", head: true }).eq("tenant_id", tenantId).eq("status", "new");
       setNewLeads(newCount || 0);
-      const { data: config } = await supabase.from("site_config").select("value").eq("key", "holiday_mode").single();
+      const { data: config } = await supabase.from("site_config").select("value").eq("key", "holiday_mode").eq("tenant_id", tenantId).single();
       if (config) setHolidayMode((config.value as { enabled: boolean }).enabled);
     };
     fetchData();
-  }, []);
+  }, [tenantId]);
 
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 

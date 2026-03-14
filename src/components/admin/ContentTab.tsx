@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTenant } from "@/hooks/useTenant";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,13 +28,15 @@ const ContentTab = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   useEffect(() => {
     fetchPages();
-  }, []);
+  }, [tenantId]);
 
   const fetchPages = async () => {
-    const { data } = await supabase.from("page_content").select("*");
+    if (!tenantId) return;
+    const { data } = await supabase.from("page_content").select("*").eq("tenant_id", tenantId);
     const existingMap = new Map((data || []).map((d: any) => [d.slug, d]));
 
     // Merge with all service keys so every page shows up
@@ -68,6 +71,7 @@ const ContentTab = () => {
       video_url: editing.video_url,
       video_type: editing.video_type,
       updated_at: new Date().toISOString(),
+      tenant_id: tenantId,
     };
 
     let error;

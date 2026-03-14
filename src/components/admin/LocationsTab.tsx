@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTenant } from "@/hooks/useTenant";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,13 +38,15 @@ const LocationsTab = () => {
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   useEffect(() => {
     fetchLocations();
-  }, []);
+  }, [tenantId]);
 
   const fetchLocations = async () => {
-    const { data } = await supabase.from("location_data").select("*").order("city");
+    if (!tenantId) return;
+    const { data } = await supabase.from("location_data").select("*").eq("tenant_id", tenantId).order("city");
     if (data) setLocations(data as LocationRow[]);
   };
 
@@ -69,6 +72,7 @@ const LocationsTab = () => {
       local_pest_description: editing.local_pest_description,
       map_embed_url: editing.map_embed_url,
       local_testimonial_quote: editing.local_testimonial_quote,
+      tenant_id: tenantId,
     };
 
     let error;

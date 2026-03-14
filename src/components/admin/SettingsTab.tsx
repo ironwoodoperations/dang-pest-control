@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTenant } from "@/hooks/useTenant";
 import { HOLIDAYS } from "@/hooks/useHolidayMode";
 import { cn } from "@/lib/utils";
 import SettingsBranding from "./settings/SettingsBranding";
@@ -81,10 +82,12 @@ const SettingsTab = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   useEffect(() => {
+    if (!tenantId) return;
     const fetchAll = async () => {
-      const { data } = await supabase.from("site_config").select("key, value");
+      const { data } = await supabase.from("site_config").select("key, value").eq("tenant_id", tenantId);
       if (data) {
         const s = { ...defaultSettings };
         for (const row of data) {
@@ -124,17 +127,18 @@ const SettingsTab = () => {
       setLoading(false);
     };
     fetchAll();
-  }, []);
+  }, [tenantId]);
 
   const saveConfig = async (key: string, value: Record<string, unknown>) => {
+    if (!tenantId) return false;
     const jsonValue = JSON.parse(JSON.stringify(value));
-    const { data: existing } = await supabase.from("site_config").select("id").eq("key", key);
+    const { data: existing } = await supabase.from("site_config").select("id").eq("key", key).eq("tenant_id", tenantId);
     let err: unknown = null;
     if (existing && existing.length > 0) {
-      const { error } = await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", key);
+      const { error } = await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", key).eq("tenant_id", tenantId);
       err = error;
     } else {
-      const { error } = await supabase.from("site_config").insert({ key, value: jsonValue });
+      const { error } = await supabase.from("site_config").insert({ key, value: jsonValue, tenant_id: tenantId });
       err = error;
     }
     return !err;

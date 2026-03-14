@@ -36,6 +36,7 @@ interface AdminSidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   userEmail: string;
+  companyName: string;
   onLogout: () => void;
 }
 
@@ -93,12 +94,11 @@ const NavGroup = ({
   </SidebarGroup>
 );
 
-export function AdminSidebar({ activeTab, onTabChange, userEmail, onLogout }: AdminSidebarProps) {
+export function AdminSidebar({ activeTab, onTabChange, userEmail, companyName, onLogout }: AdminSidebarProps) {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { enabled: holidayOn } = useHolidayMode();
 
-  // Teal when selected, orange when not. Holiday → festive red for active.
   const activeColor = holidayOn ? "hsl(0, 80%, 55%)" : "hsl(var(--admin-teal))";
   const activeBgColor = holidayOn ? "hsla(0, 80%, 55%, 0.15)" : "hsla(185, 100%, 35%, 0.15)";
   const inactiveColor = "hsl(var(--admin-orange))";
@@ -112,12 +112,17 @@ export function AdminSidebar({ activeTab, onTabChange, userEmail, onLogout }: Ad
         borderColor: "hsl(var(--admin-sidebar-border))",
       }}
     >
-      {/* Logo header — bigger logo, no text */}
+      {/* Logo header with company name */}
       <div
-        className="h-14 flex items-center justify-center px-3 border-b shrink-0"
+        className="h-14 flex items-center gap-2.5 px-3 border-b shrink-0"
         style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}
       >
-        <img src={dangLogo} alt="DANG!" className={collapsed ? "w-9 h-9 object-contain" : "w-12 h-12 object-contain"} />
+        <img src={dangLogo} alt="Logo" className={collapsed ? "w-9 h-9 object-contain" : "w-11 h-11 object-contain shrink-0"} />
+        {!collapsed && (
+          <span className="font-display text-sm tracking-wide uppercase truncate" style={{ color: "hsl(var(--admin-sidebar-text))" }}>
+            {companyName}
+          </span>
+        )}
       </div>
 
       <SidebarContent className="py-1">
