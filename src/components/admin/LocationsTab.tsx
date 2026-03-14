@@ -72,6 +72,7 @@ const LocationsTab = () => {
       local_pest_description: editing.local_pest_description,
       map_embed_url: editing.map_embed_url,
       local_testimonial_quote: editing.local_testimonial_quote,
+      tenant_id: tenantId,
     };
 
     let error;

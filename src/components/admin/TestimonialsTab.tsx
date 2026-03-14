@@ -34,18 +34,21 @@ const TestimonialsTab = () => {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   const fetch = async () => {
+    if (!tenantId) return;
     setLoading(true);
     const { data } = await supabase
       .from("testimonials")
       .select("*")
+      .eq("tenant_id", tenantId)
       .order("sort_order", { ascending: true });
     if (data) setTestimonials(data as Testimonial[]);
     setLoading(false);
   };
 
-  useEffect(() => { fetch(); }, []);
+  useEffect(() => { fetch(); }, [tenantId]);
 
   const openNew = () => {
     setEditing(null);

@@ -37,17 +37,20 @@ const LeadsTab = () => {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   const fetchLeads = async () => {
+    if (!tenantId) return;
     const { data } = await supabase
       .from("leads")
       .select("*")
+      .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false });
     setLeads((data as Lead[]) || []);
     setLoading(false);
   };
 
-  useEffect(() => { fetchLeads(); }, []);
+  useEffect(() => { fetchLeads(); }, [tenantId]);
 
   const updateStatus = async (id: string, status: string) => {
     await supabase.from("leads").update({ status }).eq("id", id);

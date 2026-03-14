@@ -82,6 +82,7 @@ const BlogTab = () => {
       ...form,
       featured_image: form.featured_image || null,
       updated_at: new Date().toISOString(),
+      tenant_id: tenantId,
     };
 
     if (editing) {
