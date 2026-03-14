@@ -13,10 +13,11 @@ interface SiteConfig {
 }
 
 /**
- * Fetches site_config for the first tenant (public-facing).
- * Used by homepage and other public pages to pull dynamic SEO & media.
+ * Fetches site_config for public-facing pages.
+ * Reads SEO from dedicated seo_title / seo_description columns on per-page rows (key = "seo:{slug}").
+ * Pass a slug to fetch SEO for a specific page; defaults to "/" (homepage).
  */
-export const useSiteConfig = (): SiteConfig => {
+export const useSiteConfig = (slug: string = "/"): SiteConfig => {
   const [config, setConfig] = useState<SiteConfig>({
     seoTitle: "",
     seoDescription: "",
@@ -29,11 +30,12 @@ export const useSiteConfig = (): SiteConfig => {
   });
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchConfig = async () => {
+      const seoKey = `seo:${slug}`;
       const { data } = await supabase
         .from("site_config")
-        .select("key, value")
-        .in("key", ["hero_media", "seo_pages"]);
+        .select("key, value, seo_title, seo_description")
+        .in("key", ["hero_media", seoKey]);
 
       if (!data) { setConfig((c) => ({ ...c, loading: false })); return; }
 
@@ -46,30 +48,24 @@ export const useSiteConfig = (): SiteConfig => {
       let seoDescription = "";
 
       for (const row of data) {
-        const val = row.value as Record<string, unknown>;
         if (row.key === "hero_media") {
+          const val = row.value as Record<string, unknown>;
           heroVideoUrl = (val.hero_video_url as string) || "";
           heroVideoType = (val.hero_video_type as string) || "youtube";
           heroVideoStart = (val.hero_video_start as string) || "";
           heroVideoEnd = (val.hero_video_end as string) || "";
           meetKirkYoutubeId = (val.meet_kirk_youtube_id as string) || "";
         }
-        if (row.key === "seo_pages") {
-          const pages = val as unknown as Array<{ slug: string; meta_title: string; meta_description: string }>;
-          if (Array.isArray(pages)) {
-            const home = pages.find((p) => p.slug === "/");
-            if (home) {
-              seoTitle = home.meta_title || "";
-              seoDescription = home.meta_description || "";
-            }
-          }
+        if (row.key === seoKey) {
+          seoTitle = row.seo_title || "";
+          seoDescription = row.seo_description || "";
         }
       }
 
       setConfig({ heroVideoUrl, heroVideoType, heroVideoStart, heroVideoEnd, meetKirkYoutubeId, seoTitle, seoDescription, loading: false });
     };
-    fetch();
-  }, []);
+    fetchConfig();
+  }, [slug]);
 
   return config;
 };
