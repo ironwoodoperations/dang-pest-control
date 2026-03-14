@@ -32,7 +32,7 @@ const AdminLogin = () => {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4"
-      style={{ background: "hsl(var(--admin-sidebar-bg))" }}
+      style={{ background: "hsl(var(--admin-teal))" }}
     >
       <Card className="w-full max-w-sm shadow-2xl border-0 rounded-2xl overflow-hidden" style={{ background: "hsl(var(--admin-card-bg))" }}>
         {/* Branded header */}
