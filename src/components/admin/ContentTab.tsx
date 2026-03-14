@@ -71,6 +71,7 @@ const ContentTab = () => {
       video_url: editing.video_url,
       video_type: editing.video_type,
       updated_at: new Date().toISOString(),
+      tenant_id: tenantId,
     };
 
     let error;

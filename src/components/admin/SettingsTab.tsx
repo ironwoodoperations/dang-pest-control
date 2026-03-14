@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTenant } from "@/hooks/useTenant";
 import { HOLIDAYS } from "@/hooks/useHolidayMode";
 import { cn } from "@/lib/utils";
 import SettingsBranding from "./settings/SettingsBranding";
