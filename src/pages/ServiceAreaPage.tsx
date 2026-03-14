@@ -3,6 +3,7 @@ import { Phone, MapPin } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 const areas = [
   { name: "Tyler, TX", slug: null, description: "Our home base — serving Tyler and surrounding neighborhoods with full pest control services." },
