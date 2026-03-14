@@ -39,15 +39,20 @@ const serviceLinks = [
 
 const Footer = () => {
   const [biz, setBiz] = useState<BusinessInfo>({});
+  const [social, setSocial] = useState<SocialLinks>({});
 
   useEffect(() => {
     supabase
       .from("site_config")
-      .select("value")
-      .eq("key", "business_info")
-      .single()
+      .select("key, value")
+      .in("key", ["business_info", "social_links"])
       .then(({ data }) => {
-        if (data) setBiz(data.value as unknown as BusinessInfo);
+        if (data) {
+          for (const row of data) {
+            if (row.key === "business_info") setBiz(row.value as unknown as BusinessInfo);
+            if (row.key === "social_links") setSocial(row.value as unknown as SocialLinks);
+          }
+        }
       });
   }, []);
 
