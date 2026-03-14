@@ -28,13 +28,15 @@ const ContentTab = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   useEffect(() => {
     fetchPages();
-  }, []);
+  }, [tenantId]);
 
   const fetchPages = async () => {
-    const { data } = await supabase.from("page_content").select("*");
+    if (!tenantId) return;
+    const { data } = await supabase.from("page_content").select("*").eq("tenant_id", tenantId);
     const existingMap = new Map((data || []).map((d: any) => [d.slug, d]));
 
     // Merge with all service keys so every page shows up
