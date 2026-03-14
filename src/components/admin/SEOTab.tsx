@@ -86,10 +86,12 @@ const SEOTab = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [newKw, setNewKw] = useState<Keyword>({ keyword: "", volume: "", difficulty: "Medium", notes: "" });
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   useEffect(() => {
+    if (!tenantId) return;
     const fetchSEO = async () => {
-      const { data } = await supabase.from("site_config").select("key, value");
+      const { data } = await supabase.from("site_config").select("key, value").eq("tenant_id", tenantId);
       const savedPages: PageSEO[] = [];
       let savedKeywords: Keyword[] = [];
       if (data) {
