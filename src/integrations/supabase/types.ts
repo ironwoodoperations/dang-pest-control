@@ -241,6 +241,9 @@ export type Database = {
         Row: {
           id: string
           key: string
+          og_image_url: string | null
+          seo_description: string | null
+          seo_title: string | null
           tenant_id: string | null
           updated_at: string
           value: Json
@@ -248,6 +251,9 @@ export type Database = {
         Insert: {
           id?: string
           key: string
+          og_image_url?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
           tenant_id?: string | null
           updated_at?: string
           value?: Json
@@ -255,6 +261,9 @@ export type Database = {
         Update: {
           id?: string
           key?: string
+          og_image_url?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
           tenant_id?: string | null
           updated_at?: string
           value?: Json
