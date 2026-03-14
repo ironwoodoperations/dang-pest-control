@@ -125,6 +125,11 @@ const Footer = () => {
               <li><Link to="/" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Home</Link></li>
               <li><Link to="/about" className="text-sm opacity-70 hover:opacity-100 transition-opacity">About Us</Link></li>
               <li><Link to="/quote" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Get a Quote</Link></li>
+              <li><Link to="/contact" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Contact</Link></li>
+              <li><Link to="/service-area" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Service Area</Link></li>
+              <li><Link to="/reviews" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Reviews</Link></li>
+              <li><Link to="/blog" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Blog</Link></li>
+              <li><Link to="/faq" className="text-sm opacity-70 hover:opacity-100 transition-opacity">FAQ</Link></li>
             </ul>
           </div>
 
