@@ -96,7 +96,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
                 <>
                   {isYouTube && youtubeId ? (
                     <iframe
-                      src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
+                      src={`https://www.youtube.com/embed/${youtubeId}?${buildYouTubeParams()}`}
                       title="Meet Kirk - Dang Pest Control"
                       className="w-full h-full"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

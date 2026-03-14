@@ -46,7 +46,7 @@ const Index = () => {
       />
       <HolidayBanner />
       <Navbar />
-      <HeroSection dynamicVideoUrl={heroVideoUrl} dynamicVideoType={heroVideoType} />
+      <HeroSection dynamicVideoUrl={heroVideoUrl} dynamicVideoType={heroVideoType} videoStart={heroVideoStart} videoEnd={heroVideoEnd} />
       <FeatureStrip />
       <ServicesSection />
       <ExpertSection />
