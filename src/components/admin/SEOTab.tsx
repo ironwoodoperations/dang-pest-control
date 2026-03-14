@@ -488,6 +488,9 @@ const SEOTab = () => {
         </CardContent>
       </Card>
 
+      {/* Keyword Power-Box */}
+      <KeywordPowerBox tenantId={tenantId} pages={pages} toast={toast} />
+
       {/* Add Keyword Dialog */}
       <Dialog open={showAddKeyword} onOpenChange={setShowAddKeyword}>
         <DialogContent>
