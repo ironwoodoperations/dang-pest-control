@@ -68,6 +68,9 @@
     --admin-text: 150 15% 15%;
     --admin-text-muted: 150 8% 46%;
     --admin-card-bg: 0 0% 100%;
+    --admin-teal: 185 100% 35%;
+    --admin-orange: 28 100% 50%;
+    --admin-indigo: 185 100% 35%;
   }
 
   .dark {

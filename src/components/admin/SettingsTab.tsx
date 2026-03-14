@@ -203,8 +203,8 @@ const SettingsTab = () => {
                 activeSection === s.id ? "font-semibold" : ""
               )}
               style={{
-                background: activeSection === s.id ? "hsl(var(--admin-accent-light))" : "hsl(var(--admin-card-bg))",
-                color: activeSection === s.id ? "hsl(var(--admin-accent))" : "hsl(var(--admin-text-muted))",
+                background: activeSection === s.id ? "hsla(185, 100%, 35%, 0.1)" : "hsl(var(--admin-card-bg))",
+                color: activeSection === s.id ? "hsl(var(--admin-teal))" : "hsl(var(--admin-orange))",
               }}
             >
               {s.label}

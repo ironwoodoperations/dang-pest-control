@@ -93,9 +93,9 @@ const TeamTab = () => {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 font-body" style={{ background: "hsl(var(--admin-indigo))" }}>
+            <Button className="gap-2 font-body text-white" style={{ background: "hsl(var(--admin-teal))" }}>
               <UserPlus className="h-4 w-4" />
-              Invite New User
+              Add Team Member
             </Button>
           </DialogTrigger>
           <DialogContent>
