@@ -5,6 +5,7 @@ import LeadsTab from "@/components/admin/LeadsTab";
 import SEOTab from "@/components/admin/SEOTab";
 import SettingsTab from "@/components/admin/SettingsTab";
 import TeamTab from "@/components/admin/TeamTab";
+import ContentTab from "@/components/admin/ContentTab";
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -13,6 +14,7 @@ const AdminPage = () => {
     <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
       {activeTab === "dashboard" && <DashboardTab />}
       {activeTab === "leads" && <LeadsTab />}
+      {activeTab === "content" && <ContentTab />}
       {activeTab === "seo" && <SEOTab />}
       {activeTab === "settings" && <SettingsTab />}
       {activeTab === "team" && <TeamTab />}

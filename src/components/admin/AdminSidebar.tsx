@@ -16,6 +16,7 @@ import dangLogo from "@/assets/dang-logo.png";
 const navItems = [
   { title: "Dashboard", value: "dashboard", icon: LayoutDashboard },
   { title: "Leads", value: "leads", icon: Users },
+  { title: "Page Content", value: "content", icon: FileEdit },
   { title: "SEO", value: "seo", icon: Search },
   { title: "Site Settings", value: "settings", icon: Settings },
   { title: "Team", value: "team", icon: UserCog },
