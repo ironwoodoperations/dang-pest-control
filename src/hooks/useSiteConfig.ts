@@ -39,6 +39,8 @@ export const useSiteConfig = (): SiteConfig => {
 
       let heroVideoUrl = "";
       let heroVideoType = "youtube";
+      let heroVideoStart = "";
+      let heroVideoEnd = "";
       let meetKirkYoutubeId = "";
       let seoTitle = "";
       let seoDescription = "";
