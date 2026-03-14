@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Search, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +18,7 @@ const navItems = [
   { title: "Leads", value: "leads", icon: Users },
   { title: "SEO", value: "seo", icon: Search },
   { title: "Site Settings", value: "settings", icon: Settings },
+  { title: "Team", value: "team", icon: UserCog },
 ];
 
 interface AdminSidebarProps {
