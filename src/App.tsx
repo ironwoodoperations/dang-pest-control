@@ -17,6 +17,7 @@ import BlogPage from "./pages/BlogPage";
 import FAQPage from "./pages/FAQPage";
 import ContactPage from "./pages/ContactPage";
 import AccessibilityPage from "./pages/AccessibilityPage";
+import AdminOnboarding from "./pages/AdminOnboarding";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/accessibility" element={<AccessibilityPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/onboarding" element={<AdminOnboarding />} />
           {/* Legacy redirects: /services/:slug → /:slug, /locations/:slug → /:slug */}
           <Route path="/services/:slug" element={<RedirectLegacy />} />
           <Route path="/locations/:slug" element={<RedirectLegacy />} />
