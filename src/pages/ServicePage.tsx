@@ -64,8 +64,8 @@ const ServicePage = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title={`${title} in Tyler, TX`}
-        description={`${intro.slice(0, 155)}…`}
+        title={dbTitle || `${title} in Tyler, TX`}
+        description={dbDesc || `${intro.slice(0, 155)}…`}
         canonical={`/${slug}`}
         jsonLd={{
           "@context": "https://schema.org",
