@@ -38,6 +38,7 @@ const whyChoose = [
 
 const LocationPage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { seoTitle, seoDescription } = useSiteConfig(`/${slug}`);
   const [location, setLocation] = useState<LocationData | null>(null);
   const [allLocations, setAllLocations] = useState<{ slug: string; city: string }[]>([]);
   const [loading, setLoading] = useState(true);
