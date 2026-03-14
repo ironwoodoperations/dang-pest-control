@@ -22,6 +22,8 @@ export const useSiteConfig = (): SiteConfig => {
     seoDescription: "",
     heroVideoUrl: "",
     heroVideoType: "youtube",
+    heroVideoStart: "",
+    heroVideoEnd: "",
     meetKirkYoutubeId: "",
     loading: true,
   });
