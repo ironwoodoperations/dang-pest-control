@@ -8,6 +8,8 @@ const DEFAULT_VIDEO = "https://www.dangpestcontrol.com/wp-content/uploads/2025/0
 interface HeroSectionProps {
   dynamicVideoUrl?: string;
   dynamicVideoType?: string;
+  videoStart?: string;
+  videoEnd?: string;
 }
 
 // Extract YouTube video ID from various YouTube URL formats
