@@ -82,10 +82,12 @@ const SettingsTab = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   useEffect(() => {
+    if (!tenantId) return;
     const fetchAll = async () => {
-      const { data } = await supabase.from("site_config").select("key, value");
+      const { data } = await supabase.from("site_config").select("key, value").eq("tenant_id", tenantId);
       if (data) {
         const s = { ...defaultSettings };
         for (const row of data) {
