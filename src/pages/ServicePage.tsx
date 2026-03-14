@@ -11,6 +11,7 @@ import ServiceFAQs from "@/components/service/ServiceFAQs";
 import { servicesData, serviceKeys } from "@/data/servicesData";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 interface PageOverride {
   title?: string | null;
