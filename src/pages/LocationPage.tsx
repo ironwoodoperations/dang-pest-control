@@ -13,6 +13,7 @@ interface LocationData {
   intro: string;
   local_pest_description: string;
   map_embed_url: string;
+  local_testimonial_quote: string;
 }
 
 const servicesList = [
