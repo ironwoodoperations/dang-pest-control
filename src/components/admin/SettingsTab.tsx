@@ -154,7 +154,7 @@ const SettingsTab = () => {
     setSaving(true);
     const results = await Promise.all([
       saveConfig("branding", { logo_url: settings.logo_url, favicon_url: settings.favicon_url }),
-      saveConfig("hero_media", { hero_video_url: settings.hero_video_url, hero_video_type: settings.hero_video_type, meet_kirk_youtube_id: settings.meet_kirk_youtube_id }),
+      saveConfig("hero_media", { hero_video_url: settings.hero_video_url, hero_video_type: settings.hero_video_type, hero_video_start: settings.hero_video_start, hero_video_end: settings.hero_video_end, meet_kirk_youtube_id: settings.meet_kirk_youtube_id }),
       saveConfig("holiday_mode", { enabled: settings.holiday_enabled, holiday: settings.holiday_key, greeting: settings.holiday_greeting }),
       saveConfig("business_info", { company_name: settings.company_name, phone: settings.phone, email: settings.email, address: settings.address, city: settings.city, state: settings.state, zip: settings.zip, hours: settings.hours, service_area: settings.service_area }),
       saveConfig("social_links", { facebook: settings.facebook, instagram: settings.instagram, google: settings.google, yelp: settings.yelp }),
