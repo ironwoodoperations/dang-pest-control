@@ -102,9 +102,14 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Right side: phone + CTA */}
-          <div className="hidden md:flex items-center gap-6">
-            <a href="tel:9038710550" className="flex items-center gap-2 text-foreground font-bold text-sm">
+          {/* Center logo - overlaps above the pill */}
+          <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-10 z-10">
+            <img
+              src={dangLogo}
+              alt="Dang Pest Control"
+              className="w-44 h-auto drop-shadow-lg"
+            />
+          </Link>
               <Phone className="w-5 h-5" />
               <div className="leading-tight">
                 <div className="text-xs font-semibold">Call us</div>
