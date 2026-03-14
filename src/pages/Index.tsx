@@ -30,7 +30,7 @@ const localBusinessJsonLd = {
   },
 };
 
-const DEFAULT_TITLE = "Tyler, TX Pest Control Services";
+const DEFAULT_TITLE = "Dang Pest Control - Professional Pest Services";
 const DEFAULT_DESC = "Family-owned pest control in Tyler, TX. Expert termite, rodent, mosquito & general pest control with a Super Powered Guarantee. Call (903) 871-0550.";
 
 const Index = () => {
