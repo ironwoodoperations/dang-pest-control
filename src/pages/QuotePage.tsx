@@ -6,6 +6,7 @@ import { Phone, Send } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const quoteSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required").max(50),
@@ -41,6 +42,7 @@ const serviceOptions = [
 
 const QuotePage = () => {
   const { toast } = useToast();
+  const [submitting, setSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -51,13 +53,37 @@ const QuotePage = () => {
     defaultValues: { services: [], consentTransactional: false },
   });
 
-  const onSubmit = (data: QuoteFormData) => {
-    console.log("Quote request submitted:", data);
-    toast({
-      title: "Quote Request Sent!",
-      description: "We'll get back to you as soon as possible.",
-    });
-    reset();
+  const onSubmit = async (data: QuoteFormData) => {
+    setSubmitting(true);
+    try {
+      const leadData = {
+        name: `${data.firstName} ${data.lastName}`,
+        email: data.email,
+        phone: data.phone,
+        service: data.services.join(", "),
+        message: data.message || null,
+      };
+
+      const { error } = await supabase.from("leads").insert(leadData);
+      if (error) throw error;
+
+      // Fire-and-forget notification
+      supabase.functions.invoke("notify-new-lead", { body: leadData }).catch(() => {});
+
+      toast({
+        title: "Quote Request Sent!",
+        description: "We'll get back to you as soon as possible.",
+      });
+      reset();
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -160,8 +186,8 @@ const QuotePage = () => {
               {errors.consentTransactional && <p className="text-destructive text-xs mt-1">{errors.consentTransactional.message}</p>}
             </div>
 
-            <button type="submit" className="btn-cta w-full">
-              <Send className="w-5 h-5 mr-2" /> Submit Quote Request
+            <button type="submit" disabled={submitting} className="btn-cta w-full disabled:opacity-50">
+              <Send className="w-5 h-5 mr-2" /> {submitting ? "Submitting..." : "Submit Quote Request"}
             </button>
           </form>
         </div>
