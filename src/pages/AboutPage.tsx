@@ -41,7 +41,11 @@ const values = [
 const AboutPage = () => {
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <SEO
+        title="About Us"
+        description="Learn about Dang Pest Control — a family-owned, community-driven pest control company serving Tyler, TX for over 15 years."
+        canonical="/about"
+      />
 
       {/* Hero */}
       <section className="hero-bg text-primary-foreground py-20 text-center">
