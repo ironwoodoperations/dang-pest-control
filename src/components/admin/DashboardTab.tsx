@@ -80,18 +80,19 @@ const DashboardTab = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>
-          Welcome back 👋
-        </h2>
-        <p className="font-body text-xs" style={{ color: "hsl(var(--admin-text-muted))" }}>{today}</p>
-      </div>
-
+      {/* Lead stats at the very top */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={Users} label="Total Leads" value={leadCount} color={accent} sparkData={[2, 4, 3, 7, 5, 8, 6, 9]} />
         <StatCard icon={TrendingUp} label="New Leads" value={newLeads} subtitle="Awaiting response" color="hsl(160, 70%, 45%)" sparkData={[1, 3, 2, 4, 3, 5, 4, 6]} />
         <StatCard icon={TreePine} label="Holiday Mode" value={holidayMode ? "ON" : "OFF"} color={holidayMode ? "hsl(0, 80%, 55%)" : "hsl(220, 9%, 46%)"} />
         <StatCard icon={Clock} label="Service Pages" value={12} subtitle="Active services" color="hsl(28, 100%, 50%)" sparkData={[8, 9, 10, 10, 11, 11, 12, 12]} />
+      </div>
+
+      <div>
+        <h2 className="font-display text-2xl tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>
+          Welcome back 👋
+        </h2>
+        <p className="font-body text-xs" style={{ color: "hsl(var(--admin-text-muted))" }}>{today}</p>
       </div>
     </div>
   );

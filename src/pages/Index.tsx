@@ -9,6 +9,7 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 const localBusinessJsonLd = {
   "@context": "https://schema.org",
@@ -29,18 +30,23 @@ const localBusinessJsonLd = {
   },
 };
 
+const DEFAULT_TITLE = "Tyler, TX Pest Control Services";
+const DEFAULT_DESC = "Family-owned pest control in Tyler, TX. Expert termite, rodent, mosquito & general pest control with a Super Powered Guarantee. Call (903) 871-0550.";
+
 const Index = () => {
+  const { seoTitle, seoDescription, heroVideoUrl, heroVideoType } = useSiteConfig();
+
   return (
     <div className="min-h-screen">
       <SEO
-        title="Tyler, TX Pest Control Services"
-        description="Family-owned pest control in Tyler, TX. Expert termite, rodent, mosquito & general pest control with a Super Powered Guarantee. Call (903) 871-0550."
+        title={seoTitle || DEFAULT_TITLE}
+        description={seoDescription || DEFAULT_DESC}
         canonical="/"
         jsonLd={localBusinessJsonLd}
       />
       <HolidayBanner />
       <Navbar />
-      <HeroSection />
+      <HeroSection dynamicVideoUrl={heroVideoUrl} dynamicVideoType={heroVideoType} />
       <FeatureStrip />
       <ServicesSection />
       <ExpertSection />

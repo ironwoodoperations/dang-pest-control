@@ -15,8 +15,8 @@ import dangLogo from "@/assets/dang-logo.png";
 import { useHolidayMode } from "@/hooks/useHolidayMode";
 
 const mainNav = [
-  { title: "Dashboard", value: "dashboard", icon: LayoutDashboard },
   { title: "Leads", value: "leads", icon: Users },
+  { title: "Dashboard", value: "dashboard", icon: LayoutDashboard },
 ];
 
 const contentNav = [
