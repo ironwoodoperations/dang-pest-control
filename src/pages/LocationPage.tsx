@@ -1,41 +1,19 @@
 import { useParams, Link } from "react-router-dom";
 import { Phone, Shield, Heart, Award, Users, Settings } from "lucide-react";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import { supabase } from "@/integrations/supabase/client";
 
-const locationsData: Record<string, { city: string; intro: string; localNote: string; mapQuery: string }> = {
-  "longview-tx": {
-    city: "Longview",
-    intro: "Your home should feel like a safe haven—but pests make that hard to achieve. At Dang Pest Control, we offer expert pest control solutions tailored to your needs, ensuring health, comfort, and the protection of your loved ones. Serving Longview, TX, and surrounding areas, our family-owned, local business is committed to making your life easier with services you can trust.",
-    localNote: "The environment in Longview provides the perfect conditions for pests like termites, rodents, and mosquitos to thrive. Protecting your property from these nuisances means maintaining your family's comfort and health.",
-    mapQuery: "Longview,TX",
-  },
-  "jacksonville-tx": {
-    city: "Jacksonville",
-    intro: "Pests are a common challenge for homeowners in Jacksonville, TX. At Dang Pest Control, we provide comprehensive pest management solutions designed for the unique conditions of East Texas. Our family-owned team delivers reliable, professional service you can count on.",
-    localNote: "Jacksonville's warm, humid climate makes it a hotspot for a variety of pests. Our tailored treatment plans address the specific pest pressures in your area.",
-    mapQuery: "Jacksonville,TX",
-  },
-  "lindale-tx": {
-    city: "Lindale",
-    intro: "Keep your Lindale home pest-free with professional pest control services from Dang Pest Control. We serve Lindale and surrounding communities with customized solutions that eliminate pests and prevent their return.",
-    localNote: "Lindale's residential communities deserve the best in pest protection. We provide targeted treatments that address the local pest challenges unique to your neighborhood.",
-    mapQuery: "Lindale,TX",
-  },
-  "bullard-tx": {
-    city: "Bullard",
-    intro: "Bullard homeowners trust Dang Pest Control for dependable, thorough pest management. Our licensed technicians deliver personalized service that targets pests at their source.",
-    localNote: "From wooded properties to lakeside homes, Bullard's diverse landscapes present unique pest challenges. Our team has the expertise to handle them all.",
-    mapQuery: "Bullard,TX",
-  },
-  "whitehouse-tx": {
-    city: "Whitehouse",
-    intro: "Protect your Whitehouse home and family from unwanted pests. Dang Pest Control offers expert pest control services with a personal touch, ensuring your property stays safe and comfortable year-round.",
-    localNote: "Whitehouse families deserve peace of mind when it comes to pest control. Our integrated approach provides long-term solutions tailored to your home's specific needs.",
-    mapQuery: "Whitehouse,TX",
-  },
-};
+interface LocationData {
+  slug: string;
+  city: string;
+  hero_title: string;
+  intro: string;
+  local_pest_description: string;
+  map_embed_url: string;
+}
 
 const servicesList = [
   { name: "General Pest Control", slug: "pest-control", description: "Protect your home from ants, spiders, roaches, and other common pests." },
@@ -58,7 +36,35 @@ const whyChoose = [
 
 const LocationPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const location = slug ? locationsData[slug] : null;
+  const [location, setLocation] = useState<LocationData | null>(null);
+  const [allLocations, setAllLocations] = useState<{ slug: string; city: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const fetchData = async () => {
+      const [{ data: loc }, { data: all }] = await Promise.all([
+        supabase.from("location_data").select("*").eq("slug", slug!).maybeSingle(),
+        supabase.from("location_data").select("slug, city"),
+      ]);
+      if (loc) setLocation(loc as LocationData);
+      if (all) setAllLocations(all as { slug: string; city: string }[]);
+      setLoading(false);
+    };
+    if (slug) fetchData();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="flex items-center justify-center py-32">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!location) {
     return (
@@ -88,7 +94,7 @@ const LocationPage = () => {
 
       <section className="hero-bg text-primary-foreground py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-comic text-4xl md:text-5xl mb-4">Pest Control Services in {location.city}, TX</h1>
+          <h1 className="text-comic text-4xl md:text-5xl mb-4">{location.hero_title}</h1>
           <p className="text-lg opacity-90 max-w-2xl mx-auto mb-8">{location.intro}</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="tel:9038710550" className="btn-cta-outline">
@@ -121,26 +127,28 @@ const LocationPage = () => {
       </section>
 
       {/* Service Area Map */}
-      <section className="py-16 bg-muted">
-        <div className="container mx-auto px-4">
-          <h2 className="text-comic text-3xl md:text-4xl text-center mb-4">Our Service Area in {location.city}</h2>
-          <p className="text-center text-muted-foreground mb-8">
-            We proudly serve {location.city} and the surrounding East Texas communities.
-          </p>
-          <div className="rounded-xl overflow-hidden shadow-lg max-w-4xl mx-auto aspect-video">
-            <iframe
-              title={`Map of ${location.city}, TX service area`}
-              src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d100000!2d-95.3!3d32.3!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s${encodeURIComponent(location.mapQuery)}!5e0!3m2!1sen!2sus!4v1`}
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+      {location.map_embed_url && (
+        <section className="py-16 bg-muted">
+          <div className="container mx-auto px-4">
+            <h2 className="text-comic text-3xl md:text-4xl text-center mb-4">Our Service Area in {location.city}</h2>
+            <p className="text-center text-muted-foreground mb-8">
+              We proudly serve {location.city} and the surrounding East Texas communities.
+            </p>
+            <div className="rounded-xl overflow-hidden shadow-lg max-w-4xl mx-auto aspect-video">
+              <iframe
+                title={`Map of ${location.city}, TX service area`}
+                src={location.map_embed_url}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Why Choose Us */}
       <section className="section-orange text-primary-foreground py-16">
@@ -160,11 +168,11 @@ const LocationPage = () => {
         </div>
       </section>
 
-      {/* Local Note CTA */}
+      {/* Local Pest Description CTA */}
       <section className="section-dark text-primary-foreground py-16 text-center">
         <div className="container mx-auto px-4">
           <h2 className="text-comic text-3xl md:text-4xl mb-4">Protect Your {location.city} Home</h2>
-          <p className="opacity-90 mb-8 max-w-2xl mx-auto">{location.localNote}</p>
+          <p className="opacity-90 mb-8 max-w-2xl mx-auto">{location.local_pest_description}</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="tel:9038710550" className="btn-cta-outline">
               <Phone className="w-5 h-5 mr-2" /> (903) 871-0550
@@ -179,10 +187,10 @@ const LocationPage = () => {
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-comic text-xl mb-4">We Also Serve</h3>
           <div className="flex flex-wrap justify-center gap-4">
-            {Object.entries(locationsData)
-              .filter(([key]) => key !== slug)
-              .map(([key, loc]) => (
-                <Link key={key} to={`/${key}`} className="text-primary font-semibold hover:underline">
+            {allLocations
+              .filter((loc) => loc.slug !== slug)
+              .map((loc) => (
+                <Link key={loc.slug} to={`/${loc.slug}`} className="text-primary font-semibold hover:underline">
                   {loc.city}, TX
                 </Link>
               ))}

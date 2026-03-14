@@ -86,6 +86,42 @@ export type Database = {
         }
         Relationships: []
       }
+      location_data: {
+        Row: {
+          city: string
+          created_at: string
+          hero_title: string
+          id: string
+          intro: string
+          local_pest_description: string
+          map_embed_url: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          city: string
+          created_at?: string
+          hero_title?: string
+          id?: string
+          intro?: string
+          local_pest_description?: string
+          map_embed_url?: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          hero_title?: string
+          id?: string
+          intro?: string
+          local_pest_description?: string
+          map_embed_url?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       page_content: {
         Row: {
           custom_content: Json | null
