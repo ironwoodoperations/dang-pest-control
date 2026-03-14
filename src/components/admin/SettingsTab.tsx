@@ -48,16 +48,19 @@ const SettingsTab = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="font-body text-2xl font-bold">Site Settings</h2>
+      <h2 className="font-body text-2xl font-bold" style={{ color: "hsl(var(--admin-text))" }}>Site Settings</h2>
 
-      <Card>
+      <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center">
-              <TreePine className="w-5 h-5 text-destructive" />
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center"
+              style={{ background: "hsl(0, 80%, 95%)", color: "hsl(0, 80%, 55%)" }}
+            >
+              <TreePine className="w-5 h-5" />
             </div>
             <div>
-              <CardTitle className="font-body text-lg">Holiday Mode</CardTitle>
+              <CardTitle className="font-body text-lg" style={{ color: "hsl(var(--admin-text))" }}>Holiday Mode</CardTitle>
               <CardDescription className="font-body">
                 Switch the homepage from green accents to red/festive accents
               </CardDescription>
@@ -67,8 +70,8 @@ const SettingsTab = () => {
         <CardContent>
           <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
             <div className="flex items-center gap-3">
-              <Sparkles className={`w-5 h-5 ${holidayMode ? "text-destructive" : "text-muted-foreground"}`} />
-              <Label htmlFor="holiday-mode" className="font-body font-medium cursor-pointer">
+              <Sparkles className={`w-5 h-5 ${holidayMode ? "text-destructive" : ""}`} style={{ color: holidayMode ? undefined : "hsl(var(--admin-text-muted))" }} />
+              <Label htmlFor="holiday-mode" className="font-body font-medium cursor-pointer" style={{ color: "hsl(var(--admin-text))" }}>
                 {holidayMode ? "Holiday Mode is ON" : "Holiday Mode is OFF"}
               </Label>
             </div>
@@ -88,9 +91,9 @@ const SettingsTab = () => {
         </CardContent>
       </Card>
 
-      <Card className="border-dashed">
+      <Card className="border-dashed" style={{ background: "hsl(var(--admin-card-bg))" }}>
         <CardContent className="p-8 text-center">
-          <p className="text-muted-foreground font-body text-sm">
+          <p className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>
             More site settings coming soon — business hours, contact info, service areas, etc.
           </p>
         </CardContent>

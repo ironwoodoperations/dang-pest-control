@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Trash2 } from "lucide-react";
 
 interface Lead {
@@ -16,9 +17,9 @@ interface Lead {
   created_at: string;
 }
 
-const statusColors: Record<string, string> = {
-  new: "bg-accent text-accent-foreground",
-  contacted: "bg-primary text-primary-foreground",
+const statusStyles: Record<string, string> = {
+  new: "bg-[hsl(234,85%,95%)] text-[hsl(234,85%,50%)]",
+  contacted: "bg-[hsl(160,70%,92%)] text-[hsl(160,70%,35%)]",
   closed: "bg-muted text-muted-foreground",
 };
 
@@ -47,52 +48,54 @@ const LeadsTab = () => {
     fetchLeads();
   };
 
-  if (loading) return <p className="text-muted-foreground">Loading leads...</p>;
+  if (loading) return <p className="font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Loading leads...</p>;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-body text-2xl font-bold">Leads</h2>
+        <h2 className="font-body text-2xl font-bold" style={{ color: "hsl(var(--admin-text))" }}>Leads</h2>
         <Badge variant="secondary" className="font-body">{leads.length} total</Badge>
       </div>
 
       {leads.length === 0 ? (
-        <div className="border border-border rounded-lg p-12 text-center text-muted-foreground">
-          <p className="font-body">No leads yet. They'll appear here when customers submit quote requests.</p>
-        </div>
+        <Card className="p-12 text-center" style={{ background: "hsl(var(--admin-card-bg))" }}>
+          <p className="font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+            No leads yet. They'll appear here when customers submit quote requests.
+          </p>
+        </Card>
       ) : (
-        <div className="border border-border rounded-lg overflow-hidden">
+        <Card className="overflow-hidden" style={{ background: "hsl(var(--admin-card-bg))" }}>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Service</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead className="font-body">Name</TableHead>
+                <TableHead className="font-body">Email</TableHead>
+                <TableHead className="font-body">Phone</TableHead>
+                <TableHead className="font-body">Service</TableHead>
+                <TableHead className="font-body">Status</TableHead>
+                <TableHead className="font-body">Date</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {leads.map((lead) => (
                 <TableRow key={lead.id}>
-                  <TableCell className="font-medium">{lead.name}</TableCell>
-                  <TableCell>{lead.email || "—"}</TableCell>
-                  <TableCell>{lead.phone || "—"}</TableCell>
-                  <TableCell>{lead.service || "—"}</TableCell>
+                  <TableCell className="font-body font-medium">{lead.name}</TableCell>
+                  <TableCell className="font-body">{lead.email || "—"}</TableCell>
+                  <TableCell className="font-body">{lead.phone || "—"}</TableCell>
+                  <TableCell className="font-body">{lead.service || "—"}</TableCell>
                   <TableCell>
                     <select
                       value={lead.status}
                       onChange={(e) => updateStatus(lead.id, e.target.value)}
-                      className={`text-xs font-semibold rounded-full px-2 py-1 border-0 cursor-pointer ${statusColors[lead.status] || ""}`}
+                      className={`text-xs font-semibold font-body rounded-full px-3 py-1 border-0 cursor-pointer ${statusStyles[lead.status] || ""}`}
                     >
                       <option value="new">New</option>
                       <option value="contacted">Contacted</option>
                       <option value="closed">Closed</option>
                     </select>
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
+                  <TableCell className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
                     {new Date(lead.created_at).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
@@ -104,7 +107,7 @@ const LeadsTab = () => {
               ))}
             </TableBody>
           </Table>
-        </div>
+        </Card>
       )}
     </div>
   );

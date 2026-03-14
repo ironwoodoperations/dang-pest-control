@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -34,26 +35,17 @@ const TeamTab = () => {
       .from("user_roles")
       .select("*")
       .order("created_at", { ascending: false });
-
-    if (!error && data) {
-      setMembers(data as TeamMember[]);
-    }
+    if (!error && data) setMembers(data as TeamMember[]);
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchMembers();
-  }, []);
+  useEffect(() => { fetchMembers(); }, []);
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     setInviting(true);
 
-    // Create user via signUp
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
 
     if (signUpError) {
       toast({ title: "Error", description: signUpError.message, variant: "destructive" });
@@ -62,11 +54,7 @@ const TeamTab = () => {
     }
 
     if (signUpData.user) {
-      // Assign role
-      const { error: roleError } = await supabase
-        .from("user_roles")
-        .insert({ user_id: signUpData.user.id, role });
-
+      const { error: roleError } = await supabase.from("user_roles").insert({ user_id: signUpData.user.id, role });
       if (roleError) {
         toast({ title: "User created but role assignment failed", description: roleError.message, variant: "destructive" });
       } else {
@@ -90,69 +78,50 @@ const TeamTab = () => {
     }
   };
 
-  const roleBadgeVariant = (role: string) => {
-    switch (role) {
-      case "admin": return "default";
-      case "editor": return "secondary";
-      default: return "outline";
-    }
+  const roleBadgeColor = (r: string) => {
+    if (r === "admin") return "bg-[hsl(234,85%,95%)] text-[hsl(234,85%,50%)]";
+    if (r === "editor") return "bg-[hsl(160,70%,92%)] text-[hsl(160,70%,35%)]";
+    return "bg-muted text-muted-foreground";
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-body font-bold text-foreground">Team Management</h2>
-          <p className="text-muted-foreground text-sm">Manage user access and roles</p>
+          <h2 className="text-2xl font-body font-bold" style={{ color: "hsl(var(--admin-text))" }}>Team Management</h2>
+          <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Manage user access and roles</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="gap-2 font-body" style={{ background: "hsl(var(--admin-indigo))" }}>
               <UserPlus className="h-4 w-4" />
               Invite New User
             </Button>
           </DialogTrigger>
-          <DialogContent className="dark">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle className="font-body">Invite Team Member</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleInvite} className="space-y-4 mt-2">
               <div className="space-y-2">
-                <Label htmlFor="invite-email">Email</Label>
-                <Input
-                  id="invite-email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="user@example.com"
-                  required
-                />
+                <Label htmlFor="invite-email" className="font-body">Email</Label>
+                <Input id="invite-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="user@example.com" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="invite-password">Password</Label>
-                <Input
-                  id="invite-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Minimum 6 characters"
-                  minLength={6}
-                  required
-                />
+                <Label htmlFor="invite-password" className="font-body">Password</Label>
+                <Input id="invite-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Minimum 6 characters" minLength={6} required />
               </div>
               <div className="space-y-2">
-                <Label>Role</Label>
+                <Label className="font-body">Role</Label>
                 <Select value={role} onValueChange={(v) => setRole(v as "editor" | "viewer")}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="editor">Editor</SelectItem>
                     <SelectItem value="viewer">Viewer</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <Button type="submit" className="w-full" disabled={inviting}>
+              <Button type="submit" className="w-full font-body" disabled={inviting} style={{ background: "hsl(var(--admin-indigo))" }}>
                 {inviting ? "Creating..." : "Create & Assign Role"}
               </Button>
             </form>
@@ -160,33 +129,33 @@ const TeamTab = () => {
         </Dialog>
       </div>
 
-      <div className="rounded-lg border border-border overflow-hidden">
+      <Card className="overflow-hidden" style={{ background: "hsl(var(--admin-card-bg))" }}>
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/50">
-              <TableHead>User ID</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Added</TableHead>
+            <TableRow>
+              <TableHead className="font-body">User ID</TableHead>
+              <TableHead className="font-body">Role</TableHead>
+              <TableHead className="font-body">Added</TableHead>
               <TableHead className="w-16"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground py-8">Loading...</TableCell>
+                <TableCell colSpan={4} className="text-center py-8 font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Loading...</TableCell>
               </TableRow>
             ) : members.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground py-8">No team members yet</TableCell>
+                <TableCell colSpan={4} className="text-center py-8 font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>No team members yet</TableCell>
               </TableRow>
             ) : (
               members.map((m) => (
                 <TableRow key={m.id}>
                   <TableCell className="font-mono text-xs">{m.user_id.slice(0, 8)}...</TableCell>
                   <TableCell>
-                    <Badge variant={roleBadgeVariant(m.role)}>{m.role}</Badge>
+                    <Badge className={`font-body border-0 ${roleBadgeColor(m.role)}`}>{m.role}</Badge>
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
+                  <TableCell className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
                     {new Date(m.created_at).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
@@ -199,7 +168,7 @@ const TeamTab = () => {
             )}
           </TableBody>
         </Table>
-      </div>
+      </Card>
     </div>
   );
 };

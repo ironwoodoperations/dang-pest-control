@@ -30,42 +30,40 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted">
-      <Card className="w-full max-w-md border-border">
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "hsl(var(--admin-bg))" }}>
+      <Card className="w-full max-w-md shadow-lg" style={{ background: "hsl(var(--admin-card-bg))" }}>
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <Lock className="w-6 h-6 text-primary" />
+          <div
+            className="mx-auto mb-4 w-12 h-12 rounded-xl flex items-center justify-center"
+            style={{ background: "hsl(var(--admin-indigo-light))", color: "hsl(var(--admin-indigo))" }}
+          >
+            <Lock className="w-6 h-6" />
           </div>
-          <CardTitle className="font-body text-2xl">Admin Login</CardTitle>
+          <CardTitle className="font-body text-2xl" style={{ color: "hsl(var(--admin-text))" }}>
+            Admin Login
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             {error && (
-              <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+              <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm font-body">
                 {error}
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <Label htmlFor="email" className="font-body">Email</Label>
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <Label htmlFor="password" className="font-body">Password</Label>
+              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full font-body text-white"
+              disabled={loading}
+              style={{ background: "hsl(var(--admin-indigo))" }}
+            >
               {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>

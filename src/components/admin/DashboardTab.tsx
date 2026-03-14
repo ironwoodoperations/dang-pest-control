@@ -1,7 +1,45 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Users, TrendingUp, TreePine, Clock } from "lucide-react";
+
+const StatCard = ({
+  icon: Icon,
+  label,
+  value,
+  subtitle,
+  color,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: string | number;
+  subtitle?: string;
+  color: string;
+}) => (
+  <Card style={{ background: "hsl(var(--admin-card-bg))" }} className="border shadow-sm">
+    <CardContent className="p-5 flex items-center gap-4">
+      <div
+        className="w-12 h-12 rounded-xl flex items-center justify-center"
+        style={{ background: color + "20", color }}
+      >
+        <Icon className="h-6 w-6" />
+      </div>
+      <div>
+        <p className="text-xs font-body font-medium uppercase tracking-wide" style={{ color: "hsl(var(--admin-text-muted))" }}>
+          {label}
+        </p>
+        <p className="text-2xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>
+          {value}
+        </p>
+        {subtitle && (
+          <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+            {subtitle}
+          </p>
+        )}
+      </div>
+    </CardContent>
+  </Card>
+);
 
 const DashboardTab = () => {
   const [leadCount, setLeadCount] = useState(0);
@@ -42,52 +80,41 @@ const DashboardTab = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-body text-3xl font-bold">Admin</h2>
-        <p className="text-muted-foreground font-body">{today}</p>
+        <h2 className="font-body text-2xl font-bold" style={{ color: "hsl(var(--admin-text))" }}>
+          Welcome back 👋
+        </h2>
+        <p className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>
+          {today}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-accent/10 border-accent/20">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-body font-medium">Total Leads</CardTitle>
-            <Users className="h-4 w-4 text-accent" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold font-body">{leadCount}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-primary/10 border-primary/20">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-body font-medium">New Leads</CardTitle>
-            <TrendingUp className="h-4 w-4 text-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold font-body">{newLeads}</div>
-            <p className="text-xs text-muted-foreground font-body">Awaiting response</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-body font-medium">Holiday Mode</CardTitle>
-            <TreePine className={`h-4 w-4 ${holidayMode ? "text-destructive" : "text-muted-foreground"}`} />
-          </CardHeader>
-          <CardContent>
-            <div className="text-lg font-bold font-body">{holidayMode ? "🎄 ON" : "OFF"}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-body font-medium">Service Pages</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold font-body">12</div>
-            <p className="text-xs text-muted-foreground font-body">Active services</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          icon={Users}
+          label="Total Leads"
+          value={leadCount}
+          color="hsl(234, 85%, 60%)"
+        />
+        <StatCard
+          icon={TrendingUp}
+          label="New Leads"
+          value={newLeads}
+          subtitle="Awaiting response"
+          color="hsl(160, 70%, 45%)"
+        />
+        <StatCard
+          icon={TreePine}
+          label="Holiday Mode"
+          value={holidayMode ? "ON" : "OFF"}
+          color={holidayMode ? "hsl(0, 80%, 55%)" : "hsl(220, 9%, 46%)"}
+        />
+        <StatCard
+          icon={Clock}
+          label="Service Pages"
+          value={12}
+          subtitle="Active services"
+          color="hsl(28, 100%, 50%)"
+        />
       </div>
     </div>
   );
