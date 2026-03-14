@@ -47,7 +47,7 @@ const AboutPage = () => {
         canonical="/about"
       />
 
-      {/* Hero */}
+      <Navbar />
       <section className="hero-bg text-primary-foreground py-20 text-center">
         <div className="container mx-auto px-4">
           <h1 className="text-comic text-4xl md:text-6xl mb-4">About Us</h1>

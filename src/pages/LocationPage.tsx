@@ -79,8 +79,8 @@ const LocationPage = () => {
           areaServed: { "@type": "City", name: location.city, addressRegion: "TX" },
         }}
       />
+      <Navbar />
 
-      {/* Hero */}
       <section className="hero-bg text-primary-foreground py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-comic text-4xl md:text-5xl mb-4">Pest Control Services in {location.city}, TX</h1>
