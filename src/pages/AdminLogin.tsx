@@ -65,7 +65,7 @@ const AdminLogin = () => {
               type="submit"
               className="w-full h-11 font-body font-semibold text-white"
               disabled={loading}
-              style={{ background: "hsl(var(--admin-accent))" }}
+              style={{ background: "hsl(var(--admin-teal))" }}
             >
               {loading ? "Signing in..." : "Sign In"}
             </Button>
