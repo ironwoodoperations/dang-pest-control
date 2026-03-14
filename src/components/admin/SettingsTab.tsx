@@ -216,6 +216,7 @@ const SettingsTab = () => {
 
         {activeSection === "branding" && <SettingsBranding settings={settings} update={update} />}
         {activeSection === "hero-media" && <SettingsHeroMedia settings={settings} update={update} />}
+        {activeSection === "media-library" && <SettingsMediaLibrary />}
         {activeSection === "campaigns" && <SettingsCampaigns settings={settings} update={update} />}
         {activeSection === "contact" && <SettingsContact settings={settings} update={update} />}
 
