@@ -38,13 +38,15 @@ const LocationsTab = () => {
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { tenantId } = useTenant();
 
   useEffect(() => {
     fetchLocations();
-  }, []);
+  }, [tenantId]);
 
   const fetchLocations = async () => {
-    const { data } = await supabase.from("location_data").select("*").order("city");
+    if (!tenantId) return;
+    const { data } = await supabase.from("location_data").select("*").eq("tenant_id", tenantId).order("city");
     if (data) setLocations(data as LocationRow[]);
   };
 
