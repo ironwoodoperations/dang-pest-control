@@ -52,27 +52,25 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
   if (!user) return null;
 
   return (
-    <div className="dark">
-      <SidebarProvider>
-        <div className="min-h-screen flex w-full bg-background text-foreground">
-          <AdminSidebar
-            activeTab={activeTab}
-            onTabChange={onTabChange}
-            userEmail={user.email || ""}
-            onLogout={handleLogout}
-          />
-          <div className="flex-1 flex flex-col">
-            <header className="h-14 flex items-center border-b border-border px-4 gap-3">
-              <SidebarTrigger />
-              <h1 className="font-body text-lg font-semibold capitalize">{activeTab}</h1>
-            </header>
-            <main className="flex-1 p-6 overflow-auto">
-              {children}
-            </main>
-          </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-muted text-foreground">
+        <AdminSidebar
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+          userEmail={user.email || ""}
+          onLogout={handleLogout}
+        />
+        <div className="flex-1 flex flex-col">
+          <header className="h-14 flex items-center border-b border-border bg-card px-4 gap-3 shadow-sm">
+            <SidebarTrigger />
+            <h1 className="font-body text-lg font-semibold capitalize text-foreground">{activeTab}</h1>
+          </header>
+          <main className="flex-1 p-6 overflow-auto">
+            {children}
+          </main>
         </div>
-      </SidebarProvider>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
