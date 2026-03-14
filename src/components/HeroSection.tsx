@@ -1,0 +1,65 @@
+import { useState, useRef } from "react";
+import { Link } from "react-router-dom";
+import { Play } from "lucide-react";
+
+const HeroSection = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handlePlay = () => {
+    setIsPlaying(true);
+    setTimeout(() => {
+      videoRef.current?.play();
+    }, 100);
+  };
+
+  return (
+    <section className="hero-bg text-primary-foreground py-16 md:py-24">
+      <div className="container mx-auto px-4">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h1 className="text-comic text-4xl md:text-6xl leading-tight mb-6">
+              Super Powered<br />
+              <span className="text-secondary">Pest Control</span>
+            </h1>
+            <p className="text-lg md:text-xl mb-8 font-body opacity-90 leading-relaxed">
+              We are a hands-on, personable, relationship-based company. We live, work, worship, and play in the Tyler community. Our innovative pest control practices make us stand out amongst our competitors. Our goal is to be an active part in making our community and the lives of our clients better. We stand by our work and guarantee satisfaction.
+            </p>
+            <Link to="/quote" className="btn-cta">
+              Get Your Quote
+            </Link>
+          </div>
+
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-video">
+            {!isPlaying ? (
+              <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
+                <img
+                  src="/video-poster.webp"
+                  alt="Dang Pest Control Video"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
+                  <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center shadow-lg">
+                    <Play className="w-8 h-8 text-secondary-foreground ml-1" />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                controls
+                playsInline
+                poster="/video-poster.webp"
+              >
+                <source src="https://www.dangpestcontrol.com/wp-content/uploads/2024/12/Dang-Pest-Control-Final-Video-Web.mp4" type="video/mp4" />
+              </video>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default HeroSection;
