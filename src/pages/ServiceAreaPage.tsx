@@ -3,6 +3,7 @@ import { Phone, MapPin } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 const areas = [
   { name: "Tyler, TX", slug: null, description: "Our home base — serving Tyler and surrounding neighborhoods with full pest control services." },
@@ -13,11 +14,13 @@ const areas = [
   { name: "Whitehouse, TX", slug: "whitehouse-tx", description: "Reliable pest protection for Whitehouse families year-round." },
 ];
 
-const ServiceAreaPage = () => (
+const ServiceAreaPage = () => {
+  const { seoTitle, seoDescription } = useSiteConfig("/service-area");
+  return (
   <div className="min-h-screen">
     <SEO
-      title="Service Area"
-      description="Dang Pest Control serves Tyler, Longview, Jacksonville, Lindale, Bullard, Whitehouse, and surrounding East Texas communities."
+      title={seoTitle || "Service Area"}
+      description={seoDescription || "Dang Pest Control serves Tyler, Longview, Jacksonville, Lindale, Bullard, Whitehouse, and surrounding East Texas communities."}
       canonical="/service-area"
     />
     <Navbar />
@@ -63,6 +66,7 @@ const ServiceAreaPage = () => (
 
     <Footer />
   </div>
-);
+  );
+};
 
 export default ServiceAreaPage;

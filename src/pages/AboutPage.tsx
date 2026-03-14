@@ -3,6 +3,7 @@ import { Phone, Users, Award, Shield, Heart, Clock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 import dangSeal from "@/assets/dang-seal.png";
 
 const values = [
@@ -39,11 +40,12 @@ const values = [
 ];
 
 const AboutPage = () => {
+  const { seoTitle, seoDescription } = useSiteConfig("/about");
   return (
     <div className="min-h-screen">
       <SEO
-        title="About Us"
-        description="Learn about Dang Pest Control — a family-owned, community-driven pest control company serving Tyler, TX for over 15 years."
+        title={seoTitle || "About Us"}
+        description={seoDescription || "Learn about Dang Pest Control — a family-owned, community-driven pest control company serving Tyler, TX for over 15 years."}
         canonical="/about"
       />
 

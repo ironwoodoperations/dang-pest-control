@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 import { supabase } from "@/integrations/supabase/client";
 
 interface LocationData {
@@ -37,6 +38,7 @@ const whyChoose = [
 
 const LocationPage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { seoTitle, seoDescription } = useSiteConfig(`/${slug}`);
   const [location, setLocation] = useState<LocationData | null>(null);
   const [allLocations, setAllLocations] = useState<{ slug: string; city: string }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,8 +82,8 @@ const LocationPage = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title={`Pest Control in ${location.city}, TX`}
-        description={`Professional pest control services in ${location.city}, TX. Family-owned, licensed & insured. Call (903) 871-0550 for a free quote.`}
+        title={seoTitle || `Pest Control in ${location.city}, TX`}
+        description={seoDescription || `Professional pest control services in ${location.city}, TX. Family-owned, licensed & insured. Call (903) 871-0550 for a free quote.`}
         canonical={`/${slug}`}
         jsonLd={{
           "@context": "https://schema.org",
