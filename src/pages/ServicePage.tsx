@@ -31,6 +31,7 @@ const ServicePage = () => {
   const { slug } = useParams<{ slug: string }>();
   const service = slug ? servicesData[slug] : null;
   const [override, setOverride] = useState<PageOverride | null>(null);
+  const { seoTitle: dbTitle, seoDescription: dbDesc } = useSiteConfig(slug || "/");
 
   useEffect(() => {
     window.scrollTo(0, 0);
