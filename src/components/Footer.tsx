@@ -111,6 +111,7 @@ const Footer = () => {
                 <Landmark className="w-4 h-4" />
               </a>
             </div>
+          </div>
 
           {/* Services */}
           <div>
