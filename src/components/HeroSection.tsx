@@ -35,13 +35,21 @@ const extractYouTubeId = (url: string): string | null => {
   return null;
 };
 
-const HeroSection = ({ dynamicVideoUrl, dynamicVideoType }: HeroSectionProps) => {
+const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }: HeroSectionProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const videoSrc = dynamicVideoUrl || DEFAULT_VIDEO;
   const isYouTube = dynamicVideoType === "youtube" || extractYouTubeId(videoSrc) !== null;
   const youtubeId = isYouTube ? extractYouTubeId(videoSrc) : null;
+
+  // Build YouTube embed params
+  const buildYouTubeParams = () => {
+    const params = new URLSearchParams({ autoplay: "1", rel: "0" });
+    if (videoStart) params.set("start", videoStart);
+    if (videoEnd) params.set("end", videoEnd);
+    return params.toString();
+  };
 
   const handlePlay = () => {
     setIsPlaying(true);
