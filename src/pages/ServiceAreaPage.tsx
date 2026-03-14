@@ -66,6 +66,7 @@ const ServiceAreaPage = () => {
 
     <Footer />
   </div>
-);
+  );
+};
 
 export default ServiceAreaPage;

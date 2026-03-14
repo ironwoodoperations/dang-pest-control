@@ -44,6 +44,7 @@ const ReviewsPage = () => {
 
     <Footer />
   </div>
-);
+  );
+};
 
 export default ReviewsPage;

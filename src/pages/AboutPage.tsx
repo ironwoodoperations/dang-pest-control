@@ -40,11 +40,12 @@ const values = [
 ];
 
 const AboutPage = () => {
+  const { seoTitle, seoDescription } = useSiteConfig("/about");
   return (
     <div className="min-h-screen">
       <SEO
-        title="About Us"
-        description="Learn about Dang Pest Control — a family-owned, community-driven pest control company serving Tyler, TX for over 15 years."
+        title={seoTitle || "About Us"}
+        description={seoDescription || "Learn about Dang Pest Control — a family-owned, community-driven pest control company serving Tyler, TX for over 15 years."}
         canonical="/about"
       />
 

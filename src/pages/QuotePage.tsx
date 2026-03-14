@@ -88,11 +88,13 @@ const QuotePage = () => {
     }
   };
 
+  const { seoTitle, seoDescription } = useSiteConfig("/quote");
+
   return (
     <div className="min-h-screen">
       <SEO
-        title="Get a Free Quote"
-        description="Request a free pest control quote from Dang Pest Control in Tyler, TX. Fast response, family & pet safe treatments, Super Powered Guarantee."
+        title={seoTitle || "Get a Free Quote"}
+        description={seoDescription || "Request a free pest control quote from Dang Pest Control in Tyler, TX. Fast response, family & pet safe treatments, Super Powered Guarantee."}
         canonical="/quote"
       />
       <Navbar />

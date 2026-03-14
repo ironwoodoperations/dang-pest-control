@@ -82,8 +82,8 @@ const LocationPage = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title={`Pest Control in ${location.city}, TX`}
-        description={`Professional pest control services in ${location.city}, TX. Family-owned, licensed & insured. Call (903) 871-0550 for a free quote.`}
+        title={seoTitle || `Pest Control in ${location.city}, TX`}
+        description={seoDescription || `Professional pest control services in ${location.city}, TX. Family-owned, licensed & insured. Call (903) 871-0550 for a free quote.`}
         canonical={`/${slug}`}
         jsonLd={{
           "@context": "https://schema.org",
