@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, BarChart3, Globe, Plus, Trash2, Save, FileText, Edit } from "lucide-react";
+import { Search, Globe, Plus, Trash2, Save, ArrowLeft, ExternalLink, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Keyword {
@@ -21,9 +21,53 @@ interface Keyword {
 
 interface PageSEO {
   slug: string;
+  label: string;
   meta_title: string;
   meta_description: string;
+  ranking_status: "indexed" | "not_indexed" | "pending";
 }
+
+const allSitePages: Omit<PageSEO, "meta_title" | "meta_description" | "ranking_status">[] = [
+  { slug: "/", label: "Home" },
+  { slug: "/about", label: "About Us" },
+  { slug: "/quote", label: "Get a Quote" },
+  { slug: "/contact", label: "Contact" },
+  { slug: "/service-area", label: "Service Area" },
+  { slug: "/reviews", label: "Reviews" },
+  { slug: "/blog", label: "Blog" },
+  { slug: "/faq", label: "FAQ" },
+  { slug: "/accessibility", label: "Accessibility" },
+  { slug: "/pest-control", label: "General Pest Control" },
+  { slug: "/termite-control", label: "Termite Control" },
+  { slug: "/termite-inspections", label: "Termite Inspections" },
+  { slug: "/ant-control", label: "Ant Control" },
+  { slug: "/spider-control", label: "Spider Control" },
+  { slug: "/wasp-hornet-control", label: "Wasp & Hornet Control" },
+  { slug: "/scorpion-control", label: "Scorpion Control" },
+  { slug: "/rodent-control", label: "Rodent Control" },
+  { slug: "/mosquito-control", label: "Mosquito Control" },
+  { slug: "/flea-tick-control", label: "Flea & Tick Control" },
+  { slug: "/roach-control", label: "Roach Control" },
+  { slug: "/bed-bug-control", label: "Bed Bug Control" },
+  { slug: "/snake-control", label: "Snake Control" },
+  { slug: "/longview-tx", label: "Longview, TX" },
+  { slug: "/jacksonville-tx", label: "Jacksonville, TX" },
+  { slug: "/lindale-tx", label: "Lindale, TX" },
+  { slug: "/bullard-tx", label: "Bullard, TX" },
+  { slug: "/whitehouse-tx", label: "Whitehouse, TX" },
+];
+
+const rankingColors: Record<string, string> = {
+  indexed: "bg-[hsl(160,70%,92%)] text-[hsl(160,70%,35%)]",
+  not_indexed: "bg-destructive/15 text-destructive",
+  pending: "bg-[hsl(40,100%,92%)] text-[hsl(40,100%,35%)]",
+};
+
+const rankingLabels: Record<string, string> = {
+  indexed: "Indexed",
+  not_indexed: "Not Indexed",
+  pending: "Pending",
+};
 
 const difficultyColors: Record<string, string> = {
   Low: "bg-[hsl(160,70%,92%)] text-[hsl(160,70%,35%)]",
@@ -31,58 +75,46 @@ const difficultyColors: Record<string, string> = {
   High: "bg-destructive/15 text-destructive",
 };
 
-const defaultPages: PageSEO[] = [
-  { slug: "home", meta_title: "", meta_description: "" },
-  { slug: "about", meta_title: "", meta_description: "" },
-  { slug: "quote", meta_title: "", meta_description: "" },
-  { slug: "pest-control", meta_title: "", meta_description: "" },
-  { slug: "termite-control", meta_title: "", meta_description: "" },
-  { slug: "ant-control", meta_title: "", meta_description: "" },
-  { slug: "spider-control", meta_title: "", meta_description: "" },
-  { slug: "rodent-control", meta_title: "", meta_description: "" },
-  { slug: "scorpion-control", meta_title: "", meta_description: "" },
-  { slug: "bed-bug-control", meta_title: "", meta_description: "" },
-  { slug: "roach-control", meta_title: "", meta_description: "" },
-  { slug: "flea-tick-control", meta_title: "", meta_description: "" },
-  { slug: "wasp-control", meta_title: "", meta_description: "" },
-  { slug: "snake-control", meta_title: "", meta_description: "" },
-];
-
 const SEOTab = () => {
   const [keywords, setKeywords] = useState<Keyword[]>([]);
-  const [pages, setPages] = useState<PageSEO[]>(defaultPages);
+  const [pages, setPages] = useState<PageSEO[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [showAddKeyword, setShowAddKeyword] = useState(false);
   const [editingPage, setEditingPage] = useState<PageSEO | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [newKw, setNewKw] = useState<Keyword>({ keyword: "", volume: "", difficulty: "Medium", notes: "" });
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchSEO = async () => {
       const { data } = await supabase.from("site_config").select("key, value");
+      const savedPages: PageSEO[] = [];
+      let savedKeywords: Keyword[] = [];
       if (data) {
         for (const row of data) {
-          if (row.key === "seo_keywords") {
-            setKeywords((row.value as unknown as Keyword[]) || []);
-          } else if (row.key === "seo_pages") {
-            const saved = (row.value as unknown as PageSEO[]) || [];
-            // Merge saved with defaults
-            const merged = defaultPages.map((dp) => {
-              const found = saved.find((s) => s.slug === dp.slug);
-              return found || dp;
-            });
-            setPages(merged);
+          if (row.key === "seo_keywords") savedKeywords = (row.value as unknown as Keyword[]) || [];
+          if (row.key === "seo_pages") {
+            const raw = (row.value as unknown as PageSEO[]) || [];
+            savedPages.push(...raw);
           }
         }
       }
+      // Merge defaults with saved
+      const merged = allSitePages.map((p) => {
+        const found = savedPages.find((s) => s.slug === p.slug);
+        return found || { ...p, meta_title: "", meta_description: "", ranking_status: "pending" as const };
+      });
+      setPages(merged);
+      setKeywords(savedKeywords);
       setLoading(false);
     };
     fetchSEO();
   }, []);
 
   const saveToConfig = async (key: string, value: unknown) => {
-    setSaving(key);
+    setSaving(true);
     const jsonValue = JSON.parse(JSON.stringify(value));
     const { data: existing } = await supabase.from("site_config").select("id").eq("key", key);
     if (existing && existing.length > 0) {
@@ -91,7 +123,7 @@ const SEOTab = () => {
       await supabase.from("site_config").insert({ key, value: jsonValue });
     }
     toast({ title: "Saved!" });
-    setSaving(null);
+    setSaving(false);
   };
 
   const addKeyword = () => {
@@ -117,7 +149,143 @@ const SEOTab = () => {
     setEditingPage(null);
   };
 
+  const filteredPages = pages.filter((p) => {
+    const matchesSearch = p.label.toLowerCase().includes(searchQuery.toLowerCase()) || p.slug.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "all" || p.ranking_status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const indexedCount = pages.filter((p) => p.ranking_status === "indexed").length;
+  const configuredCount = pages.filter((p) => p.meta_title || p.meta_description).length;
+
   if (loading) return <p className="font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Loading...</p>;
+
+  // Detail view when editing a page
+  if (editingPage) {
+    return (
+      <div className="space-y-6">
+        <button
+          onClick={() => setEditingPage(null)}
+          className="flex items-center gap-2 text-sm font-body hover:underline"
+          style={{ color: "hsl(var(--admin-indigo))" }}
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to All Pages
+        </button>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="font-body text-2xl font-bold" style={{ color: "hsl(var(--admin-text))" }}>{editingPage.label}</h2>
+            <p className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>
+              dangpestcontrol.com{editingPage.slug}
+            </p>
+          </div>
+          <Badge className={`font-body border-0 text-xs ${rankingColors[editingPage.ranking_status]}`}>
+            {rankingLabels[editingPage.ranking_status]}
+          </Badge>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main form */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
+              <CardHeader>
+                <CardTitle className="font-body text-lg" style={{ color: "hsl(var(--admin-text))" }}>Meta Tags</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Meta Title</Label>
+                  <Input
+                    value={editingPage.meta_title}
+                    onChange={(e) => setEditingPage({ ...editingPage, meta_title: e.target.value })}
+                    placeholder="Page title for search engines (max 60 chars)"
+                    maxLength={60}
+                    className="font-body"
+                  />
+                  <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                    {editingPage.meta_title.length}/60 characters
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Meta Description</Label>
+                  <Textarea
+                    value={editingPage.meta_description}
+                    onChange={(e) => setEditingPage({ ...editingPage, meta_description: e.target.value })}
+                    placeholder="Page description for search results (max 160 chars)"
+                    maxLength={160}
+                    className="font-body"
+                    rows={3}
+                  />
+                  <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                    {editingPage.meta_description.length}/160 characters
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Ranking Status</Label>
+                  <Select value={editingPage.ranking_status} onValueChange={(v) => setEditingPage({ ...editingPage, ranking_status: v as PageSEO["ranking_status"] })}>
+                    <SelectTrigger className="font-body"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="indexed">Indexed</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="not_indexed">Not Indexed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button onClick={savePageSEO} className="w-full gap-2 font-body" style={{ background: "hsl(var(--admin-indigo))" }} disabled={saving}>
+                  <Save className="w-4 h-4" /> Save Changes
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar preview */}
+          <div className="space-y-6">
+            <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
+              <CardHeader>
+                <CardTitle className="font-body text-sm" style={{ color: "hsl(var(--admin-text))" }}>Google Preview</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-1">
+                <p className="text-sm font-body" style={{ color: "hsl(234, 85%, 50%)" }}>
+                  {editingPage.meta_title || "Page Title"}
+                </p>
+                <p className="text-xs font-body" style={{ color: "hsl(160, 70%, 35%)" }}>
+                  dangpestcontrol.com{editingPage.slug}
+                </p>
+                <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                  {editingPage.meta_description || "No description set."}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
+              <CardHeader>
+                <CardTitle className="font-body text-sm" style={{ color: "hsl(var(--admin-text))" }}>Page Info</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                <div className="flex justify-between">
+                  <span>URL</span>
+                  <span className="font-medium" style={{ color: "hsl(var(--admin-text))" }}>{editingPage.slug}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Status</span>
+                  <Badge className={`border-0 text-xs ${rankingColors[editingPage.ranking_status]}`}>
+                    {rankingLabels[editingPage.ranking_status]}
+                  </Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span>Title Set</span>
+                  <span>{editingPage.meta_title ? "✓" : "✗"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Description Set</span>
+                  <span>{editingPage.meta_description ? "✓" : "✗"}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -127,48 +295,136 @@ const SEOTab = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-body font-medium" style={{ color: "hsl(var(--admin-text-muted))" }}>Target Keywords</CardTitle>
+            <CardTitle className="text-sm font-body font-medium" style={{ color: "hsl(var(--admin-text-muted))" }}>Total Pages</CardTitle>
             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "hsl(234, 85%, 95%)", color: "hsl(234, 85%, 60%)" }}>
-              <Search className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>{keywords.length}</div>
-          </CardContent>
-        </Card>
-        <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-body font-medium" style={{ color: "hsl(var(--admin-text-muted))" }}>Pages Configured</CardTitle>
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "hsl(160, 70%, 92%)", color: "hsl(160, 70%, 40%)" }}>
               <Globe className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>
-              {pages.filter((p) => p.meta_title || p.meta_description).length} / {pages.length}
-            </div>
+            <div className="text-3xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>{pages.length}</div>
           </CardContent>
         </Card>
         <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-body font-medium" style={{ color: "hsl(var(--admin-text-muted))" }}>Analytics</CardTitle>
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "hsl(28, 100%, 93%)", color: "hsl(28, 100%, 50%)" }}>
-              <BarChart3 className="h-4 w-4" />
+            <CardTitle className="text-sm font-body font-medium" style={{ color: "hsl(var(--admin-text-muted))" }}>Indexed</CardTitle>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "hsl(160, 70%, 92%)", color: "hsl(160, 70%, 40%)" }}>
+              <CheckCircle2 className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Connect Google Analytics</p>
+            <div className="text-3xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>{indexedCount} / {pages.length}</div>
+          </CardContent>
+        </Card>
+        <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-body font-medium" style={{ color: "hsl(var(--admin-text-muted))" }}>SEO Configured</CardTitle>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "hsl(28, 100%, 93%)", color: "hsl(28, 100%, 50%)" }}>
+              <TrendingUp className="h-4 w-4" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>{configuredCount} / {pages.length}</div>
           </CardContent>
         </Card>
       </div>
 
+      {/* Pages Table - Elstar Customers Style */}
+      <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <CardTitle className="font-body text-lg" style={{ color: "hsl(var(--admin-text))" }}>All Pages</CardTitle>
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} />
+                <Input
+                  placeholder="Search pages..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 font-body"
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-36 font-body"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="indexed">Indexed</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="not_indexed">Not Indexed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-body pl-6">Page</TableHead>
+                <TableHead className="font-body">URL</TableHead>
+                <TableHead className="font-body">Status</TableHead>
+                <TableHead className="font-body">SEO</TableHead>
+                <TableHead className="font-body text-right pr-6">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredPages.map((page) => (
+                <TableRow key={page.slug} className="cursor-pointer" onClick={() => setEditingPage({ ...page })}>
+                  <TableCell className="pl-6">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold font-body"
+                        style={{ background: "hsl(var(--admin-indigo-light))", color: "hsl(var(--admin-indigo))" }}
+                      >
+                        {page.label.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-body font-medium text-sm" style={{ color: "hsl(var(--admin-text))" }}>{page.label}</p>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-body text-xs font-mono" style={{ color: "hsl(var(--admin-text-muted))" }}>{page.slug}</span>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={`font-body border-0 text-xs ${rankingColors[page.ranking_status]}`}>
+                      {rankingLabels[page.ranking_status]}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {page.meta_title || page.meta_description ? (
+                      <Badge className="bg-[hsl(160,70%,92%)] text-[hsl(160,70%,35%)] border-0 text-xs font-body">Configured</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-xs font-body">
+                        <AlertCircle className="w-3 h-3 mr-1" /> Not set
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right pr-6">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="gap-1.5 font-body text-xs"
+                      onClick={(e) => { e.stopPropagation(); setEditingPage({ ...page }); }}
+                    >
+                      <ExternalLink className="w-3 h-3" /> Edit SEO
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {filteredPages.length === 0 && (
+            <p className="text-center py-8 font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>
+              No pages match your search.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Keyword Tracker */}
       <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
         <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="font-body text-lg" style={{ color: "hsl(var(--admin-text))" }}>Keyword Targets</CardTitle>
-            <CardDescription className="font-body">Track your target keywords and their metrics</CardDescription>
-          </div>
+          <CardTitle className="font-body text-lg" style={{ color: "hsl(var(--admin-text))" }}>Keyword Targets</CardTitle>
           <Button size="sm" className="gap-1 font-body" style={{ background: "hsl(var(--admin-indigo))" }} onClick={() => setShowAddKeyword(true)}>
             <Plus className="w-4 h-4" /> Add Keyword
           </Button>
@@ -211,45 +467,6 @@ const SEOTab = () => {
         </CardContent>
       </Card>
 
-      {/* Page Meta Editor */}
-      <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
-        <CardHeader>
-          <div>
-            <CardTitle className="font-body text-lg" style={{ color: "hsl(var(--admin-text))" }}>Page Meta Tags</CardTitle>
-            <CardDescription className="font-body">Set meta title and description for each page</CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {pages.map((page) => (
-              <div
-                key={page.slug}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/30 transition-colors cursor-pointer"
-                onClick={() => setEditingPage({ ...page })}
-              >
-                <div className="flex items-center gap-3">
-                  <FileText className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} />
-                  <div>
-                    <p className="font-body font-medium text-sm" style={{ color: "hsl(var(--admin-text))" }}>/{page.slug}</p>
-                    <p className="text-xs font-body truncate max-w-[400px]" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                      {page.meta_title || "No meta title set"}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {(page.meta_title || page.meta_description) ? (
-                    <Badge className="bg-[hsl(160,70%,92%)] text-[hsl(160,70%,35%)] border-0 text-xs font-body">Configured</Badge>
-                  ) : (
-                    <Badge variant="outline" className="text-xs font-body">Not set</Badge>
-                  )}
-                  <Edit className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Add Keyword Dialog */}
       <Dialog open={showAddKeyword} onOpenChange={setShowAddKeyword}>
         <DialogContent className="max-w-md">
@@ -286,53 +503,6 @@ const SEOTab = () => {
               <Plus className="w-4 h-4" /> Add Keyword
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Page Meta Dialog */}
-      <Dialog open={!!editingPage} onOpenChange={(open) => !open && setEditingPage(null)}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="font-body" style={{ color: "hsl(var(--admin-text))" }}>
-              Edit Meta — /{editingPage?.slug}
-            </DialogTitle>
-          </DialogHeader>
-          {editingPage && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Meta Title</Label>
-                <Input
-                  value={editingPage.meta_title}
-                  onChange={(e) => setEditingPage({ ...editingPage, meta_title: e.target.value })}
-                  placeholder="Page title for search engines (max 60 chars)"
-                  maxLength={60}
-                  className="font-body"
-                />
-                <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{editingPage.meta_title.length}/60 characters</p>
-              </div>
-              <div className="space-y-2">
-                <Label className="font-body" style={{ color: "hsl(var(--admin-text))" }}>Meta Description</Label>
-                <Textarea
-                  value={editingPage.meta_description}
-                  onChange={(e) => setEditingPage({ ...editingPage, meta_description: e.target.value })}
-                  placeholder="Page description for search results (max 160 chars)"
-                  maxLength={160}
-                  className="font-body"
-                />
-                <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{editingPage.meta_description.length}/160 characters</p>
-              </div>
-              {/* Google Preview */}
-              <div className="space-y-1 p-3 rounded-lg bg-muted/30">
-                <p className="text-xs font-body font-medium" style={{ color: "hsl(var(--admin-text-muted))" }}>Google Preview</p>
-                <p className="text-sm font-body" style={{ color: "hsl(234, 85%, 50%)" }}>{editingPage.meta_title || "Page Title"}</p>
-                <p className="text-xs font-body" style={{ color: "hsl(160, 70%, 35%)" }}>dangpestcontrol.com/{editingPage.slug}</p>
-                <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{editingPage.meta_description || "No description set."}</p>
-              </div>
-              <Button onClick={savePageSEO} className="w-full gap-2 font-body" style={{ background: "hsl(var(--admin-indigo))" }}>
-                <Save className="w-4 h-4" /> Save Meta Tags
-              </Button>
-            </div>
-          )}
         </DialogContent>
       </Dialog>
     </div>
