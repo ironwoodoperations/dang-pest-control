@@ -75,19 +75,15 @@ const SettingsTab = () => {
 
   const saveConfig = async (key: string, value: Record<string, unknown>) => {
     setSaving(key);
-    // Upsert: try update first, if no rows affected, insert
-    const { error: updateError, count } = await supabase
-      .from("site_config")
-      .update({ value, updated_at: new Date().toISOString() })
-      .eq("key", key)
-      .select("id");
-
-    if (!count || (Array.isArray(count) && count.length === 0)) {
-      // Check if row was actually updated
-      const { data: existing } = await supabase.from("site_config").select("id").eq("key", key);
-      if (!existing || existing.length === 0) {
-        await supabase.from("site_config").insert({ key, value });
-      }
+    const jsonValue = JSON.parse(JSON.stringify(value));
+    const { data: existing } = await supabase.from("site_config").select("id").eq("key", key);
+    let updateError: unknown = null;
+    if (existing && existing.length > 0) {
+      const { error } = await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", key);
+      updateError = error;
+    } else {
+      const { error } = await supabase.from("site_config").insert({ key, value: jsonValue });
+      updateError = error;
     }
 
     if (updateError) {
