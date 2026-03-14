@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Star, ExternalLink } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Star, ExternalLink, ShieldCheck, Landmark } from "lucide-react";
 import dangLogo from "@/assets/dang-logo.png";
 
 interface BusinessInfo {
@@ -101,6 +101,15 @@ const Footer = () => {
                   <span className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center opacity-40"><Instagram className="w-4 h-4" /></span>
                 </>
               )}
+            </div>
+            {/* Trust badges */}
+            <div className="flex gap-3 pt-2">
+              <a href="https://www.bbb.org/us/tx/tyler/profile/pest-control/dang-pest-control-1075-28152342" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors" title="BBB Accredited">
+                <ShieldCheck className="w-4 h-4" />
+              </a>
+              <a href="https://www.tylertexas.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors" title="Tyler Chamber of Commerce">
+                <Landmark className="w-4 h-4" />
+              </a>
             </div>
           </div>
 
