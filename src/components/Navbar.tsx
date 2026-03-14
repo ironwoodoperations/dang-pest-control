@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Phone, Menu, X, ChevronDown } from "lucide-react";
+import dangLogo from "@/assets/dang-logo.png";
 
 const pestLinks = [
   { label: "General Pest Control", href: "/services/pest-control" },
@@ -15,98 +16,147 @@ const pestLinks = [
   { label: "Snake Control", href: "/services/snake-control" },
 ];
 
+const termiteLinks = [
+  { label: "Termite Inspections", href: "/services/termite-inspections" },
+];
+
+const aboutLinks = [
+  { label: "About Us", href: "/about" },
+  { label: "Get a Quote", href: "/quote" },
+];
+
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [pestsOpen, setPestsOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-      <div className="container mx-auto px-4 flex items-center justify-between h-16">
-        {/* Logo */}
-        <Link to="/" className="text-comic text-2xl text-primary font-bold tracking-wider">
-          DANG PEST CONTROL
+    <header className="hero-bg relative z-50 pt-4 pb-0">
+      {/* Logo centered above navbar */}
+      <div className="flex justify-center -mb-6 relative z-10">
+        <Link to="/">
+          <img
+            src={dangLogo}
+            alt="Dang Pest Control"
+            className="w-40 md:w-52 h-auto drop-shadow-lg"
+          />
         </Link>
+      </div>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-6">
-          <Link to="/" className="text-sm font-semibold text-foreground hover:text-primary transition-colors">Home</Link>
-
-          {/* Services dropdown */}
-          <div className="relative group">
-            <button
-              className="text-sm font-semibold text-foreground hover:text-primary transition-colors flex items-center gap-1"
-              onMouseEnter={() => setPestsOpen(true)}
-              onMouseLeave={() => setPestsOpen(false)}
-              onClick={() => setPestsOpen(!pestsOpen)}
-            >
-              Services <ChevronDown className="w-4 h-4" />
-            </button>
+      {/* Yellow pill navbar */}
+      <div className="container mx-auto px-4">
+        <nav className="navbar-pill flex items-center justify-between px-4 md:px-8 py-3 mx-4 md:mx-8 relative z-0">
+          {/* Desktop nav links */}
+          <div className="hidden md:flex items-center gap-1">
+            {/* Pests dropdown */}
             <div
-              className={`absolute top-full left-0 mt-1 w-56 bg-card rounded-lg shadow-lg border border-border py-2 transition-all ${pestsOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
-              onMouseEnter={() => setPestsOpen(true)}
-              onMouseLeave={() => setPestsOpen(false)}
+              className="relative"
+              onMouseEnter={() => setOpenDropdown("pests")}
+              onMouseLeave={() => setOpenDropdown(null)}
             >
-              {pestLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  className="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
-                  onClick={() => setPestsOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <Link
-                to="/services/termite-inspections"
-                className="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
-                onClick={() => setPestsOpen(false)}
-              >
-                Termite Inspections
-              </Link>
-              <Link
-                to="/services/mosquito-control"
-                className="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
-                onClick={() => setPestsOpen(false)}
-              >
-                Mosquito Control
-              </Link>
+              <button className="navbar-link flex items-center gap-1">
+                Pests <ChevronDown className="w-4 h-4" />
+              </button>
+              {openDropdown === "pests" && (
+                <div className="navbar-dropdown">
+                  {pestLinks.map((link) => (
+                    <Link key={link.href} to={link.href} className="navbar-dropdown-item">
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Mosquitos link */}
+            <Link to="/services/mosquito-control" className="navbar-link">
+              Mosquitos
+            </Link>
+
+            {/* Termites dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setOpenDropdown("termites")}
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
+              <button className="navbar-link flex items-center gap-1">
+                Termites <ChevronDown className="w-4 h-4" />
+              </button>
+              {openDropdown === "termites" && (
+                <div className="navbar-dropdown">
+                  {termiteLinks.map((link) => (
+                    <Link key={link.href} to={link.href} className="navbar-dropdown-item">
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* About dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setOpenDropdown("about")}
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
+              <button className="navbar-link flex items-center gap-1">
+                About <ChevronDown className="w-4 h-4" />
+              </button>
+              {openDropdown === "about" && (
+                <div className="navbar-dropdown">
+                  {aboutLinks.map((link) => (
+                    <Link key={link.href} to={link.href} className="navbar-dropdown-item">
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          <Link to="/about" className="text-sm font-semibold text-foreground hover:text-primary transition-colors">About</Link>
-          <Link to="/quote" className="btn-cta text-sm !px-6 !py-2">Get Your Quote</Link>
-          <a href="tel:9038710550" className="flex items-center gap-1.5 text-sm font-bold text-primary">
-            <Phone className="w-4 h-4" /> (903) 871-0550
-          </a>
-        </div>
+          {/* Right side: phone + CTA */}
+          <div className="hidden md:flex items-center gap-6">
+            <a href="tel:9038710550" className="flex items-center gap-2 text-foreground font-bold text-sm">
+              <Phone className="w-5 h-5" />
+              <div className="leading-tight">
+                <div className="text-xs font-semibold">Call us</div>
+                <div className="font-bold">(903) 871-0550</div>
+              </div>
+            </a>
+            <Link to="/quote" className="btn-cta-cyan">
+              Get Your Quote
+            </Link>
+          </div>
 
-        {/* Mobile toggle */}
-        <button className="md:hidden text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+          {/* Mobile toggle */}
+          <button className="md:hidden text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
+            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+
+          {/* Mobile: show logo text as fallback */}
+          <span className="md:hidden text-comic text-lg text-foreground">DANG!</span>
+        </nav>
       </div>
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-card border-b border-border px-4 pb-4">
-          <Link to="/" className="block py-2 text-sm font-semibold" onClick={() => setMobileOpen(false)}>Home</Link>
+        <div className="md:hidden bg-card border-b border-border px-4 pb-4 mx-8 rounded-b-2xl shadow-lg">
           <button
             className="w-full text-left py-2 text-sm font-semibold flex items-center justify-between"
-            onClick={() => setPestsOpen(!pestsOpen)}
+            onClick={() => setOpenDropdown(openDropdown === "pests" ? null : "pests")}
           >
-            Services <ChevronDown className={`w-4 h-4 transition-transform ${pestsOpen ? "rotate-180" : ""}`} />
+            Pests <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === "pests" ? "rotate-180" : ""}`} />
           </button>
-          {pestsOpen && (
+          {openDropdown === "pests" && (
             <div className="pl-4">
               {pestLinks.map((link) => (
                 <Link key={link.href} to={link.href} className="block py-1.5 text-sm text-muted-foreground hover:text-primary" onClick={() => setMobileOpen(false)}>
                   {link.label}
                 </Link>
               ))}
-              <Link to="/services/termite-inspections" className="block py-1.5 text-sm text-muted-foreground hover:text-primary" onClick={() => setMobileOpen(false)}>Termite Inspections</Link>
-              <Link to="/services/mosquito-control" className="block py-1.5 text-sm text-muted-foreground hover:text-primary" onClick={() => setMobileOpen(false)}>Mosquito Control</Link>
             </div>
           )}
+          <Link to="/services/mosquito-control" className="block py-2 text-sm font-semibold" onClick={() => setMobileOpen(false)}>Mosquitos</Link>
+          <Link to="/services/termite-inspections" className="block py-2 text-sm font-semibold" onClick={() => setMobileOpen(false)}>Termites</Link>
           <Link to="/about" className="block py-2 text-sm font-semibold" onClick={() => setMobileOpen(false)}>About</Link>
           <Link to="/quote" className="block py-2 text-sm font-semibold text-primary" onClick={() => setMobileOpen(false)}>Get Your Quote</Link>
           <a href="tel:9038710550" className="flex items-center gap-1.5 py-2 text-sm font-bold text-primary">
@@ -114,7 +164,7 @@ const Navbar = () => {
           </a>
         </div>
       )}
-    </nav>
+    </header>
   );
 };
 
