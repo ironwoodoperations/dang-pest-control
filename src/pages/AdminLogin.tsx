@@ -36,7 +36,7 @@ const AdminLogin = () => {
     >
       <Card className="w-full max-w-sm shadow-2xl border-0 rounded-2xl overflow-hidden" style={{ background: "hsl(var(--admin-card-bg))" }}>
         {/* Branded header */}
-        <div className="flex flex-col items-center pt-10 pb-6 px-6" style={{ background: "hsl(var(--admin-sidebar-bg))" }}>
+        <div className="flex flex-col items-center pt-10 pb-6 px-6" style={{ background: "hsl(var(--admin-teal))" }}>
           <img src={dangLogo} alt="DANG! Pest Control" className="w-20 h-20 object-contain mb-3" />
           <h1 className="font-display text-2xl tracking-wide uppercase text-white">
             DANG! Pest Control
