@@ -10,17 +10,44 @@ interface HeroSectionProps {
   dynamicVideoType?: string;
 }
 
+// Extract YouTube video ID from various YouTube URL formats
+const extractYouTubeId = (url: string): string | null => {
+  if (!url) return null;
+  
+  // Handle youtube.com/shorts/VIDEO_ID
+  const shortsMatch = url.match(/youtube\.com\/shorts\/([^?&/]+)/);
+  if (shortsMatch) return shortsMatch[1];
+  
+  // Handle youtube.com/watch?v=VIDEO_ID
+  const watchMatch = url.match(/[?&]v=([^?&/]+)/);
+  if (watchMatch) return watchMatch[1];
+  
+  // Handle youtu.be/VIDEO_ID
+  const shortMatch = url.match(/youtu\.be\/([^?&/]+)/);
+  if (shortMatch) return shortMatch[1];
+  
+  // Handle embed/VIDEO_ID
+  const embedMatch = url.match(/embed\/([^?&/]+)/);
+  if (embedMatch) return embedMatch[1];
+  
+  return null;
+};
+
 const HeroSection = ({ dynamicVideoUrl, dynamicVideoType }: HeroSectionProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const videoSrc = dynamicVideoUrl || DEFAULT_VIDEO;
+  const isYouTube = dynamicVideoType === "youtube" || extractYouTubeId(videoSrc) !== null;
+  const youtubeId = isYouTube ? extractYouTubeId(videoSrc) : null;
 
   const handlePlay = () => {
     setIsPlaying(true);
-    setTimeout(() => {
-      videoRef.current?.play();
-    }, 100);
+    if (!isYouTube) {
+      setTimeout(() => {
+        videoRef.current?.play();
+      }, 100);
+    }
   };
 
   return (
@@ -56,15 +83,27 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType }: HeroSectionProps) =>
                   </div>
                 </div>
               ) : (
-                <video
-                  ref={videoRef}
-                  className="w-full h-full object-cover"
-                  controls
-                  playsInline
-                  poster="/video-poster.webp"
-                >
-                  <source src={videoSrc} type="video/mp4" />
-                </video>
+                <>
+                  {isYouTube && youtubeId ? (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
+                      title="Meet Kirk - Dang Pest Control"
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <video
+                      ref={videoRef}
+                      className="w-full h-full object-cover"
+                      controls
+                      playsInline
+                      poster="/video-poster.webp"
+                    >
+                      <source src={videoSrc} type="video/mp4" />
+                    </video>
+                  )}
+                </>
               )}
             </div>
           </HolidayVideoWrapper>
