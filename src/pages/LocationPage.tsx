@@ -4,31 +4,36 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 
-const locationsData: Record<string, { city: string; intro: string; localNote: string }> = {
+const locationsData: Record<string, { city: string; intro: string; localNote: string; mapQuery: string }> = {
   "longview-tx": {
     city: "Longview",
     intro: "Your home should feel like a safe haven—but pests make that hard to achieve. At Dang Pest Control, we offer expert pest control solutions tailored to your needs, ensuring health, comfort, and the protection of your loved ones. Serving Longview, TX, and surrounding areas, our family-owned, local business is committed to making your life easier with services you can trust.",
     localNote: "The environment in Longview provides the perfect conditions for pests like termites, rodents, and mosquitos to thrive. Protecting your property from these nuisances means maintaining your family's comfort and health.",
+    mapQuery: "Longview,TX",
   },
   "jacksonville-tx": {
     city: "Jacksonville",
     intro: "Pests are a common challenge for homeowners in Jacksonville, TX. At Dang Pest Control, we provide comprehensive pest management solutions designed for the unique conditions of East Texas. Our family-owned team delivers reliable, professional service you can count on.",
     localNote: "Jacksonville's warm, humid climate makes it a hotspot for a variety of pests. Our tailored treatment plans address the specific pest pressures in your area.",
+    mapQuery: "Jacksonville,TX",
   },
   "lindale-tx": {
     city: "Lindale",
     intro: "Keep your Lindale home pest-free with professional pest control services from Dang Pest Control. We serve Lindale and surrounding communities with customized solutions that eliminate pests and prevent their return.",
     localNote: "Lindale's residential communities deserve the best in pest protection. We provide targeted treatments that address the local pest challenges unique to your neighborhood.",
+    mapQuery: "Lindale,TX",
   },
   "bullard-tx": {
     city: "Bullard",
     intro: "Bullard homeowners trust Dang Pest Control for dependable, thorough pest management. Our licensed technicians deliver personalized service that targets pests at their source.",
     localNote: "From wooded properties to lakeside homes, Bullard's diverse landscapes present unique pest challenges. Our team has the expertise to handle them all.",
+    mapQuery: "Bullard,TX",
   },
   "whitehouse-tx": {
     city: "Whitehouse",
     intro: "Protect your Whitehouse home and family from unwanted pests. Dang Pest Control offers expert pest control services with a personal touch, ensuring your property stays safe and comfortable year-round.",
     localNote: "Whitehouse families deserve peace of mind when it comes to pest control. Our integrated approach provides long-term solutions tailored to your home's specific needs.",
+    mapQuery: "Whitehouse,TX",
   },
 };
 
@@ -111,6 +116,28 @@ const LocationPage = () => {
           </div>
           <div className="text-center mt-10">
             <Link to="/quote" className="btn-cta">Get Your Quote</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Service Area Map */}
+      <section className="py-16 bg-muted">
+        <div className="container mx-auto px-4">
+          <h2 className="text-comic text-3xl md:text-4xl text-center mb-4">Our Service Area in {location.city}</h2>
+          <p className="text-center text-muted-foreground mb-8">
+            We proudly serve {location.city} and the surrounding East Texas communities.
+          </p>
+          <div className="rounded-xl overflow-hidden shadow-lg max-w-4xl mx-auto aspect-video">
+            <iframe
+              title={`Map of ${location.city}, TX service area`}
+              src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d100000!2d-95.3!3d32.3!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s${encodeURIComponent(location.mapQuery)}!5e0!3m2!1sen!2sus!4v1`}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </div>
         </div>
       </section>
