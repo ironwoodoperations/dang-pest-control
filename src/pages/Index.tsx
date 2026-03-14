@@ -34,7 +34,7 @@ const DEFAULT_TITLE = "Tyler, TX Pest Control Services";
 const DEFAULT_DESC = "Family-owned pest control in Tyler, TX. Expert termite, rodent, mosquito & general pest control with a Super Powered Guarantee. Call (903) 871-0550.";
 
 const Index = () => {
-  const { seoTitle, seoDescription, heroVideoUrl, heroVideoType } = useSiteConfig();
+  const { seoTitle, seoDescription, heroVideoUrl, heroVideoType, heroVideoStart, heroVideoEnd } = useSiteConfig();
 
   return (
     <div className="min-h-screen">
