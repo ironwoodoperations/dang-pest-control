@@ -94,6 +94,7 @@ export type Database = {
           id: string
           intro: string
           local_pest_description: string
+          local_testimonial_quote: string
           map_embed_url: string
           slug: string
           updated_at: string
@@ -105,6 +106,7 @@ export type Database = {
           id?: string
           intro?: string
           local_pest_description?: string
+          local_testimonial_quote?: string
           map_embed_url?: string
           slug: string
           updated_at?: string
@@ -116,6 +118,7 @@ export type Database = {
           id?: string
           intro?: string
           local_pest_description?: string
+          local_testimonial_quote?: string
           map_embed_url?: string
           slug?: string
           updated_at?: string
