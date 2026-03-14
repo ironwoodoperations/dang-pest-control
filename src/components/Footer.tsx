@@ -26,14 +26,16 @@ interface SocialLinks {
 const serviceLinks = [
   { label: "General Pest Control", slug: "pest-control" },
   { label: "Termite Control", slug: "termite-control" },
+  { label: "Termite Inspections", slug: "termite-inspections" },
   { label: "Ant Control", slug: "ant-control" },
   { label: "Spider Control", slug: "spider-control" },
   { label: "Scorpion Control", slug: "scorpion-control" },
   { label: "Rodent Control", slug: "rodent-control" },
+  { label: "Mosquito Control", slug: "mosquito-control" },
   { label: "Bed Bug Control", slug: "bed-bug-control" },
   { label: "Roach Control", slug: "roach-control" },
   { label: "Flea & Tick", slug: "flea-tick-control" },
-  { label: "Wasp Control", slug: "wasp-control" },
+  { label: "Wasp & Hornet Control", slug: "wasp-hornet-control" },
   { label: "Snake Control", slug: "snake-control" },
 ];
 
