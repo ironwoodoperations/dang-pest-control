@@ -48,6 +48,8 @@ const defaultSettings: SettingsData = {
   favicon_url: "",
   hero_video_url: "",
   hero_video_type: "youtube",
+  hero_video_start: "",
+  hero_video_end: "",
   meet_kirk_youtube_id: "",
   holiday_enabled: false,
   holiday_key: "",
