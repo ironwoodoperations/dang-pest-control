@@ -68,6 +68,7 @@ const defaultSettings: SettingsData = {
 const sections = [
   { id: "branding", label: "Branding" },
   { id: "hero-media", label: "Hero Media" },
+  { id: "media-library", label: "Media Library" },
   { id: "campaigns", label: "Campaigns" },
   { id: "contact", label: "Contact Info" },
 ] as const;
