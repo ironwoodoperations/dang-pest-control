@@ -68,8 +68,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
-              <img src={dangLogo} alt={companyName} className="w-10 h-10 object-contain" />
-              <span className="text-comic text-xl text-background">{companyName}</span>
+              <img src={dangLogo} alt={companyName} className="w-40 h-auto object-contain" />
             </Link>
             <p className="text-sm opacity-70 leading-relaxed">
               Professional pest control services protecting your home and family. Licensed, insured, and locally owned.
