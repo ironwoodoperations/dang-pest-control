@@ -25,10 +25,10 @@ const ServicesSection = () => {
           Using the latest industry techniques, we deliver tailored treatment plans that are highly effective while remaining friendly for your family, pets, and the environment.
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {services.map((service) => (
             <Link key={service.slug} to={`/${service.slug}`} className="bg-white rounded-2xl p-5 shadow-sm text-center flex flex-col items-center gap-3 hover:shadow-md transition-all duration-200">
-              <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-2 text-2xl" style={{background: 'hsl(var(--primary))'}}>
+              <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-2 text-3xl" style={{background: 'hsl(var(--primary))'}}>
                 {service.icon}
               </div>
               <h3 className="text-comic text-sm uppercase" style={{color: 'hsl(20, 40%, 12%)'}}>{service.name}</h3>
