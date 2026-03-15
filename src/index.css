@@ -142,7 +142,7 @@
   }
 
   .section-dark {
-    background: hsl(var(--brown-dark));
+    background: hsl(22, 45%, 14%);
   }
 
   .text-comic {
