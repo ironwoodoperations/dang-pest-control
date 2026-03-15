@@ -309,7 +309,7 @@ const Navbar = () => {
           </a>
         </div>
       )}
-    </header>
+    </header></>
   );
 };
 
