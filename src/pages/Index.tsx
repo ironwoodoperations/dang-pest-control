@@ -48,8 +48,8 @@ const Index = () => {
       <Navbar />
       <HeroSection dynamicVideoUrl={heroVideoUrl} dynamicVideoType={heroVideoType} videoStart={heroVideoStart} videoEnd={heroVideoEnd} />
       <FeatureStrip />
-      <ServicesSection />
       <ExpertSection />
+      <ServicesSection />
       <WhyChooseUs />
       <TestimonialsSection />
       <CTASection />
