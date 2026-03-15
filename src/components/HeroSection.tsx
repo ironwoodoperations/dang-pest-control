@@ -51,9 +51,8 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
   };
 
   return (
-    <section className="hero-bg text-white pt-8 pb-0 relative overflow-hidden">
-      <div className="mx-auto max-w-[1400px] px-4 relative z-10">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
+    <section className="relative overflow-hidden pt-8 pb-16 text-white">
+      <div className="mx-auto max-w-[1400px] px-4 relative z-10 grid md:grid-cols-2 gap-8 md:gap-10 items-center">
           <div>
             <h1 
               className="text-comic text-5xl md:text-7xl leading-[0.9] mb-6 italic"
@@ -113,7 +112,6 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
               )}
             </div>
           </HolidayVideoWrapper>
-        </div>
       </div>
     </section>
   );

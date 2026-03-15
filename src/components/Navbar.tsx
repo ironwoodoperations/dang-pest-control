@@ -145,7 +145,7 @@ const Navbar = () => {
         </div>
       </header>
 
-      <header className="hero-bg relative z-50 pt-0 pb-0">
+      <header className="relative z-50 pt-14 pb-0">
       <div className="mx-auto max-w-[1400px] px-4">
         <nav className="navbar-pill flex items-center justify-between 
           px-6 md:px-8 py-3.5 relative z-0">
