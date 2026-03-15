@@ -149,7 +149,7 @@ const ServicePage = () => {
       )}
 
       {/* Bottom CTA */}
-      <section className="py-16 text-white" style={{background: 'hsl(22, 45%, 14%)'}}>
+      <section className="py-16 text-white" style={{background: 'hsl(var(--primary))'}}>
         <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-comic text-3xl md:text-4xl mb-4 text-white">{service.bottomCTA.title}</h2>

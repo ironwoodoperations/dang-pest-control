@@ -91,6 +91,7 @@ const AboutPage = () => {
       {/* Values */}
       <section className="py-16 text-white" style={{background: 'hsl(var(--primary))'}}>
         <div className="container mx-auto px-4">
+          <p className="text-comic text-sm italic text-center mb-2 text-white opacity-80">OUR EXPERTISE</p>
           <h2 className="text-comic text-3xl md:text-4xl text-center mb-12 text-white">Expertise & Proven Results</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {values.map((value) => (
