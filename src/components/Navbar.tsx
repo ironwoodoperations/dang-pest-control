@@ -38,7 +38,7 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 shadow-sm" style={{background: 'hsl(45, 100%, 51%)'}}>
       {/* Yellow pill navbar with logo inline */}
-      <div className="mx-auto max-w-[1400px] px-4">
+      <div className="mx-auto max-w-[1400px] px-4 py-2">
         <nav className="navbar-pill flex items-center justify-between px-6 md:px-8 py-3 relative z-0">
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-2">
