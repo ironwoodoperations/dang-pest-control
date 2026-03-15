@@ -113,15 +113,15 @@ const Navbar = () => {
           </Link>
 
           {/* Right side: phone + CTA */}
-          <div className="hidden md:flex items-center gap-6">
-            <a href="tel:9038710550" className="flex items-center gap-2 text-foreground font-bold text-sm">
-              <Phone className="w-5 h-5" />
+          <div className="hidden md:flex items-center gap-4">
+            <a href="tel:9038710550" className="flex items-center gap-2 text-foreground font-bold text-xs">
+              <Phone className="w-4 h-4" />
               <div className="leading-tight">
-                <div className="text-xs font-semibold">Call us</div>
-                <div className="font-bold">(903) 871-0550</div>
+                <div className="text-[10px] font-semibold">Call us</div>
+                <div className="text-xs font-bold">(903) 871-0550</div>
               </div>
             </a>
-            <Link to="/quote" className="btn-cta-cyan">
+            <Link to="/quote" className="btn-cta-cyan text-sm px-5 py-2">
               Get Your Quote
             </Link>
           </div>
