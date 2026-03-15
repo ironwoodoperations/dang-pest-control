@@ -45,8 +45,9 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-[100] bg-white 
-        shadow-sm transition-all duration-300">
+      <header className={`fixed top-0 left-0 right-0 z-[100] bg-white 
+        shadow-sm transition-all duration-300 
+        ${scrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
         <div className="mx-auto max-w-[1400px] px-4 flex items-center 
           justify-between py-2">
 
