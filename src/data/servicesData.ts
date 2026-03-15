@@ -9,12 +9,10 @@ import rodentHero from "@/assets/services/rodent-hero.jpg";
 import fleaTickHero from "@/assets/services/flea-tick-hero.jpg";
 import roachHero from "@/assets/services/roach-hero.jpg";
 import bedBugHero from "@/assets/services/bed-bug-hero.jpg";
-import snakeHero from "@/assets/services/snake-hero.jpg";
 // Secondary images
 import fireAntsImg from "@/assets/services/fire-ants.jpg";
 import brownRecluseImg from "@/assets/services/brown-recluse.jpg";
-import coralSnakeImg from "@/assets/services/coral-snake.jpg";
-import rattlesnakeImg from "@/assets/services/rattlesnake.jpg";
+import houseMouseImg from "@/assets/services/house-mouse.jpg";
 import houseMouseImg from "@/assets/services/house-mouse.jpg";
 import petsFleaImg from "@/assets/services/pets-flea.jpg";
 import antsVsTermitesImg from "@/assets/services/ants-vs-termites.png";
