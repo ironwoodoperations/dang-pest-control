@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Testimonial {
@@ -16,6 +16,18 @@ const fallback = [
   { id: "3", name: "Shelley H.", title: "Quick Treatment & Suggestions", text: "When we moved into our new Barndominium, we apparently brought German Cockroaches in with our moving boxes. Dang quickly discovered where they were coming from and treated them. We haven't had any issues since!", rating: 5 },
   { id: "4", name: "Kelley S.", title: "Friendly & Informative", text: "Dang is so friendly and informative. We recommend everyone use them!", rating: 5 },
 ];
+
+const ArrowLeft = () => (
+  <svg viewBox="0 0 60 40" className="w-14 h-10 drop-shadow-lg" fill="hsl(48,100%,50%)">
+    <polygon points="0,20 25,0 25,12 60,12 60,28 25,28 25,40" />
+  </svg>
+);
+
+const ArrowRight = () => (
+  <svg viewBox="0 0 60 40" className="w-14 h-10 drop-shadow-lg" fill="hsl(48,100%,50%)">
+    <polygon points="60,20 35,0 35,12 0,12 0,28 35,28 35,40" />
+  </svg>
+);
 
 const TestimonialsSection = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>(fallback);
@@ -39,29 +51,43 @@ const TestimonialsSection = () => {
   return (
     <section
       className="py-16 relative overflow-hidden"
-      style={{ background: 'hsl(185, 65%, 45%)' }}
+      style={{ background: 'hsl(185, 65%, 42%)' }}
     >
-      {/* Halftone dot background pattern */}
+      {/* Halftone dot pattern */}
       <div
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0"
         style={{
-          backgroundImage: 'radial-gradient(circle, hsl(185, 65%, 30%) 1.5px, transparent 1.5px)',
-          backgroundSize: '20px 20px',
+          backgroundImage: 'radial-gradient(circle, hsl(185,65%,28%) 2px, transparent 2px)',
+          backgroundSize: '18px 18px',
+          opacity: 0.5,
         }}
       />
 
-      {/* Ray burst lines from center */}
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `repeating-conic-gradient(
-            hsl(185, 65%, 30%) 0deg 2deg,
-            transparent 2deg 30deg
-          )`,
-          backgroundSize: '200% 200%',
-          backgroundPosition: 'center',
-        }}
-      />
+      {/* Ray burst lines — SVG for sharp crisp rays */}
+      <svg
+        className="absolute inset-0 w-full h-full"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="xMidYMid slice"
+        style={{ opacity: 0.18 }}
+      >
+        {Array.from({ length: 24 }).map((_, i) => {
+          const angle = (i * 360) / 24;
+          const rad = (angle * Math.PI) / 180;
+          const x2 = 50 + Math.cos(rad) * 100;
+          const y2 = 50 + Math.sin(rad) * 100;
+          return (
+            <line
+              key={i}
+              x1="50%"
+              y1="50%"
+              x2={`${x2}%`}
+              y2={`${y2}%`}
+              stroke="hsl(185,65%,25%)"
+              strokeWidth="8"
+            />
+          );
+        })}
+      </svg>
 
       <div className="container mx-auto px-4 relative z-10">
         <p
@@ -82,56 +108,63 @@ const TestimonialsSection = () => {
           {/* Left arrow */}
           <button
             onClick={prev}
-            className="absolute left-0 md:left-8 z-10 transition-all 
-              hover:scale-110"
-            style={{ color: 'hsl(48, 100%, 50%)' }}
+            className="absolute left-0 md:left-4 z-10 
+              transition-all hover:scale-110 hover:brightness-110"
           >
-            <ChevronLeft className="w-14 h-14 drop-shadow-lg" />
+            <ArrowLeft />
           </button>
 
           {/* Card */}
           <div
-            className="bg-white rounded-2xl px-10 py-8 mx-16 md:mx-32 
-              w-full max-w-2xl shadow-xl relative"
-            style={{ border: '4px solid hsl(20, 40%, 12%)' }}
+            className="bg-white rounded-xl py-10 px-10 mx-20 md:mx-40 
+              w-full shadow-2xl relative"
+            style={{ border: '5px solid #111111' }}
           >
-            {/* Open quote mark */}
+            {/* Open quote */}
             <div
-              className="absolute top-4 left-5 text-6xl leading-none 
-                font-serif font-bold"
-              style={{ color: 'hsl(20, 40%, 12%)', lineHeight: 1 }}
+              className="absolute top-3 left-4 font-serif font-black 
+                leading-none select-none"
+              style={{
+                fontSize: '5rem',
+                color: '#111111',
+                lineHeight: 1,
+              }}
             >
               &#8220;
             </div>
 
-            {/* Close quote mark */}
+            {/* Close quote */}
             <div
-              className="absolute bottom-4 right-5 text-6xl leading-none 
-                font-serif font-bold"
-              style={{ color: 'hsl(20, 40%, 12%)', lineHeight: 1 }}
+              className="absolute bottom-3 right-4 font-serif font-black 
+                leading-none select-none"
+              style={{
+                fontSize: '5rem',
+                color: '#111111',
+                lineHeight: 1,
+              }}
             >
               &#8221;
             </div>
 
-            {/* Reviewer name ABOVE quote */}
+            {/* Name above quote */}
             <p
-              className="font-bold text-base text-center mb-1 mt-4"
-              style={{ color: 'hsl(20, 40%, 12%)' }}
+              className="font-bold text-lg text-center mb-0.5 mt-6"
+              style={{ color: '#111111' }}
             >
               {t.name}
             </p>
             <p
-              className="text-sm text-center mb-4"
-              style={{ color: 'hsl(20, 20%, 40%)' }}
+              className="text-sm text-center mb-5"
+              style={{ color: 'hsl(20, 20%, 45%)' }}
             >
               {t.title}
             </p>
 
             {/* Review text */}
             <p
-              className="text-sm leading-relaxed italic text-center 
-                px-4 mb-4"
-              style={{ color: 'hsl(20, 20%, 30%)' }}
+              className="text-base leading-relaxed italic text-center 
+                px-6 mb-6"
+              style={{ color: 'hsl(20, 20%, 25%)' }}
             >
               {t.text}
             </p>
@@ -141,7 +174,7 @@ const TestimonialsSection = () => {
               {[...Array(t.rating)].map((_, i) => (
                 <Star
                   key={i}
-                  className="w-5 h-5 fill-current"
+                  className="w-6 h-6 fill-current"
                   style={{ color: 'hsl(48, 100%, 50%)' }}
                 />
               ))}
@@ -151,11 +184,10 @@ const TestimonialsSection = () => {
           {/* Right arrow */}
           <button
             onClick={next}
-            className="absolute right-0 md:right-8 z-10 transition-all 
-              hover:scale-110"
-            style={{ color: 'hsl(48, 100%, 50%)' }}
+            className="absolute right-0 md:right-4 z-10 
+              transition-all hover:scale-110 hover:brightness-110"
           >
-            <ChevronRight className="w-14 h-14 drop-shadow-lg" />
+            <ArrowRight />
           </button>
 
         </div>
