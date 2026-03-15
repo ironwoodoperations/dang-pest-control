@@ -55,11 +55,14 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
       <div className="mx-auto max-w-[1400px] px-4 relative z-10">
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
           <div>
-            <h1 className="text-comic text-yellow-cta text-4xl md:text-[3.2rem] leading-[0.95] mb-6 [text-shadow:-2px_-2px_0_hsl(var(--brown-dark)),2px_-2px_0_hsl(var(--brown-dark)),-2px_2px_0_hsl(var(--brown-dark)),2px_2px_0_hsl(var(--brown-dark))]">
+            <h1 
+              className="text-comic text-yellow-cta text-5xl md:text-7xl leading-[0.9] mb-6 italic"
+              style={{textShadow: '-3px -3px 0 hsl(22,45%,14%), 3px -3px 0 hsl(22,45%,14%), -3px 3px 0 hsl(22,45%,14%), 3px 3px 0 hsl(22,45%,14%)'}}
+            >
               Super Powered<br />
               Pest Control
             </h1>
-            <p className="text-[15px] md:text-base mb-8 font-body opacity-90 leading-relaxed max-w-lg">
+            <p className="text-[15px] md:text-base mb-8 font-body leading-relaxed max-w-lg text-white opacity-95">
               We are a hands-on, personable, relationship-based company. We live, work, worship, and play in the Tyler community. Our innovative pest control practices make us stand out amongst our competitors. Our goal is to be an active part in making our community and the lives of our clients better. We stand by our work and guarantee satisfaction.
             </p>
             <Link to="/quote" className="btn-cta-white text-[15px] px-8 py-3">
