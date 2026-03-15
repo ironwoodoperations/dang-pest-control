@@ -37,9 +37,17 @@ const reasons = [
   },
 ];
 
+const WHY_CHOOSE_BG = "https://aelitedigital.com/wp-dang/wp-content/uploads/2025/03/Professional-background-img.png";
+
 const WhyChooseUs = () => {
   return (
-    <section className="py-16" style={{ background: "hsl(30, 40%, 97%)" }}>
+    <section
+      className="py-16"
+      style={{
+        backgroundImage: `url(${WHY_CHOOSE_BG})`,
+        backgroundSize: "cover",
+      }}
+    >
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-8">
           {/* Left column: eyebrow, heading, subtext */}

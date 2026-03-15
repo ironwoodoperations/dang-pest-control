@@ -145,11 +145,32 @@ const Navbar = () => {
         </div>
       </header>
 
-      <header className="relative z-50 pt-14 pb-0">
-      <div className="mx-auto max-w-[1400px] px-4">
-        <nav className="navbar-pill flex items-center justify-between 
-          px-6 md:px-8 py-3.5 relative z-0">
-
+      <div
+        className="relative z-[9] w-full"
+        style={{
+          position: "absolute",
+          top: 0,
+          marginTop: "4%",
+          paddingLeft: "14rem",
+          paddingRight: "14rem",
+          minHeight: "10vh",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <nav
+          className="flex items-center justify-between relative z-0 w-full max-w-[1400px] mx-auto"
+          style={{
+            borderRadius: "30rem",
+            paddingTop: "0.938rem",
+            paddingBottom: "0.938rem",
+            paddingLeft: "3rem",
+            paddingRight: "3rem",
+            alignItems: "center",
+            background: "hsl(48, 100%, 50%)",
+          }}
+        >
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-2">
             <div className="relative"
@@ -211,15 +232,16 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Center logo */}
+          {/* Center logo - positioned above the pill */}
           <Link
             to="/"
             className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-12 z-10"
+            style={{ width: "267px" }}
           >
             <img
               src={dangLogo}
               alt="Dang Pest Control"
-              className="w-64 md:w-72 h-auto drop-shadow-lg"
+              className="h-auto drop-shadow-lg w-full"
             />
           </Link>
 
@@ -255,7 +277,7 @@ const Navbar = () => {
         </nav>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu - outside pill, full width */}
       {mobileOpen && (
         <div className="md:hidden bg-white border-b border-yellow-200 
           px-4 pb-4 mx-4 rounded-b-2xl shadow-lg">
@@ -326,7 +348,7 @@ const Navbar = () => {
           </a>
         </div>
       )}
-    </header></>
+    </>
   );
 };
 

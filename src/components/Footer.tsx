@@ -74,8 +74,16 @@ const Footer = () => {
 
   const companyName = biz.company_name || "Dang Pest Control";
 
+  const footerBg = "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/footer_bg.jpg";
+
   return (
-    <footer className="bg-white py-12 border-t border-orange-100">
+    <footer
+      className="py-12 border-t border-orange-100"
+      style={{
+        backgroundImage: `url(${footerBg})`,
+        backgroundSize: "cover",
+      }}
+    >
       <div className="container mx-auto px-4" style={{ color: "hsl(20, 40%, 12%)" }}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Column 1: SERVICES */}

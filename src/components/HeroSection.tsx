@@ -1,7 +1,11 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Play } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import HolidayVideoWrapper from "@/components/HolidayVideoWrapper";
+
+const HERO_BG_IMAGE = "https://www.dangpestcontrol.com/wp-content/uploads/2025/06/moblie_banner.webp";
+const VIDEO_POSTER_URL = "https://www.dangpestcontrol.com/wp-content/uploads/2025/06/dang-pest-homepage-img-1.webp";
 
 const DEFAULT_VIDEO = "https://www.dangpestcontrol.com/wp-content/uploads/2025/04/dang-pest-homepage.mp4";
 
@@ -51,8 +55,21 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
   };
 
   return (
-    <section className="relative overflow-hidden pt-6 pb-20 text-white">
-      <div className="mx-auto max-w-[1400px] px-6 relative z-10 grid md:grid-cols-2 gap-8 items-center min-h-[75vh]">
+    <section
+      className="overflow-hidden pb-20 text-white"
+      style={{
+        backgroundImage: `url('${HERO_BG_IMAGE}')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        minHeight: "100vh",
+        position: "relative",
+      }}
+    >
+      <Navbar />
+      <div
+        className="mx-auto max-w-[1400px] px-6 relative z-10 grid md:grid-cols-2 gap-8 items-center min-h-[75vh]"
+        style={{ paddingTop: "180px" }}
+      >
           <div>
             <h1
               className="text-comic italic text-5xl md:text-7xl leading-[0.85] mb-6"
@@ -77,7 +94,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
               {!isPlaying ? (
                 <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
                   <img
-                    src="/video-poster.webp"
+                    src={VIDEO_POSTER_URL}
                     alt="Meet Kirk - Dang Pest Control"
                     className="w-full h-full object-cover"
                   />
@@ -103,7 +120,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
                       className="w-full h-full object-cover"
                       controls
                       playsInline
-                      poster="/video-poster.webp"
+                      poster={VIDEO_POSTER_URL}
                     >
                       <source src={videoSrc} type="video/mp4" />
                     </video>
