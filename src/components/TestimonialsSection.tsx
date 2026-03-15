@@ -18,13 +18,13 @@ const fallback = [
 ];
 
 const ArrowLeft = () => (
-  <svg viewBox="0 0 60 40" className="w-14 h-10 drop-shadow-lg" fill="hsl(48,100%,50%)">
+  <svg viewBox="0 0 60 40" className="w-16 h-12 drop-shadow-lg" fill="hsl(48,100%,50%)">
     <polygon points="0,20 25,0 25,12 60,12 60,28 25,28 25,40" />
   </svg>
 );
 
 const ArrowRight = () => (
-  <svg viewBox="0 0 60 40" className="w-14 h-10 drop-shadow-lg" fill="hsl(48,100%,50%)">
+  <svg viewBox="0 0 60 40" className="w-16 h-12 drop-shadow-lg" fill="hsl(48,100%,50%)">
     <polygon points="60,20 35,0 35,12 0,12 0,28 35,28 35,40" />
   </svg>
 );
@@ -53,28 +53,28 @@ const TestimonialsSection = () => {
       className="py-16 relative overflow-hidden"
       style={{ background: 'hsl(185, 65%, 42%)' }}
     >
-      {/* Halftone dot pattern */}
+      {/* Halftone dots */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: 'radial-gradient(circle, hsl(185,65%,28%) 2px, transparent 2px)',
-          backgroundSize: '18px 18px',
-          opacity: 0.5,
+          backgroundImage: 'radial-gradient(circle, hsl(185,65%,28%) 2.5px, transparent 2.5px)',
+          backgroundSize: '16px 16px',
+          opacity: 0.6,
         }}
       />
 
-      {/* Ray burst lines — SVG for sharp crisp rays */}
+      {/* Ray burst lines */}
       <svg
         className="absolute inset-0 w-full h-full"
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="xMidYMid slice"
-        style={{ opacity: 0.18 }}
+        style={{ opacity: 0.25 }}
       >
         {Array.from({ length: 24 }).map((_, i) => {
           const angle = (i * 360) / 24;
           const rad = (angle * Math.PI) / 180;
-          const x2 = 50 + Math.cos(rad) * 100;
-          const y2 = 50 + Math.sin(rad) * 100;
+          const x2 = 50 + Math.cos(rad) * 120;
+          const y2 = 50 + Math.sin(rad) * 120;
           return (
             <line
               key={i}
@@ -83,7 +83,7 @@ const TestimonialsSection = () => {
               x2={`${x2}%`}
               y2={`${y2}%`}
               stroke="hsl(185,65%,25%)"
-              strokeWidth="8"
+              strokeWidth="10"
             />
           );
         })}
@@ -105,50 +105,34 @@ const TestimonialsSection = () => {
 
         <div className="relative flex items-center justify-center">
 
-          {/* Left arrow */}
           <button
             onClick={prev}
-            className="absolute left-0 md:left-4 z-10 
-              transition-all hover:scale-110 hover:brightness-110"
+            className="absolute left-0 md:left-4 z-10 transition-all hover:scale-110"
           >
             <ArrowLeft />
           </button>
 
-          {/* Card */}
           <div
-            className="bg-white rounded-xl py-10 px-10 mx-20 md:mx-40 
+            className="bg-white rounded-xl py-10 px-12 mx-20 md:mx-48
               w-full shadow-2xl relative"
             style={{ border: '5px solid #111111' }}
           >
-            {/* Open quote */}
             <div
-              className="absolute top-3 left-4 font-serif font-black 
-                leading-none select-none"
-              style={{
-                fontSize: '5rem',
-                color: '#111111',
-                lineHeight: 1,
-              }}
+              className="absolute top-2 left-3 font-serif font-black select-none"
+              style={{ fontSize: '6rem', color: '#111111', lineHeight: 1 }}
             >
               &#8220;
             </div>
 
-            {/* Close quote */}
             <div
-              className="absolute bottom-3 right-4 font-serif font-black 
-                leading-none select-none"
-              style={{
-                fontSize: '5rem',
-                color: '#111111',
-                lineHeight: 1,
-              }}
+              className="absolute bottom-2 right-3 font-serif font-black select-none"
+              style={{ fontSize: '6rem', color: '#111111', lineHeight: 1 }}
             >
               &#8221;
             </div>
 
-            {/* Name above quote */}
             <p
-              className="font-bold text-lg text-center mb-0.5 mt-6"
+              className="font-bold text-lg text-center mb-0.5 mt-8"
               style={{ color: '#111111' }}
             >
               {t.name}
@@ -160,16 +144,13 @@ const TestimonialsSection = () => {
               {t.title}
             </p>
 
-            {/* Review text */}
             <p
-              className="text-base leading-relaxed italic text-center 
-                px-6 mb-6"
+              className="text-base leading-relaxed italic text-center px-6 mb-6"
               style={{ color: 'hsl(20, 20%, 25%)' }}
             >
               {t.text}
             </p>
 
-            {/* Stars */}
             <div className="flex gap-1 justify-center">
               {[...Array(t.rating)].map((_, i) => (
                 <Star
@@ -181,11 +162,9 @@ const TestimonialsSection = () => {
             </div>
           </div>
 
-          {/* Right arrow */}
           <button
             onClick={next}
-            className="absolute right-0 md:right-4 z-10 
-              transition-all hover:scale-110 hover:brightness-110"
+            className="absolute right-0 md:right-4 z-10 transition-all hover:scale-110"
           >
             <ArrowRight />
           </button>
