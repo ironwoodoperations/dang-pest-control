@@ -82,6 +82,7 @@ const Footer = () => {
       style={{
         backgroundImage: `url(${footerBg})`,
         backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
       <div className="container mx-auto px-4" style={{ color: "hsl(20, 40%, 12%)" }}>

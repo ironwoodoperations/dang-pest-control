@@ -145,30 +145,32 @@ const Navbar = () => {
         </div>
       </header>
 
+      {/* Outer sticky header wrapper: height 279px, position relative, transparent */}
       <div
-        className="relative z-[9] w-full"
+        className="z-[9] w-full"
         style={{
-          position: "absolute",
-          top: 0,
-          marginTop: "4%",
-          paddingLeft: "14rem",
-          paddingRight: "14rem",
-          minHeight: "10vh",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          position: "relative",
+          height: "279px",
         }}
       >
         <nav
-          className="flex items-center justify-between relative z-0 w-full max-w-[1400px] mx-auto"
+          className="flex justify-between items-center relative z-0 w-full max-w-[1400px] mx-auto"
           style={{
-            borderRadius: "30rem",
-            paddingTop: "0.938rem",
-            paddingBottom: "0.938rem",
-            paddingLeft: "3rem",
-            paddingRight: "3rem",
+            background: "rgb(255, 213, 39)",
+            height: "75px",
+            borderRadius: "219px",
+            paddingLeft: "95px",
+            paddingRight: "95px",
+            display: "flex",
             alignItems: "center",
-            background: "hsl(48, 100%, 50%)",
+            gap: "2rem",
+            position: scrolled ? "fixed" : "relative",
+            top: scrolled ? 0 : undefined,
+            left: scrolled ? 0 : undefined,
+            right: scrolled ? 0 : undefined,
+            zIndex: scrolled ? 100 : undefined,
+            marginLeft: scrolled ? "auto" : undefined,
+            marginRight: scrolled ? "auto" : undefined,
           }}
         >
           {/* Desktop nav links */}

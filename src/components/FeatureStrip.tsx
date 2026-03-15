@@ -6,11 +6,18 @@ const FeatureStrip = () => {
   const textStyle = { color: "hsl(20, 40%, 12%)" };
   const descStyle = { color: "hsl(20, 20%, 40%)" };
   return (
-    <section className="bg-white border-b border-orange-100 py-12">
-      <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-0 text-center">
+    <section
+      className="border-b border-orange-100"
+      style={{
+        height: "249px",
+        padding: "0 15px",
+        background: "transparent",
+      }}
+    >
+      <div className="h-full mx-auto max-w-[1400px]">
+        <div className="grid grid-cols-3 gap-0 text-center h-full" style={{ height: "249px" }}>
           {/* Column 1: Dang Seal */}
-          <div className="flex flex-col items-center px-6 md:border-r border-orange-100">
+          <div className="flex flex-col items-center justify-center px-4 md:border-r border-orange-100 h-full">
             <img src={SEAL_URL} alt="Dang Seal of Approval" className="w-28 h-28 object-contain mb-4" />
             <h3 className="text-comic text-lg font-semibold mb-2" style={textStyle}>
               Dang Seal of Approval
@@ -21,7 +28,7 @@ const FeatureStrip = () => {
           </div>
 
           {/* Column 2: Super Hero Response Team */}
-          <div className="flex flex-col items-center px-6 md:border-r border-orange-100">
+          <div className="flex flex-col items-center justify-center px-4 md:border-r border-orange-100 h-full">
             <img src={SERVICES_ICON_URL} alt="Super Hero Response Team" className="w-20 h-20 object-contain mb-4" />
             <h3 className="text-comic text-lg font-semibold mb-2" style={textStyle}>
               Super Hero Response Team
@@ -32,7 +39,7 @@ const FeatureStrip = () => {
           </div>
 
           {/* Column 3: Certified Expert */}
-          <div className="flex flex-col items-center px-6">
+          <div className="flex flex-col items-center justify-center px-4 h-full">
             <img src={EXPERT_ICON_URL} alt="Certified Expert" className="w-20 h-20 object-contain mb-4" />
             <h3 className="text-comic text-lg font-semibold mb-2" style={textStyle}>
               Certified Expert

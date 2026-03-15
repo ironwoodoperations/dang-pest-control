@@ -6,18 +6,21 @@ const EXPERT_IMAGE_URL =
 
 const ExpertSection = () => {
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
+    <section
+      className="bg-white"
+      style={{ padding: "40px 15px", height: "421px" }}
+    >
+      <div className="container mx-auto h-full">
+        <div className="grid md:grid-cols-2 gap-12 items-stretch h-full">
+          <div style={{ height: "243px" }}>
             <img
               src={EXPERT_IMAGE_URL}
               alt="Expert pest control technician"
-              className="w-full rounded-2xl object-cover"
+              className="w-full h-full rounded-2xl object-cover"
               style={{ border: "6px solid hsl(28, 100%, 50%)" }}
             />
           </div>
-          <div>
+          <div style={{ height: "341px", paddingLeft: "21.925px" }}>
             <h2
               className="text-comic text-3xl md:text-4xl mb-4"
               style={{ color: "hsl(20, 40%, 12%)" }}

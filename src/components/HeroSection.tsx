@@ -56,19 +56,20 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
 
   return (
     <section
-      className="overflow-hidden pb-20 text-white"
+      className="text-white"
       style={{
+        minHeight: "987px",
+        position: "relative",
+        overflow: "hidden",
         backgroundImage: `url('${HERO_BG_IMAGE}')`,
         backgroundSize: "cover",
-        backgroundPosition: "center",
-        minHeight: "100vh",
-        position: "relative",
+        backgroundPosition: "center center",
       }}
     >
       <Navbar />
       <div
-        className="mx-auto max-w-[1400px] px-6 relative z-10 grid md:grid-cols-2 gap-8 items-center min-h-[75vh]"
-        style={{ paddingTop: "180px" }}
+        className="mx-auto max-w-[1140px] px-4 relative z-10 grid md:grid-cols-2 gap-8 items-center"
+        style={{ paddingTop: "280px", paddingBottom: "60px" }}
       >
           <div>
             <h1
@@ -88,8 +89,8 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
 
           <HolidayVideoWrapper>
             <div
-              className="relative rounded-2xl overflow-hidden aspect-video shadow-xl"
-              style={{ borderColor: "hsl(185, 100%, 45%)", border: "4px solid" }}
+              className="relative rounded-2xl overflow-hidden shadow-xl w-full"
+              style={{ borderColor: "hsl(185, 100%, 45%)", border: "4px solid", height: "472px" }}
             >
               {!isPlaying ? (
                 <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>

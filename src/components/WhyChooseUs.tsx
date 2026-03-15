@@ -42,14 +42,15 @@ const WHY_CHOOSE_BG = "https://aelitedigital.com/wp-dang/wp-content/uploads/2025
 const WhyChooseUs = () => {
   return (
     <section
-      className="py-16"
       style={{
         backgroundImage: `url(${WHY_CHOOSE_BG})`,
         backgroundSize: "cover",
+        padding: "35px 15px 36px",
+        height: "2003px",
       }}
     >
-      <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-8">
+      <div className="container mx-auto">
+        <div className="grid md:grid-cols-3 gap-8" style={{ height: "924px" }}>
           {/* Left column: eyebrow, heading, subtext */}
           <div className="flex flex-col justify-start pt-2">
             <p className="text-comic text-sm italic mb-2" style={{ color: "hsl(var(--primary))" }}>
