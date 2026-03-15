@@ -51,7 +51,7 @@ const ServicePage = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <Navbar />
-        <h1 className="text-comic text-4xl mb-4">Service Not Found</h1>
+        <h1 className="text-comic text-4xl mb-4" style={{color: 'hsl(20, 40%, 12%)'}}>Service Not Found</h1>
         <Link to="/" className="btn-cta">Return Home</Link>
       </div>
     );
@@ -84,15 +84,15 @@ const ServicePage = () => {
         <div className="relative h-[400px] md:h-[500px]">
           <img src={service.heroImage} alt={service.heroAlt} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30" />
-          <Link to="/" className="absolute top-6 left-6 flex items-center gap-2 text-primary-foreground text-sm hover:underline z-10">
+          <Link to="/" className="absolute top-6 left-6 flex items-center gap-2 text-white text-sm hover:underline z-10">
             <ArrowLeft className="w-4 h-4" /> Back to Home
           </Link>
 
           <div className="absolute inset-0 flex items-center">
             <div className="container mx-auto px-4">
               <span className="text-secondary text-sm font-bold uppercase tracking-wider">{subtitle}</span>
-              <h1 className="text-comic text-3xl md:text-5xl text-primary-foreground mt-2 mb-4">{title}</h1>
-              <p className="text-primary-foreground/90 max-w-2xl mb-6 leading-relaxed">{intro}</p>
+              <h1 className="text-comic text-3xl md:text-5xl text-white mt-2 mb-4">{title}</h1>
+              <p className="text-white/90 max-w-2xl mb-6 leading-relaxed">{intro}</p>
               <div className="flex flex-wrap gap-4">
                 <a href="tel:9038710550" className="btn-cta-outline">
                   <Phone className="w-5 h-5 mr-2" /> (903) 871-0550
@@ -106,9 +106,9 @@ const ServicePage = () => {
 
       {/* Optional Video Section */}
       {override?.video_url && (
-        <section className="py-12 bg-muted">
+        <section className="py-12 bg-white">
           <div className="container mx-auto px-4 max-w-3xl">
-            <h2 className="text-comic text-2xl text-center mb-6">Watch & Learn</h2>
+            <h2 className="text-comic text-2xl text-center mb-6" style={{color: 'hsl(20, 40%, 12%)'}}>Watch & Learn</h2>
             <div className="rounded-2xl overflow-hidden shadow-xl aspect-video cyan-border">
               {override.video_type === "youtube" && getYouTubeEmbedUrl(override.video_url) ? (
                 <iframe
@@ -149,11 +149,11 @@ const ServicePage = () => {
       )}
 
       {/* Bottom CTA */}
-      <section className="section-dark text-primary-foreground py-16">
+      <section className="py-16 text-white" style={{background: 'hsl(22, 45%, 14%)'}}>
         <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-comic text-3xl md:text-4xl mb-4">{service.bottomCTA.title}</h2>
-            <p className="opacity-90 mb-8 leading-relaxed">{service.bottomCTA.text}</p>
+            <h2 className="text-comic text-3xl md:text-4xl mb-4 text-white">{service.bottomCTA.title}</h2>
+            <p className="opacity-90 mb-8 leading-relaxed text-white">{service.bottomCTA.text}</p>
             <div className="flex flex-wrap gap-4">
               <a href="tel:9038710550" className="btn-cta-outline">
                 <Phone className="w-5 h-5 mr-2" /> (903) 871-0550
@@ -171,18 +171,18 @@ const ServicePage = () => {
       </section>
 
       {/* Other Services */}
-      <section className="py-16 bg-muted">
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-comic text-3xl text-center mb-8">Additional Services</h2>
-          <p className="text-center text-muted-foreground mb-8">We also provide specialized services for a wide range of pests:</p>
+          <h2 className="text-comic text-3xl text-center mb-8" style={{color: 'hsl(20, 40%, 12%)'}}>Additional Services</h2>
+          <p className="text-center mb-8" style={{color: 'hsl(20, 20%, 35%)'}}>We also provide specialized services for a wide range of pests:</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {serviceKeys
               .filter((key) => key !== slug)
               .map((key) => {
                 const s = servicesData[key];
                 return (
-                  <Link key={key} to={`/${key}`} className="card-service">
-                    <h3 className="text-comic text-sm">{s.title}</h3>
+                  <Link key={key} to={`/${key}`} className="bg-white rounded-2xl p-6 shadow-sm border border-orange-100 hover:border-primary hover:shadow-md transition-all duration-200 text-center">
+                    <h3 className="text-comic text-sm" style={{color: 'hsl(20, 40%, 12%)'}}>{s.title}</h3>
                   </Link>
                 );
               })}

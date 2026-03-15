@@ -44,34 +44,34 @@ const ServiceAreaPage = () => (
     />
     <Navbar />
 
-    <section className="hero-bg text-primary-foreground py-20 text-center">
+    <section className="hero-bg text-white py-20 text-center relative overflow-hidden">
       <div className="container mx-auto px-4">
-        <h1 className="text-comic text-4xl md:text-6xl mb-4">Service Area</h1>
-        <p className="text-lg opacity-90">Proudly serving Tyler and all of East Texas.</p>
+        <h1 className="text-comic text-4xl md:text-6xl mb-4 text-white">Service Area</h1>
+        <p className="text-lg text-white opacity-90 max-w-xl mx-auto">Proudly serving Tyler and all of East Texas.</p>
       </div>
     </section>
 
-    <section className="py-16">
+    <section className="py-16 bg-white">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h2 className="text-comic text-3xl mb-8 text-center">Cities We Serve</h2>
+        <h2 className="text-comic text-3xl mb-8 text-center" style={{color: 'hsl(20, 40%, 12%)'}}>Cities We Serve</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
           {cities.map((city) => (
-            <div key={city.name} className="flex items-center gap-2 p-4 rounded-xl border border-border bg-card">
-              <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
+            <div key={city.name} className="flex items-center gap-2 p-4 rounded-xl border border-orange-100 bg-white hover:border-primary transition-colors">
+              <MapPin className="w-4 h-4 flex-shrink-0" style={{color: 'hsl(var(--primary))'}} />
               {city.slug ? (
-                <Link to={`/${city.slug}`} className="font-semibold hover:text-primary transition-colors">
+                <Link to={`/${city.slug}`} className="font-semibold hover:text-primary transition-colors" style={{color: 'hsl(20, 40%, 12%)'}}>
                   {city.name}, TX
                 </Link>
               ) : (
-                <span className="font-semibold">{city.name}, TX</span>
+                <span className="font-semibold" style={{color: 'hsl(20, 40%, 12%)'}}>{city.name}, TX</span>
               )}
             </div>
           ))}
         </div>
 
-        <div className="text-center bg-muted rounded-2xl p-8">
-          <h3 className="text-comic text-2xl mb-3">Don't See Your City?</h3>
-          <p className="text-muted-foreground mb-6">Give us a call — we may still be able to help.</p>
+        <div className="text-center rounded-2xl p-8 mt-8" style={{background: 'hsl(30, 40%, 96%)'}}>
+          <h3 className="text-comic text-2xl mb-3" style={{color: 'hsl(20, 40%, 12%)'}}>Don't See Your City?</h3>
+          <p className="mb-6" style={{color: 'hsl(20, 20%, 35%)'}}>Give us a call — we may still be able to help.</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="tel:9038710550" className="btn-cta">
               <Phone className="w-5 h-5 mr-2" /> (903) 871-0550

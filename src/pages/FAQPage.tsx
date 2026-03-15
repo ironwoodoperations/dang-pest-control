@@ -25,30 +25,30 @@ const FAQPage = () => (
     />
     <Navbar />
 
-    <section className="hero-bg text-primary-foreground py-20 text-center">
+    <section className="hero-bg text-white py-20 text-center relative overflow-hidden">
       <div className="container mx-auto px-4">
-        <h1 className="text-comic text-4xl md:text-5xl mb-4">Frequently Asked Questions</h1>
-        <p className="text-lg opacity-90">Everything you need to know about our pest control services.</p>
+        <h1 className="text-comic text-4xl md:text-6xl mb-4 text-white">Frequently Asked Questions</h1>
+        <p className="text-lg text-white opacity-90 max-w-xl mx-auto">Everything you need to know about our pest control services.</p>
       </div>
     </section>
 
-    <section className="py-16">
+    <section className="py-16 bg-white">
       <div className="container mx-auto px-4 max-w-3xl">
         <Accordion type="single" collapsible className="space-y-3">
           {faqs.map((faq, i) => (
-            <AccordionItem key={i} value={`faq-${i}`} className="border rounded-xl px-6">
-              <AccordionTrigger className="text-comic text-base text-left">{faq.q}</AccordionTrigger>
-              <AccordionContent className="text-muted-foreground leading-relaxed">{faq.a}</AccordionContent>
+            <AccordionItem key={i} value={`faq-${i}`} className="border-b border-orange-100 px-6">
+              <AccordionTrigger className="text-left font-bold py-4 text-base hover:text-primary transition-colors" style={{color: 'hsl(20, 40%, 12%)'}}>{faq.q}</AccordionTrigger>
+              <AccordionContent className="text-sm leading-relaxed pb-4" style={{color: 'hsl(20, 20%, 35%)'}}>{faq.a}</AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
       </div>
     </section>
 
-    <section className="section-dark text-primary-foreground py-16 text-center">
+    <section className="py-16 text-white text-center" style={{background: 'hsl(22, 45%, 14%)'}}>
       <div className="container mx-auto px-4">
-        <h2 className="text-comic text-3xl mb-4">Still Have Questions?</h2>
-        <p className="opacity-90 mb-8">We're here to help. Reach out anytime.</p>
+        <h2 className="text-comic text-3xl mb-4 text-white">Still Have Questions?</h2>
+        <p className="opacity-90 mb-8 text-white">We're here to help. Reach out anytime.</p>
         <div className="flex flex-wrap justify-center gap-4">
           <a href="tel:9038710550" className="btn-cta-outline"><Phone className="w-5 h-5 mr-2" /> (903) 871-0550</a>
           <Link to="/quote" className="btn-cta">Get Your Quote</Link>

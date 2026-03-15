@@ -42,6 +42,9 @@ const serviceOptions = [
   "Termite Inspections",
 ];
 
+const labelStyle = { color: 'hsl(20, 40%, 12%)' };
+const inputClass = "w-full rounded-xl border border-orange-200 px-4 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors";
+
 const QuotePage = () => {
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
@@ -69,7 +72,6 @@ const QuotePage = () => {
       const { error } = await supabase.from("leads").insert(leadData);
       if (error) throw error;
 
-      // Fire-and-forget notification
       supabase.functions.invoke("notify-new-lead", { body: leadData }).catch(() => {});
 
       toast({
@@ -100,29 +102,29 @@ const QuotePage = () => {
       <Navbar />
 
       {/* Header */}
-      <section className="hero-bg text-primary-foreground py-16 text-center">
+      <section className="hero-bg text-white py-20 text-center relative overflow-hidden">
         <div className="container mx-auto px-4">
-          <h1 className="text-comic text-4xl md:text-5xl mb-4">Get Your Quote</h1>
-          <p className="text-lg opacity-90 max-w-xl mx-auto">
+          <h1 className="text-comic text-4xl md:text-6xl mb-4 text-white">Get Your Quote</h1>
+          <p className="text-lg text-white opacity-90 max-w-xl mx-auto">
             Fill out the form below and our team will get back to you quickly with a customized quote for your pest control needs.
           </p>
         </div>
       </section>
 
       {/* Form */}
-      <section className="py-16">
+      <section className="py-16" style={{background: 'hsl(30, 40%, 97%)'}}>
         <div className="container mx-auto px-4 max-w-2xl">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl shadow-sm border border-orange-100 p-8 space-y-6">
             {/* Name */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold mb-1">First Name *</label>
-                <input {...register("firstName")} className="w-full border border-input rounded-lg px-4 py-2.5 bg-background" />
+                <label className="text-sm font-semibold mb-1 block" style={labelStyle}>First Name *</label>
+                <input {...register("firstName")} className={inputClass} />
                 {errors.firstName && <p className="text-destructive text-xs mt-1">{errors.firstName.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1">Last Name *</label>
-                <input {...register("lastName")} className="w-full border border-input rounded-lg px-4 py-2.5 bg-background" />
+                <label className="text-sm font-semibold mb-1 block" style={labelStyle}>Last Name *</label>
+                <input {...register("lastName")} className={inputClass} />
                 {errors.lastName && <p className="text-destructive text-xs mt-1">{errors.lastName.message}</p>}
               </div>
             </div>
@@ -130,48 +132,48 @@ const QuotePage = () => {
             {/* Email & Phone */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold mb-1">Email *</label>
-                <input type="email" {...register("email")} className="w-full border border-input rounded-lg px-4 py-2.5 bg-background" />
+                <label className="text-sm font-semibold mb-1 block" style={labelStyle}>Email *</label>
+                <input type="email" {...register("email")} className={inputClass} />
                 {errors.email && <p className="text-destructive text-xs mt-1">{errors.email.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1">Phone *</label>
-                <input type="tel" {...register("phone")} className="w-full border border-input rounded-lg px-4 py-2.5 bg-background" />
+                <label className="text-sm font-semibold mb-1 block" style={labelStyle}>Phone *</label>
+                <input type="tel" {...register("phone")} className={inputClass} />
                 {errors.phone && <p className="text-destructive text-xs mt-1">{errors.phone.message}</p>}
               </div>
             </div>
 
             {/* Address */}
             <div>
-              <label className="block text-sm font-semibold mb-1">Street Address *</label>
-              <input {...register("address")} className="w-full border border-input rounded-lg px-4 py-2.5 bg-background" />
+              <label className="text-sm font-semibold mb-1 block" style={labelStyle}>Street Address *</label>
+              <input {...register("address")} className={inputClass} />
               {errors.address && <p className="text-destructive text-xs mt-1">{errors.address.message}</p>}
             </div>
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-semibold mb-1">City *</label>
-                <input {...register("city")} className="w-full border border-input rounded-lg px-4 py-2.5 bg-background" />
+                <label className="text-sm font-semibold mb-1 block" style={labelStyle}>City *</label>
+                <input {...register("city")} className={inputClass} />
                 {errors.city && <p className="text-destructive text-xs mt-1">{errors.city.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1">State *</label>
-                <input {...register("state")} className="w-full border border-input rounded-lg px-4 py-2.5 bg-background" />
+                <label className="text-sm font-semibold mb-1 block" style={labelStyle}>State *</label>
+                <input {...register("state")} className={inputClass} />
                 {errors.state && <p className="text-destructive text-xs mt-1">{errors.state.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1">ZIP *</label>
-                <input {...register("zip")} className="w-full border border-input rounded-lg px-4 py-2.5 bg-background" />
+                <label className="text-sm font-semibold mb-1 block" style={labelStyle}>ZIP *</label>
+                <input {...register("zip")} className={inputClass} />
                 {errors.zip && <p className="text-destructive text-xs mt-1">{errors.zip.message}</p>}
               </div>
             </div>
 
             {/* Services */}
             <div>
-              <label className="block text-sm font-semibold mb-2">Service(s) Requested *</label>
+              <label className="text-sm font-semibold mb-2 block" style={labelStyle}>Service(s) Requested *</label>
               <div className="grid grid-cols-2 gap-2">
                 {serviceOptions.map((service) => (
-                  <label key={service} className="flex items-center gap-2 text-sm">
+                  <label key={service} className="flex items-center gap-2 text-sm" style={{color: 'hsl(20, 20%, 35%)'}}>
                     <input type="checkbox" value={service} {...register("services")} className="rounded" />
                     {service}
                   </label>
@@ -182,21 +184,21 @@ const QuotePage = () => {
 
             {/* Message */}
             <div>
-              <label className="block text-sm font-semibold mb-1">Message (Optional)</label>
-              <textarea {...register("message")} rows={4} className="w-full border border-input rounded-lg px-4 py-2.5 bg-background" />
+              <label className="text-sm font-semibold mb-1 block" style={labelStyle}>Message (Optional)</label>
+              <textarea {...register("message")} rows={4} className={inputClass} />
             </div>
 
             {/* Consent */}
             <div>
-              <label className="flex items-start gap-2 text-sm">
+              <label className="flex items-start gap-2 text-sm" style={{color: 'hsl(20, 20%, 35%)'}}>
                 <input type="checkbox" {...register("consentTransactional")} className="mt-1 rounded" />
                 <span>I consent to receive transactional communications from Dang Pest Control regarding my service request. *</span>
               </label>
               {errors.consentTransactional && <p className="text-destructive text-xs mt-1">{errors.consentTransactional.message}</p>}
             </div>
 
-            <button type="submit" disabled={submitting} className="btn-cta w-full disabled:opacity-50">
-              <Send className="w-5 h-5 mr-2" /> {submitting ? "Submitting..." : "Submit Quote Request"}
+            <button type="submit" disabled={submitting} className="w-full font-bold rounded-full py-3 text-white text-base transition-all hover:brightness-110 disabled:opacity-50" style={{background: 'hsl(var(--primary))'}}>
+              <Send className="w-5 h-5 mr-2 inline" /> {submitting ? "Submitting..." : "Submit Quote Request"}
             </button>
           </form>
         </div>
