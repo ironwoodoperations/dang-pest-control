@@ -35,6 +35,7 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
+    <>
       <header className="fixed top-0 left-0 right-0 z-[100] bg-white 
         shadow-sm transition-all duration-300">
         <div className="mx-auto max-w-[1400px] px-4 flex items-center 
@@ -132,7 +133,7 @@ const Navbar = () => {
         </div>
       </header>
 
-    <header className="hero-bg relative z-50 pt-14 pb-0 mt-[52px]">
+      <header className="hero-bg relative z-50 pt-14 pb-0 mt-[52px]">
       <div className="mx-auto max-w-[1400px] px-4">
         <nav className="navbar-pill flex items-center justify-between 
           px-6 md:px-8 py-3.5 relative z-0">
