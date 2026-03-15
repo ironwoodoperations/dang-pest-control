@@ -60,7 +60,11 @@ const AboutPage = () => {
       {/* Story */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+          <div className="flex justify-center">
+            <img src={interiorService} alt="Dang Pest Control Technician" className="w-full max-w-md rounded-2xl shadow-lg object-cover" />
+          </div>
           <div>
+            <p className="text-comic text-sm italic mb-2" style={{color: 'hsl(var(--primary))'}}>ABOUT US</p>
             <h2 className="text-comic text-3xl md:text-4xl mb-6" style={{color: 'hsl(20, 40%, 12%)'}}>Our Story</h2>
             <p className="text-muted-foreground mb-4 leading-relaxed" style={{color: 'hsl(20, 20%, 35%)'}}>
               We have been in the home services industry for over 15 years and love that our contribution to you is to bring peace and security to a place where you should feel the safest.
