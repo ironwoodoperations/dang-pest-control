@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Star, ExternalLink, ShieldCheck, Landmark } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Star, ExternalLink, ShieldCheck, Landmark, Linkedin, Youtube } from "lucide-react";
 import dangLogo from "@/assets/dang-logo.png";
 
 interface BusinessInfo {
@@ -98,6 +98,24 @@ const Footer = () => {
                   <ExternalLink className="w-4 h-4" />
                 </a>
               )}
+              <a
+                href="https://www.linkedin.com/company/dangpestcontrol/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white transition-all hover:brightness-110"
+                style={socialBg}
+              >
+                <Linkedin className="w-4 h-4" />
+              </a>
+              <a
+                href="https://www.youtube.com/@dangpestcontrol"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white transition-all hover:brightness-110"
+                style={socialBg}
+              >
+                <Youtube className="w-4 h-4" />
+              </a>
               {!social.facebook && !social.instagram && !social.google && !social.yelp && (
                 <>
                   <span className="w-10 h-10 rounded-full flex items-center justify-center text-white opacity-40" style={socialBg}><Facebook className="w-4 h-4" /></span>

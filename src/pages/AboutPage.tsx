@@ -61,7 +61,10 @@ const AboutPage = () => {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center">
-            <img src={interiorService} alt="Dang Pest Control Technician" className="w-full max-w-md rounded-2xl shadow-lg object-cover" />
+            <div className="w-full max-w-md h-64 rounded-2xl border-4 flex flex-col items-center justify-center" style={{ background: 'hsl(28, 100%, 50%)', borderColor: 'hsl(28, 100%, 50%)' }}>
+              <p className="text-white text-3xl md:text-4xl text-comic mb-2">Kirk & Claire</p>
+              <p className="text-white text-sm md:text-base">Owners, Dang Pest Control</p>
+            </div>
           </div>
           <div>
             <p className="text-comic text-sm italic mb-2" style={{color: 'hsl(var(--primary))'}}>ABOUT US</p>

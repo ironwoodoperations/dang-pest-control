@@ -11,8 +11,8 @@ interface ServiceFAQsProps {
 }
 
 const ServiceFAQs = ({ faqs }: ServiceFAQsProps) => (
-  <section className="py-16 bg-muted">
-    <div className="container mx-auto px-4 max-w-3xl">
+  <section className="py-16 bg-white">
+    <div className="container mx-auto px-4 max-w-3xl" style={{ color: 'hsl(20, 40%, 12%)' }}>
       <h2 className="text-comic text-3xl md:text-4xl text-center mb-8">Frequently Asked Questions</h2>
       <Accordion type="single" collapsible className="space-y-2">
         {faqs.map((faq, i) => (
