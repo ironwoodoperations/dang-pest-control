@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import HolidayBanner from "@/components/HolidayBanner";
 import FeatureStrip from "@/components/FeatureStrip";
+import MidPageVideo from "@/components/MidPageVideo";
 import ServicesSection from "@/components/ServicesSection";
 import ExpertSection from "@/components/ExpertSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
