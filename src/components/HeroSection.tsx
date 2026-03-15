@@ -65,7 +65,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
             <p className="text-[15px] md:text-base mb-8 font-body leading-relaxed max-w-lg text-white opacity-95">
               We are a hands-on, personable, relationship-based company. We live, work, worship, and play in the Tyler community. Our innovative pest control practices make us stand out amongst our competitors. Our goal is to be an active part in making our community and the lives of our clients better. We stand by our work and guarantee satisfaction.
             </p>
-            <Link to="/quote" className="btn-cta-white text-[15px] px-8 py-3">
+            <Link to="/quote" className="inline-flex items-center justify-center font-bold rounded-full px-8 py-3 text-base border-2 border-white text-white hover:bg-white hover:text-primary transition-all duration-200">
               Get Your Quote
             </Link>
           </div>
