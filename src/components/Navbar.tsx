@@ -34,7 +34,7 @@ const Navbar = () => {
     <header className="hero-bg relative z-50 pt-4 pb-0">
       {/* Yellow pill navbar with logo inline */}
       <div className="container mx-auto px-4">
-        <nav className="navbar-pill flex items-center justify-between px-6 md:px-8 py-3 mx-4 md:mx-8 relative z-0">
+        <nav className="navbar-pill flex items-center justify-between px-4 md:px-6 py-2 mx-4 md:mx-8 relative z-0">
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-1">
             {/* Pests dropdown */}
@@ -104,24 +104,24 @@ const Navbar = () => {
           </div>
 
           {/* Center logo - overlaps above the pill */}
-          <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-10 z-10">
+          <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-8 z-10">
             <img
               src={dangLogo}
               alt="Dang Pest Control"
-              className="w-44 h-auto drop-shadow-lg"
+              className="w-36 h-auto drop-shadow-lg"
             />
           </Link>
 
           {/* Right side: phone + CTA */}
-          <div className="hidden md:flex items-center gap-6">
-            <a href="tel:9038710550" className="flex items-center gap-2 text-foreground font-bold text-sm">
-              <Phone className="w-5 h-5" />
+          <div className="hidden md:flex items-center gap-4">
+            <a href="tel:9038710550" className="flex items-center gap-2 text-foreground font-bold text-xs">
+              <Phone className="w-4 h-4" />
               <div className="leading-tight">
-                <div className="text-xs font-semibold">Call us</div>
-                <div className="font-bold">(903) 871-0550</div>
+                <div className="text-[10px] font-semibold">Call us</div>
+                <div className="text-xs font-bold">(903) 871-0550</div>
               </div>
             </a>
-            <Link to="/quote" className="btn-cta-cyan">
+            <Link to="/quote" className="btn-cta-cyan text-sm px-5 py-2">
               Get Your Quote
             </Link>
           </div>
