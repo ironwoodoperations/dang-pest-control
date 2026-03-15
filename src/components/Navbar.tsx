@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Phone, Menu, X, ChevronDown } from "lucide-react";
 import dangLogo from "@/assets/dang-logo.png";
@@ -33,11 +33,21 @@ const aboutLinks = [
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 120);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-[100] bg-white 
-        shadow-sm transition-all duration-300">
+      <header className={`fixed top-0 left-0 right-0 z-[100] bg-white 
+        shadow-sm transition-all duration-300 
+        ${scrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
         <div className="mx-auto max-w-[1400px] px-4 flex items-center 
           justify-between py-2">
 
@@ -133,7 +143,7 @@ const Navbar = () => {
         </div>
       </header>
 
-      <header className="hero-bg relative z-50 pt-14 pb-0 mt-[52px]">
+      <header className="hero-bg relative z-50 pt-14 pb-0">
       <div className="mx-auto max-w-[1400px] px-4">
         <nav className="navbar-pill flex items-center justify-between 
           px-6 md:px-8 py-3.5 relative z-0">
