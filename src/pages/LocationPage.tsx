@@ -24,7 +24,7 @@ const servicesList = [
   { name: "Bed Bug Control", slug: "bed-bug-control", description: "Expert elimination of bed bugs from your home quickly and effectively." },
   { name: "Rodent Control", slug: "rodent-control", description: "Remove mice and rats and prevent them from coming back." },
   { name: "Flea & Tick Control", slug: "flea-tick-control", description: "Tailored solutions for fleas, ticks, wasps, hornets, and scorpions." },
-  { name: "Snake Control", slug: "snake-control", description: "Professional snake identification, removal, and prevention for venomous and non-venomous species." },
+  ];
 ];
 
 const whyChoose = [

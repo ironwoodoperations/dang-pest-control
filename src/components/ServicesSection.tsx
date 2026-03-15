@@ -12,7 +12,7 @@ const services = [
   { icon: "🪲", name: "Flea & Tick Control", slug: "flea-tick-control" },
   { icon: "🪳", name: "Roach Pest Control", slug: "roach-control" },
   { icon: "🛏️", name: "Bed Bug Pest Control", slug: "bed-bug-control" },
-  { icon: "🐍", name: "Snake Control", slug: "snake-control" },
+  ];
 ];
 
 const ServicesSection = () => {
