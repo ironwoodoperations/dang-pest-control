@@ -130,11 +130,18 @@
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(35deg, transparent 0%, transparent 49.5%, rgba(255,165,0,0.15) 49.5%, rgba(255,165,0,0.15) 50.5%, transparent 50.5%, transparent 100%),
-      linear-gradient(145deg, transparent 0%, transparent 49.5%, rgba(255,165,0,0.12) 49.5%, rgba(255,165,0,0.12) 50.5%, transparent 50.5%, transparent 100%),
-      linear-gradient(55deg, transparent 0%, transparent 49.5%, rgba(255,165,0,0.1) 49.5%, rgba(255,165,0,0.1) 50.5%, transparent 50.5%, transparent 100%),
-      linear-gradient(160deg, transparent 0%, transparent 49.5%, rgba(255,165,0,0.08) 49.5%, rgba(255,165,0,0.08) 50.5%, transparent 50.5%, transparent 100%);
-    background-size: 100% 100%;
+      repeating-linear-gradient(
+        32deg,
+        transparent 0 140px,
+        hsl(var(--orange-light) / 0.14) 140px 144px,
+        transparent 144px 300px
+      ),
+      repeating-linear-gradient(
+        -32deg,
+        transparent 0 170px,
+        hsl(var(--orange-light) / 0.1) 170px 173px,
+        transparent 173px 340px
+      );
     pointer-events: none;
   }
 
