@@ -35,7 +35,104 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
-    <header className="hero-bg relative z-50 pt-14 pb-0">
+      <header className="fixed top-0 left-0 right-0 z-[100] bg-white 
+        shadow-sm transition-all duration-300">
+        <div className="mx-auto max-w-[1400px] px-4 flex items-center 
+          justify-between py-2">
+
+          {/* Left nav links */}
+          <div className="hidden md:flex items-center gap-2">
+            <div className="relative"
+              onMouseEnter={() => setOpenDropdown("pests")}
+              onMouseLeave={() => setOpenDropdown(null)}>
+              <button className="navbar-link flex items-center gap-1">
+                Pests <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+              {openDropdown === "pests" && (
+                <div className="navbar-dropdown">
+                  {pestLinks.map((l) => (
+                    <Link key={l.href} to={l.href}
+                      className="navbar-dropdown-item">{l.label}</Link>
+                  ))}
+                </div>
+              )}
+            </div>
+            <Link to="/mosquito-control" className="navbar-link">
+              Mosquitos
+            </Link>
+            <div className="relative"
+              onMouseEnter={() => setOpenDropdown("termites")}
+              onMouseLeave={() => setOpenDropdown(null)}>
+              <button className="navbar-link flex items-center gap-1">
+                Termites <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+              {openDropdown === "termites" && (
+                <div className="navbar-dropdown">
+                  {termiteLinks.map((l) => (
+                    <Link key={l.href} to={l.href}
+                      className="navbar-dropdown-item">{l.label}</Link>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="relative"
+              onMouseEnter={() => setOpenDropdown("about")}
+              onMouseLeave={() => setOpenDropdown(null)}>
+              <button className="navbar-link flex items-center gap-1">
+                About <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+              {openDropdown === "about" && (
+                <div className="navbar-dropdown">
+                  {aboutLinks.map((l) => (
+                    <Link key={l.href} to={l.href}
+                      className="navbar-dropdown-item">{l.label}</Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Center small logo */}
+          <Link to="/" className="hidden md:block absolute left-1/2 
+            -translate-x-1/2">
+            <img src={dangLogo} alt="Dang Pest Control"
+              className="w-16 h-auto drop-shadow-md" />
+          </Link>
+
+          {/* Mobile small logo */}
+          <Link to="/" className="md:hidden">
+            <img src={dangLogo} alt="Dang Pest Control"
+              className="w-12 h-auto" />
+          </Link>
+
+          {/* Right: phone + CTA */}
+          <div className="hidden md:flex items-center gap-5">
+            <a href="tel:9038710550"
+              className="flex items-center gap-2 font-bold"
+              style={{ color: 'hsl(20, 40%, 12%)' }}>
+              <Phone className="w-4 h-4" />
+              <div className="leading-tight">
+                <div className="text-xs font-semibold">Call us</div>
+                <div className="text-sm font-bold">(903) 871-0550</div>
+              </div>
+            </a>
+            <Link to="/quote" className="btn-cta-cyan text-sm px-5 py-2">
+              Get Your Quote
+            </Link>
+          </div>
+
+          {/* Mobile toggle */}
+          <button className="md:hidden"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            style={{ color: 'hsl(20, 40%, 12%)' }}>
+            {mobileOpen
+              ? <X className="w-6 h-6" />
+              : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+      </header>
+
+    <header className="hero-bg relative z-50 pt-14 pb-0 mt-[52px]">
       <div className="mx-auto max-w-[1400px] px-4">
         <nav className="navbar-pill flex items-center justify-between 
           px-6 md:px-8 py-3.5 relative z-0">
