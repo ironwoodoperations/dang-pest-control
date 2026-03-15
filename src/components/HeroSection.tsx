@@ -71,7 +71,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
           </div>
 
           <HolidayVideoWrapper>
-            <div className="relative rounded-2xl overflow-hidden aspect-video border-[8px] border-cyan-accent shadow-[0_0_20px_hsl(var(--accent)/0.35)]">
+            <div className="relative rounded-2xl overflow-hidden aspect-video border-4 border-[hsl(185,100%,45%)] shadow-[0_0_30px_hsl(185,100%,45%,0.5)]">
               {!isPlaying ? (
                 <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
                   <img
