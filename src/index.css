@@ -146,6 +146,10 @@
     background: hsl(22, 45%, 14%);
   }
 
+  .section-orange-dark {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(22, 45%, 18%) 100%);
+  }
+
   .text-comic {
     font-family: var(--font-display);
     letter-spacing: 0.05em;
