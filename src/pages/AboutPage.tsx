@@ -85,9 +85,6 @@ const AboutPage = () => {
               </Link>
             </div>
           </div>
-          <div className="flex justify-center">
-            <img src={interiorService} alt="Dang Pest Control Technician" className="w-full max-w-md rounded-2xl shadow-lg object-cover" />
-          </div>
         </div>
       </section>
 
