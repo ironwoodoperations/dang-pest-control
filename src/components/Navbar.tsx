@@ -31,7 +31,7 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
-    <header className="hero-bg relative z-50 pt-10 pb-0">
+    <header className="hero-bg relative z-50 pt-12 pb-0">
       {/* Yellow pill navbar with logo inline */}
       <div className="container mx-auto px-4">
         <nav className="navbar-pill flex items-center justify-between px-6 md:px-8 py-3.5 mx-2 md:mx-6 relative z-0">
