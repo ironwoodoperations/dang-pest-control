@@ -41,10 +41,10 @@ const BlogIndex = () => {
         description="Pest control tips, guides, and news from Dang Pest Control in Tyler, TX."
         canonical="/blog"
       />
-      <section className="hero-bg text-white py-20 text-center">
+      <section className="hero-bg text-white py-20 text-center relative overflow-hidden">
         <div className="container mx-auto px-4">
-          <h1 className="text-comic text-4xl md:text-5xl mb-4 text-white">Pest Control Blog</h1>
-          <p className="text-lg opacity-90 text-white max-w-xl mx-auto">Tips, guides, and news from your local pest experts.</p>
+          <h1 className="text-comic text-4xl md:text-6xl mb-4 text-white">Pest Control Blog</h1>
+          <p className="text-lg text-white opacity-90 max-w-xl mx-auto">Tips, guides, and news from your local pest experts.</p>
         </div>
       </section>
       <section className="py-16 bg-white">
@@ -52,58 +52,19 @@ const BlogIndex = () => {
           {loading ? (
             <p className="text-center" style={{color: 'hsl(20, 20%, 35%)'}}>Loading posts...</p>
           ) : posts.length === 0 ? (
-            <div className="text-center py-20">
-              <div
-                className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
-                style={{background: 'hsl(28, 100%, 50%)'}}
-              >
-                <span className="text-4xl">📝</span>
-              </div>
-              <h2
-                className="text-comic text-3xl mb-4"
-                style={{color: 'hsl(20, 40%, 12%)'}}
-              >
-                Coming Soon
-              </h2>
-              <p
-                className="text-base mb-8 max-w-md mx-auto"
-                style={{color: 'hsl(20, 20%, 40%)'}}
-              >
-                Check back soon for pest control tips, guides, and news from your local experts in Tyler, TX.
-              </p>
-              <Link
-                to="/quote"
-                className="inline-flex items-center justify-center font-bold rounded-full px-8 py-3 text-white text-base transition-all hover:brightness-110"
-                style={{background: 'hsl(28, 100%, 50%)'}}
-              >
-                Get Your Quote
-              </Link>
-            </div>
+            <p className="text-center" style={{color: 'hsl(20, 20%, 35%)'}}>No posts yet. Check back soon!</p>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => (
-                <Link
-                  key={post.slug}
-                  to={`/blog/${post.slug}`}
-                  className="bg-white rounded-2xl p-6 shadow-sm border border-orange-100 hover:border-primary hover:shadow-md transition-all duration-200 text-left group overflow-hidden"
-                >
+                <Link key={post.slug} to={`/blog/${post.slug}`} className="bg-white rounded-2xl p-6 shadow-sm border border-orange-100 hover:border-primary hover:shadow-md transition-all duration-200 text-left group overflow-hidden">
                   {post.featured_image && (
                     <img src={post.featured_image} alt={post.title} className="w-full h-40 object-cover rounded-lg mb-4" loading="lazy" />
                   )}
-                  <h3
-                    className="text-comic text-base mb-2 group-hover:text-primary transition-colors"
-                    style={{color: 'hsl(20, 40%, 12%)'}}
-                  >
-                    {post.title}
-                  </h3>
+                  <h3 className="text-comic text-base mb-2 group-hover:text-primary transition-colors" style={{color: 'hsl(20, 40%, 12%)'}}>{post.title}</h3>
                   <p className="text-sm mb-3" style={{color: 'hsl(20, 20%, 35%)'}}>{post.excerpt}</p>
-                  <div className="flex items-center gap-3 text-xs" style={{color: 'hsl(28, 100%, 50%)'}}>
-                    <span className="flex items-center gap-1">
-                      <User className="h-3 w-3" /> {post.author}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" /> {new Date(post.created_at).toLocaleDateString()}
-                    </span>
+                  <div className="flex items-center gap-3 text-xs" style={{color: 'hsl(20, 20%, 50%)'}}>
+                    <span className="flex items-center gap-1"><User className="h-3 w-3" /> {post.author}</span>
+                    <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {new Date(post.created_at).toLocaleDateString()}</span>
                   </div>
                 </Link>
               ))}

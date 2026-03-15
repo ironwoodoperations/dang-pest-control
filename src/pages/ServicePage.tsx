@@ -79,23 +79,27 @@ const ServicePage = () => {
       <HolidayBanner />
       <Navbar />
 
-      {/* Hero */}
-      <section className="hero-bg text-white py-20 text-center relative overflow-hidden">
-        <div className="container mx-auto px-4">
-          <Link
-            to="/"
-            className="absolute top-6 left-6 flex items-center gap-2 text-white text-sm hover:underline"
-          >
+      {/* Hero with image */}
+      <section className="relative">
+        <div className="relative h-[400px] md:h-[500px]">
+          <img src={service.heroImage} alt={service.heroAlt} className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30" />
+          <Link to="/" className="absolute top-6 left-6 flex items-center gap-2 text-white text-sm hover:underline z-10">
             <ArrowLeft className="w-4 h-4" /> Back to Home
           </Link>
-          <span className="text-secondary text-sm font-bold uppercase tracking-wider">{subtitle}</span>
-          <h1 className="text-comic text-3xl md:text-5xl text-white mt-2 mb-4">{title}</h1>
-          <p className="text-white/90 max-w-2xl mx-auto mb-6 leading-relaxed">{intro}</p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <a href="tel:9038710550" className="btn-cta-outline">
-              <Phone className="w-5 h-5 mr-2" /> (903) 871-0550
-            </a>
-            <Link to="/quote" className="btn-cta">Get Your Quote</Link>
+
+          <div className="absolute inset-0 flex items-center">
+            <div className="container mx-auto px-4">
+              <span className="text-secondary text-sm font-bold uppercase tracking-wider">{subtitle}</span>
+              <h1 className="text-comic text-3xl md:text-5xl text-white mt-2 mb-4">{title}</h1>
+              <p className="text-white/90 max-w-2xl mb-6 leading-relaxed">{intro}</p>
+              <div className="flex flex-wrap gap-4">
+                <a href="tel:9038710550" className="btn-cta-outline">
+                  <Phone className="w-5 h-5 mr-2" /> (903) 871-0550
+                </a>
+                <Link to="/quote" className="btn-cta">Get Your Quote</Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -145,7 +149,7 @@ const ServicePage = () => {
       )}
 
       {/* Bottom CTA */}
-      <section className="py-16 text-white" style={{background: 'hsl(28, 100%, 50%)'}}>
+      <section className="py-16 text-white" style={{background: 'hsl(var(--primary))'}}>
         <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-comic text-3xl md:text-4xl mb-4 text-white">{service.bottomCTA.title}</h2>

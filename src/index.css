@@ -218,7 +218,7 @@
 
   .btn-cta-cyan {
     @apply inline-flex items-center justify-center font-bold rounded-full px-8 py-3 text-base transition-all duration-200;
-    background: hsl(var(--cyan-accent));
+    background: hsl(185, 65%, 42%);
     color: hsl(var(--primary-foreground));
     font-family: var(--font-body);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);

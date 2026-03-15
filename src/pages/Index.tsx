@@ -1,3 +1,4 @@
+import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import HolidayBanner from "@/components/HolidayBanner";
 import FeatureStrip from "@/components/FeatureStrip";
@@ -45,9 +46,8 @@ const Index = () => {
         jsonLd={localBusinessJsonLd}
       />
       <HolidayBanner />
-      <div className="relative overflow-hidden" style={{ minHeight: "100vh" }}>
-        <HeroSection dynamicVideoUrl={heroVideoUrl} dynamicVideoType={heroVideoType} videoStart={heroVideoStart} videoEnd={heroVideoEnd} />
-      </div>
+      <Navbar />
+      <HeroSection dynamicVideoUrl={heroVideoUrl} dynamicVideoType={heroVideoType} videoStart={heroVideoStart} videoEnd={heroVideoEnd} />
       <FeatureStrip />
       <ExpertSection />
       <ServicesSection />

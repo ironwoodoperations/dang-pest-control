@@ -11,10 +11,10 @@ const ServiceProcess = ({ title, intro, steps }: ServiceProcessProps) => {
   if (steps.length === 0 && !intro) return null;
 
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4" style={{ color: 'hsl(20, 40%, 12%)' }}>
+    <section className="py-16 bg-muted">
+      <div className="container mx-auto px-4">
         <h2 className="text-comic text-3xl md:text-4xl text-center mb-4">{title}</h2>
-        {intro && <p className="text-center mb-12 max-w-3xl mx-auto">{intro}</p>}
+        {intro && <p className="text-center text-muted-foreground mb-12 max-w-3xl mx-auto">{intro}</p>}
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
           {steps.map((step, i) => (

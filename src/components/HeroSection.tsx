@@ -1,11 +1,7 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Play } from "lucide-react";
-import Navbar from "@/components/Navbar";
 import HolidayVideoWrapper from "@/components/HolidayVideoWrapper";
-
-const HERO_BG_IMAGE = "https://www.dangpestcontrol.com/wp-content/uploads/2025/06/moblie_banner.webp";
-const VIDEO_POSTER_URL = "https://www.dangpestcontrol.com/wp-content/uploads/2025/06/dang-pest-homepage-img-1.webp";
 
 const DEFAULT_VIDEO = "https://www.dangpestcontrol.com/wp-content/uploads/2025/04/dang-pest-homepage.mp4";
 
@@ -56,30 +52,23 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
 
   return (
     <section
-      className="text-white"
-      style={{
-        minHeight: "987px",
-        position: "relative",
-        overflow: "hidden",
-        backgroundImage: `url('${HERO_BG_IMAGE}')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center center",
-      }}
+      className="hero-bg text-white py-14 md:py-20 relative overflow-hidden"
+      style={{ minHeight: "100vh", paddingBottom: "120px" }}
     >
-      <Navbar />
-      <div
-        className="mx-auto max-w-[1140px] px-4 relative z-10 grid md:grid-cols-2 gap-8 items-center"
-        style={{ paddingTop: "280px", paddingBottom: "60px" }}
-      >
+      <div className="mx-auto max-w-[1400px] px-4 relative z-10">
+        <div
+          className="grid md:grid-cols-2 gap-8 md:gap-10 items-center"
+          style={{ paddingTop: "320px" }}
+        >
           <div>
             <h1
-              className="text-comic italic text-5xl md:text-7xl leading-[0.85] mb-6"
+              className="text-comic text-7xl md:text-8xl font-extrabold tracking-wide leading-[0.9] mb-6 italic"
               style={{ color: "hsl(48, 100%, 50%)" }}
             >
               Super Powered<br />
               Pest Control
             </h1>
-            <p className="text-base md:text-lg text-white mb-8 max-w-md">
+            <p className="text-[15px] md:text-base mb-8 font-body leading-relaxed max-w-lg text-white opacity-95">
               We are a hands-on, personable, relationship-based company. We live, work, worship, and play in the Tyler community. Our innovative pest control practices make us stand out amongst our competitors. Our goal is to be an active part in making our community and the lives of our clients better. We stand by our work and guarantee satisfaction.
             </p>
             <Link to="/quote" className="inline-flex items-center justify-center font-bold rounded-full px-8 py-3 text-base border-2 border-white text-white hover:bg-white hover:text-primary transition-all duration-200">
@@ -88,14 +77,11 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
           </div>
 
           <HolidayVideoWrapper>
-            <div
-              className="relative rounded-2xl overflow-hidden shadow-xl w-full"
-              style={{ borderColor: "hsl(185, 100%, 45%)", border: "4px solid", height: "472px" }}
-            >
+            <div className="relative rounded-2xl overflow-hidden aspect-video border-4 border-[hsl(185,100%,45%)] shadow-[0_0_30px_hsl(185,100%,45%,0.5)] max-w-[85%] mx-auto">
               {!isPlaying ? (
                 <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
                   <img
-                    src={VIDEO_POSTER_URL}
+                    src="/video-poster.webp"
                     alt="Meet Kirk - Dang Pest Control"
                     className="w-full h-full object-cover"
                   />
@@ -121,7 +107,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
                       className="w-full h-full object-cover"
                       controls
                       playsInline
-                      poster={VIDEO_POSTER_URL}
+                      poster="/video-poster.webp"
                     >
                       <source src={videoSrc} type="video/mp4" />
                     </video>
@@ -130,6 +116,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
               )}
             </div>
           </HolidayVideoWrapper>
+        </div>
       </div>
     </section>
   );

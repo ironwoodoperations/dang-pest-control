@@ -7,8 +7,8 @@ interface ServiceWhyChooseProps {
 }
 
 const ServiceWhyChoose = ({ items, intro }: ServiceWhyChooseProps) => (
-  <section className="py-16 bg-white">
-    <div className="container mx-auto px-4" style={{ color: 'hsl(20, 40%, 12%)' }}>
+  <section className="section-orange text-primary-foreground py-16">
+    <div className="container mx-auto px-4">
       <h2 className="text-comic text-3xl md:text-4xl text-center mb-4">Why Choose Us?</h2>
       {intro && <p className="text-center opacity-90 mb-12 max-w-3xl mx-auto">{intro}</p>}
 

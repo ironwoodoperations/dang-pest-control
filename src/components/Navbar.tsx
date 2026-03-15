@@ -145,34 +145,11 @@ const Navbar = () => {
         </div>
       </header>
 
-      {/* Outer sticky header wrapper: height 279px, position relative, transparent */}
-      <div
-        className="z-[9] w-full"
-        style={{
-          position: "relative",
-          height: "279px",
-        }}
-      >
-        <nav
-          className="flex justify-between items-center relative z-0 w-full max-w-[1400px] mx-auto"
-          style={{
-            background: "rgb(255, 213, 39)",
-            height: "75px",
-            borderRadius: "219px",
-            paddingLeft: "95px",
-            paddingRight: "95px",
-            display: "flex",
-            alignItems: "center",
-            gap: "2rem",
-            position: scrolled ? "fixed" : "relative",
-            top: scrolled ? 0 : undefined,
-            left: scrolled ? 0 : undefined,
-            right: scrolled ? 0 : undefined,
-            zIndex: scrolled ? 100 : undefined,
-            marginLeft: scrolled ? "auto" : undefined,
-            marginRight: scrolled ? "auto" : undefined,
-          }}
-        >
+      <header className="hero-bg relative z-50 pt-14 pb-0">
+      <div className="mx-auto max-w-[1400px] px-4">
+        <nav className="navbar-pill flex items-center justify-between 
+          px-6 md:px-8 py-3.5 relative z-0">
+
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-2">
             <div className="relative"
@@ -234,17 +211,11 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Center logo - positioned above the pill */}
-          <Link
-            to="/"
-            className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-12 z-10"
-            style={{ width: "267px" }}
-          >
-            <img
-              src={dangLogo}
-              alt="Dang Pest Control"
-              className="h-auto drop-shadow-lg w-full"
-            />
+          {/* Center logo */}
+          <Link to="/" className="hidden md:block absolute left-1/2 
+            -translate-x-1/2 -top-20 z-10">
+            <img src={dangLogo} alt="Dang Pest Control"
+              className="w-80 h-auto drop-shadow-lg" />
           </Link>
 
           {/* Right: phone + CTA */}
@@ -258,7 +229,7 @@ const Navbar = () => {
                 <div className="text-sm font-bold">(903) 871-0550</div>
               </div>
             </a>
-            <Link to="/quote" className="btn-cta-cyan text-base px-7 py-4">
+            <Link to="/quote" className="btn-cta-cyan text-base px-7 py-3">
               Get Your Quote
             </Link>
           </div>
@@ -279,7 +250,7 @@ const Navbar = () => {
         </nav>
       </div>
 
-      {/* Mobile menu - outside pill, full width */}
+      {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden bg-white border-b border-yellow-200 
           px-4 pb-4 mx-4 rounded-b-2xl shadow-lg">
@@ -350,7 +321,7 @@ const Navbar = () => {
           </a>
         </div>
       )}
-    </>
+    </header></>
   );
 };
 
