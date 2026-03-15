@@ -166,6 +166,9 @@ const Navbar = () => {
           <a href="tel:9038710550" className="flex items-center gap-1.5 py-2 text-sm font-bold text-primary">
             <Phone className="w-4 h-4" /> (903) 871-0550
           </a>
+          <a href="sms:9038710550" className="flex items-center gap-1.5 py-2 text-sm font-bold text-primary" onClick={() => setMobileOpen(false)}>
+            Text Us
+          </a>
         </div>
       )}
     </header>
