@@ -212,7 +212,7 @@
   }
 
   .navbar-dropdown-item:hover {
-    background: hsl(48, 100%, 96%);
+    background: hsl(48, 100%, 94%);
     color: hsl(var(--primary));
   }
 

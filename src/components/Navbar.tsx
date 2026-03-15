@@ -143,7 +143,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-card border-b border-border px-4 pb-4 mx-8 rounded-b-2xl shadow-lg">
+        <div className="md:hidden bg-white border-b border-yellow-200 px-4 pb-4 mx-4 rounded-b-2xl shadow-lg">
           <button
             className="w-full text-left py-2 text-sm font-semibold flex items-center justify-between"
             onClick={() => setOpenDropdown(openDropdown === "pests" ? null : "pests")}
