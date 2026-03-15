@@ -14,6 +14,7 @@ const pestLinks = [
   { label: "Flea & Tick Control", href: "/flea-tick-control" },
   { label: "Bed Bug Control", href: "/bed-bug-control" },
   { label: "Snake Control", href: "/snake-control" },
+  { label: "View All", href: "/pest-control" },
 ];
 
 const termiteLinks = [
@@ -23,7 +24,11 @@ const termiteLinks = [
 
 const aboutLinks = [
   { label: "About Us", href: "/about" },
-  { label: "Get a Quote", href: "/quote" },
+  { label: "Service Area", href: "/service-area" },
+  { label: "Customer Reviews", href: "/reviews" },
+  { label: "Blog", href: "/blog" },
+  { label: "Frequently Asked Questions", href: "/faq" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 const Navbar = () => {
@@ -160,6 +165,9 @@ const Navbar = () => {
           <Link to="/quote" className="block py-2 text-sm font-semibold text-primary" onClick={() => setMobileOpen(false)}>Get Your Quote</Link>
           <a href="tel:9038710550" className="flex items-center gap-1.5 py-2 text-sm font-bold text-primary">
             <Phone className="w-4 h-4" /> (903) 871-0550
+          </a>
+          <a href="sms:9038710550" className="flex items-center gap-1.5 py-2 text-sm font-bold text-primary" onClick={() => setMobileOpen(false)}>
+            Text Us
           </a>
         </div>
       )}
