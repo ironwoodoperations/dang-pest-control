@@ -121,8 +121,7 @@
 
 @layer components {
   .hero-bg {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--orange-light)) 50%, hsl(var(--primary)) 100%);
-    background-size: 400% 400%;
+    background: hsl(var(--primary));
     position: relative;
   }
 
@@ -130,13 +129,12 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 80px,
-      rgba(255, 255, 255, 0.03) 80px,
-      rgba(255, 255, 255, 0.03) 82px
-    );
+    background:
+      linear-gradient(35deg, transparent 0%, transparent 49.5%, rgba(255,165,0,0.15) 49.5%, rgba(255,165,0,0.15) 50.5%, transparent 50.5%, transparent 100%),
+      linear-gradient(145deg, transparent 0%, transparent 49.5%, rgba(255,165,0,0.12) 49.5%, rgba(255,165,0,0.12) 50.5%, transparent 50.5%, transparent 100%),
+      linear-gradient(55deg, transparent 0%, transparent 49.5%, rgba(255,165,0,0.1) 49.5%, rgba(255,165,0,0.1) 50.5%, transparent 50.5%, transparent 100%),
+      linear-gradient(160deg, transparent 0%, transparent 49.5%, rgba(255,165,0,0.08) 49.5%, rgba(255,165,0,0.08) 50.5%, transparent 50.5%, transparent 100%);
+    background-size: 100% 100%;
     pointer-events: none;
   }
 
@@ -188,7 +186,7 @@
   }
 
   .navbar-link {
-    @apply px-3 py-1.5 text-xs font-bold rounded-full transition-colors;
+    @apply px-4 py-2 text-sm font-bold rounded-full transition-colors;
     color: hsl(var(--foreground));
   }
 
@@ -256,10 +254,7 @@
   }
 
   .sunburst-rays {
-    background: repeating-conic-gradient(
-      hsl(var(--primary-foreground)) 0deg 10deg,
-      transparent 10deg 20deg
-    );
+    display: none;
   }
 
   .testimonial-card {

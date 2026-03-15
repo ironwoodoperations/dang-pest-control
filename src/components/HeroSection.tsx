@@ -15,23 +15,14 @@ interface HeroSectionProps {
 // Extract YouTube video ID from various YouTube URL formats
 const extractYouTubeId = (url: string): string | null => {
   if (!url) return null;
-  
-  // Handle youtube.com/shorts/VIDEO_ID
   const shortsMatch = url.match(/youtube\.com\/shorts\/([^?&/]+)/);
   if (shortsMatch) return shortsMatch[1];
-  
-  // Handle youtube.com/watch?v=VIDEO_ID
   const watchMatch = url.match(/[?&]v=([^?&/]+)/);
   if (watchMatch) return watchMatch[1];
-  
-  // Handle youtu.be/VIDEO_ID
   const shortMatch = url.match(/youtu\.be\/([^?&/]+)/);
   if (shortMatch) return shortMatch[1];
-  
-  // Handle embed/VIDEO_ID
   const embedMatch = url.match(/embed\/([^?&/]+)/);
   if (embedMatch) return embedMatch[1];
-  
   return null;
 };
 
@@ -43,7 +34,6 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
   const isYouTube = dynamicVideoType === "youtube" || extractYouTubeId(videoSrc) !== null;
   const youtubeId = isYouTube ? extractYouTubeId(videoSrc) : null;
 
-  // Build YouTube embed params
   const buildYouTubeParams = () => {
     const params = new URLSearchParams({ autoplay: "1", rel: "0" });
     if (videoStart) params.set("start", videoStart);
@@ -61,22 +51,18 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
   };
 
   return (
-    <section className="hero-bg text-primary-foreground py-8 md:py-12 relative overflow-hidden">
-      {/* Sunburst rays background */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[200%] h-[200%] sunburst-rays opacity-[0.07]" />
-      </div>
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
-        <div className="grid md:grid-cols-2 gap-6 md:gap-10 items-center">
+    <section className="hero-bg text-primary-foreground py-12 md:py-20 relative overflow-hidden">
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div>
-            <h1 className="text-comic text-3xl md:text-4xl leading-tight mb-4">
+            <h1 className="text-comic text-4xl md:text-[3.2rem] leading-tight mb-6">
               Super Powered<br />
               Pest Control
             </h1>
-            <p className="text-sm md:text-base mb-6 font-body opacity-90 leading-relaxed max-w-md">
+            <p className="text-[15px] md:text-base mb-8 font-body opacity-90 leading-relaxed max-w-lg">
               We are a hands-on, personable, relationship-based company. We live, work, worship, and play in the Tyler community. Our innovative pest control practices make us stand out amongst our competitors. Our goal is to be an active part in making our community and the lives of our clients better. We stand by our work and guarantee satisfaction.
             </p>
-            <Link to="/quote" className="btn-cta-white text-sm px-8 py-2.5">
+            <Link to="/quote" className="btn-cta-white text-[15px] px-8 py-3">
               Get Your Quote
             </Link>
           </div>
