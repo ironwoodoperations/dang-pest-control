@@ -47,14 +47,8 @@ const Index = () => {
       />
       <HolidayBanner />
       <div
-        className="relative"
-        style={{
-          background: "hsl(28, 100%, 50%)",
-          backgroundImage: "url('/hero-streaks.webp')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          minHeight: "100vh",
-        }}
+        className="relative overflow-hidden"
+        style={{ background: "hsl(28, 100%, 50%)", minHeight: "100vh" }}
       >
         <Navbar />
         <HeroSection dynamicVideoUrl={heroVideoUrl} dynamicVideoType={heroVideoType} videoStart={heroVideoStart} videoEnd={heroVideoEnd} />

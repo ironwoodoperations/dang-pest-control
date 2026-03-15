@@ -51,17 +51,17 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
   };
 
   return (
-    <section className="relative overflow-hidden pt-8 pb-16 text-white">
-      <div className="mx-auto max-w-[1400px] px-4 relative z-10 grid md:grid-cols-2 gap-8 md:gap-10 items-center">
+    <section className="relative overflow-hidden pt-6 pb-20 text-white">
+      <div className="mx-auto max-w-[1400px] px-6 relative z-10 grid md:grid-cols-2 gap-8 items-center min-h-[75vh]">
           <div>
-            <h1 
-              className="text-comic text-5xl md:text-7xl leading-[0.9] mb-6 italic"
-              style={{color: 'hsl(48, 100%, 50%)'}}
+            <h1
+              className="text-comic italic text-5xl md:text-7xl leading-[0.85] mb-6"
+              style={{ color: "hsl(48, 100%, 50%)" }}
             >
               Super Powered<br />
               Pest Control
             </h1>
-            <p className="text-[15px] md:text-base mb-8 font-body leading-relaxed max-w-lg text-white opacity-95">
+            <p className="text-base md:text-lg text-white mb-8 max-w-md">
               We are a hands-on, personable, relationship-based company. We live, work, worship, and play in the Tyler community. Our innovative pest control practices make us stand out amongst our competitors. Our goal is to be an active part in making our community and the lives of our clients better. We stand by our work and guarantee satisfaction.
             </p>
             <Link to="/quote" className="inline-flex items-center justify-center font-bold rounded-full px-8 py-3 text-base border-2 border-white text-white hover:bg-white hover:text-primary transition-all duration-200">
@@ -71,8 +71,8 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
 
           <HolidayVideoWrapper>
             <div
-              className="relative rounded-2xl overflow-hidden aspect-video border-4 shadow-xl"
-              style={{ borderColor: 'hsl(185, 100%, 45%)' }}
+              className="relative rounded-2xl overflow-hidden aspect-video shadow-xl"
+              style={{ borderColor: "hsl(185, 100%, 45%)", border: "4px solid" }}
             >
               {!isPlaying ? (
                 <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
