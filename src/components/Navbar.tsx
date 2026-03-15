@@ -14,6 +14,7 @@ const pestLinks = [
   { label: "Flea & Tick Control", href: "/flea-tick-control" },
   { label: "Bed Bug Control", href: "/bed-bug-control" },
   { label: "Snake Control", href: "/snake-control" },
+  { label: "View All", href: "/pest-control" },
 ];
 
 const termiteLinks = [
