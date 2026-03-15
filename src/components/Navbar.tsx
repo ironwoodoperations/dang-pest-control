@@ -34,7 +34,7 @@ const Navbar = () => {
     <header className="hero-bg relative z-50 pt-4 pb-0">
       {/* Yellow pill navbar with logo inline */}
       <div className="container mx-auto px-4">
-        <nav className="navbar-pill flex items-center justify-between px-6 md:px-8 py-3 mx-4 md:mx-8 relative z-0">
+        <nav className="navbar-pill flex items-center justify-between px-4 md:px-6 py-2 mx-4 md:mx-8 relative z-0">
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-1">
             {/* Pests dropdown */}
