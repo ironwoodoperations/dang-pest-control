@@ -109,11 +109,11 @@ const Navbar = () => {
           </div>
 
           {/* Center logo - overlaps above the pill */}
-          <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-10 z-10">
+          <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-14 z-10">
             <img
               src={dangLogo}
               alt="Dang Pest Control"
-              className="w-60 h-auto drop-shadow-lg"
+              className="w-72 h-auto drop-shadow-xl"
             />
           </Link>
 
