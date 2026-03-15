@@ -32,6 +32,7 @@ const WhyChooseUs = () => {
   return (
     <section className="py-16" style={{background: 'hsl(30, 40%, 97%)'}}>
       <div className="container mx-auto px-4">
+        <p className="text-comic text-sm italic text-center mb-2" style={{color: 'hsl(var(--primary))'}}>WHY CHOOSE US</p>
         <h2 className="text-comic text-3xl md:text-5xl text-center mb-12" style={{color: 'hsl(20, 40%, 12%)'}}>Why Choose Dang Pest Control?</h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

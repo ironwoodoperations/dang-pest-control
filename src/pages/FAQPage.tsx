@@ -45,7 +45,7 @@ const FAQPage = () => (
       </div>
     </section>
 
-    <section className="py-16 text-white text-center" style={{background: 'hsl(22, 45%, 14%)'}}>
+    <section className="py-16 text-white text-center" style={{background: 'hsl(var(--primary))'}}>
       <div className="container mx-auto px-4">
         <h2 className="text-comic text-3xl mb-4 text-white">Still Have Questions?</h2>
         <p className="opacity-90 mb-8 text-white">We're here to help. Reach out anytime.</p>
