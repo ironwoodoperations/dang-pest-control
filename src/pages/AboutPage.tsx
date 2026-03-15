@@ -82,7 +82,7 @@ const AboutPage = () => {
             </div>
           </div>
           <div className="flex justify-center">
-            <img src={dangSeal} alt="Dang Pest Control Seal of Approval" className="w-64 h-64 object-contain animate-float" />
+            <img src={interiorService} alt="Dang Pest Control Technician" className="w-full max-w-md rounded-2xl shadow-lg object-cover" />
           </div>
         </div>
       </section>
