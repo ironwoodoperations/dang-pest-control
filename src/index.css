@@ -196,17 +196,17 @@
 
   .navbar-dropdown {
     @apply absolute top-full left-0 mt-2 w-56 rounded-xl shadow-xl border py-2 z-50;
-    background: hsl(var(--card));
-    border-color: hsl(var(--border));
+    background: #ffffff;
+    border-color: hsl(30, 20%, 88%);
   }
 
   .navbar-dropdown-item {
     @apply block px-4 py-2 text-sm transition-colors;
-    color: hsl(var(--foreground));
+    color: hsl(20, 40%, 12%);
   }
 
   .navbar-dropdown-item:hover {
-    background: hsl(var(--muted));
+    background: hsl(48, 100%, 96%);
     color: hsl(var(--primary));
   }
 
