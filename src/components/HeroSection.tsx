@@ -51,11 +51,11 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
   };
 
   return (
-    <section className="hero-bg text-primary-foreground py-16 md:py-24 relative overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+    <section className="hero-bg text-primary-foreground py-10 md:py-14 relative overflow-hidden">
+      <div className="mx-auto max-w-[1400px] px-4 relative z-10">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
           <div>
-            <h1 className="text-comic text-4xl md:text-[3.2rem] leading-tight mb-6">
+            <h1 className="text-comic text-yellow-cta text-4xl md:text-[3.2rem] leading-[0.95] mb-6 [text-shadow:-2px_-2px_0_hsl(var(--brown-dark)),2px_-2px_0_hsl(var(--brown-dark)),-2px_2px_0_hsl(var(--brown-dark)),2px_2px_0_hsl(var(--brown-dark))]">
               Super Powered<br />
               Pest Control
             </h1>
@@ -68,7 +68,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
           </div>
 
           <HolidayVideoWrapper>
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-video cyan-border">
+            <div className="relative rounded-2xl overflow-hidden aspect-video border-[8px] border-cyan-accent shadow-[0_0_20px_hsl(var(--accent)/0.35)]">
               {!isPlaying ? (
                 <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
                   <img

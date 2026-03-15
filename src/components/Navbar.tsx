@@ -31,10 +31,10 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
-    <header className="hero-bg relative z-50 pt-12 pb-0">
+    <header className="hero-bg relative z-50 pt-14 pb-0">
       {/* Yellow pill navbar with logo inline */}
-      <div className="container mx-auto px-4">
-        <nav className="navbar-pill flex items-center justify-between px-6 md:px-8 py-3.5 mx-2 md:mx-6 relative z-0">
+      <div className="mx-auto max-w-[1400px] px-4">
+        <nav className="navbar-pill flex items-center justify-between px-6 md:px-8 py-3.5 relative z-0">
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-2">
             {/* Pests dropdown */}
@@ -104,11 +104,11 @@ const Navbar = () => {
           </div>
 
           {/* Center logo - overlaps above the pill */}
-          <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-12 z-10">
+          <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-10 z-10">
             <img
               src={dangLogo}
               alt="Dang Pest Control"
-              className="w-56 h-auto drop-shadow-lg"
+              className="w-60 h-auto drop-shadow-lg"
             />
           </Link>
 
