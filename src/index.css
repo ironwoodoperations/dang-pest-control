@@ -254,10 +254,7 @@
   }
 
   .sunburst-rays {
-    background: repeating-conic-gradient(
-      hsl(var(--primary-foreground)) 0deg 10deg,
-      transparent 10deg 20deg
-    );
+    display: none;
   }
 
   .testimonial-card {
