@@ -37,7 +37,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 120);
+      setScrolled(window.scrollY > 80);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -48,8 +48,9 @@ const Navbar = () => {
       <header className={`fixed top-0 left-0 right-0 z-[100] bg-white 
         shadow-sm transition-all duration-300 
         ${scrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
-        <div className="mx-auto max-w-[1400px] px-4 flex items-center 
-          justify-between py-2">
+        <div className="mx-auto max-w-[1400px] px-4">
+          <div className="flex items-center justify-between px-6 md:px-8 
+            py-3.5 relative">
 
           {/* Left nav links */}
           <div className="hidden md:flex items-center gap-2">
@@ -140,6 +141,7 @@ const Navbar = () => {
               ? <X className="w-6 h-6" />
               : <Menu className="w-6 h-6" />}
           </button>
+          </div>
         </div>
       </header>
 
