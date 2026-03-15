@@ -119,14 +119,14 @@ const Navbar = () => {
 
           {/* Right side: phone + CTA */}
           <div className="hidden md:flex items-center gap-5">
-            <a href="tel:9038710550" className="flex items-center gap-2 text-foreground font-bold">
-              <Phone className="w-5 h-5" />
+            <a href="tel:9038710550" className="flex items-center gap-2" style={{color: 'hsl(20, 40%, 12%)'}}>
+              <Phone className="w-5 h-5" style={{color: 'hsl(20, 40%, 12%)'}} />
               <div className="leading-tight">
-                <div className="text-xs font-semibold">Call us</div>
-                <div className="text-sm font-bold">(903) 871-0550</div>
+                <div className="text-xs font-semibold" style={{color: 'hsl(20, 40%, 12%)'}}>Call us</div>
+                <div className="text-sm font-bold" style={{color: 'hsl(20, 40%, 12%)'}}>(903) 871-0550</div>
               </div>
             </a>
-            <Link to="/quote" className="btn-cta-cyan text-base px-7 py-3">
+            <Link to="/quote" className="inline-flex items-center justify-center font-bold rounded-full px-7 py-2.5 text-sm text-white transition-all duration-200 hover:brightness-110" style={{background: 'hsl(185, 100%, 35%)'}}>
               Get Your Quote
             </Link>
           </div>
