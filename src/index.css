@@ -251,8 +251,15 @@
   }
 
   .cyan-border {
-    border: 4px solid hsl(var(--cyan-accent));
+    border: 5px solid hsl(var(--cyan-accent));
     border-radius: 1rem;
+  }
+
+  .sunburst-rays {
+    background: repeating-conic-gradient(
+      hsl(var(--primary-foreground)) 0deg 10deg,
+      transparent 10deg 20deg
+    );
   }
 
   .testimonial-card {
