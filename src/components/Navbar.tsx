@@ -23,7 +23,11 @@ const termiteLinks = [
 
 const aboutLinks = [
   { label: "About Us", href: "/about" },
-  { label: "Get a Quote", href: "/quote" },
+  { label: "Service Area", href: "/service-area" },
+  { label: "Customer Reviews", href: "/reviews" },
+  { label: "Blog", href: "/blog" },
+  { label: "Frequently Asked Questions", href: "/faq" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 const Navbar = () => {
