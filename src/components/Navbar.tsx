@@ -113,7 +113,7 @@ const Navbar = () => {
             <img
               src={dangLogo}
               alt="Dang Pest Control"
-              className="w-72 h-auto drop-shadow-xl"
+              className="w-48 h-auto drop-shadow-xl"
             />
           </Link>
 
