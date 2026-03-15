@@ -13,7 +13,6 @@ import bedBugHero from "@/assets/services/bed-bug-hero.jpg";
 import fireAntsImg from "@/assets/services/fire-ants.jpg";
 import brownRecluseImg from "@/assets/services/brown-recluse.jpg";
 import houseMouseImg from "@/assets/services/house-mouse.jpg";
-import houseMouseImg from "@/assets/services/house-mouse.jpg";
 import petsFleaImg from "@/assets/services/pets-flea.jpg";
 import antsVsTermitesImg from "@/assets/services/ants-vs-termites.png";
 // Process icons
