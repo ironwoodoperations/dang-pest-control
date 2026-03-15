@@ -37,33 +37,127 @@ const TestimonialsSection = () => {
   const t = testimonials[current];
 
   return (
-    <section className="py-16 relative overflow-hidden" style={{background: 'hsl(185, 65%, 45%)'}}>
-      <div className="container mx-auto px-4">
-        <p className="text-comic text-sm italic text-center mb-2" style={{color: 'hsl(48, 100%, 50%)'}}>TESTIMONIALS</p>
-        <h2 className="text-comic text-3xl md:text-5xl text-center mb-10" style={{color: 'hsl(20, 40%, 12%)'}}>What Our Customers Say</h2>
+    <section
+      className="py-16 relative overflow-hidden"
+      style={{ background: 'hsl(185, 65%, 45%)' }}
+    >
+      {/* Halftone dot background pattern */}
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage: 'radial-gradient(circle, hsl(185, 65%, 30%) 1.5px, transparent 1.5px)',
+          backgroundSize: '20px 20px',
+        }}
+      />
 
-        <div className="relative">
-          {/* Left Arrow */}
-          <button onClick={prev} className="absolute top-1/2 -translate-y-1/2 left-4 md:left-12 w-12 h-12 flex items-center justify-center transition-all hover:scale-110 z-10" style={{color: 'hsl(48, 100%, 50%)'}}>
-            <ChevronLeft className="w-10 h-10" />
+      {/* Ray burst lines from center */}
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: `repeating-conic-gradient(
+            hsl(185, 65%, 30%) 0deg 2deg,
+            transparent 2deg 30deg
+          )`,
+          backgroundSize: '200% 200%',
+          backgroundPosition: 'center',
+        }}
+      />
+
+      <div className="container mx-auto px-4 relative z-10">
+        <p
+          className="text-comic text-sm italic text-center mb-2"
+          style={{ color: 'hsl(48, 100%, 50%)' }}
+        >
+          TESTIMONIALS
+        </p>
+        <h2
+          className="text-comic text-3xl md:text-5xl text-center mb-10"
+          style={{ color: 'hsl(20, 40%, 12%)' }}
+        >
+          What Our Customers Say
+        </h2>
+
+        <div className="relative flex items-center justify-center">
+
+          {/* Left arrow */}
+          <button
+            onClick={prev}
+            className="absolute left-0 md:left-8 z-10 transition-all 
+              hover:scale-110"
+            style={{ color: 'hsl(48, 100%, 50%)' }}
+          >
+            <ChevronLeft className="w-14 h-14 drop-shadow-lg" />
           </button>
 
           {/* Card */}
-          <div className="bg-white rounded-2xl p-8 max-w-2xl mx-auto shadow-lg" style={{border: '3px solid hsl(20, 40%, 12%)'}}>
-            <div className="flex gap-1 justify-center my-3">
+          <div
+            className="bg-white rounded-2xl px-10 py-8 mx-16 md:mx-32 
+              w-full max-w-2xl shadow-xl relative"
+            style={{ border: '4px solid hsl(20, 40%, 12%)' }}
+          >
+            {/* Open quote mark */}
+            <div
+              className="absolute top-4 left-5 text-6xl leading-none 
+                font-serif font-bold"
+              style={{ color: 'hsl(20, 40%, 12%)', lineHeight: 1 }}
+            >
+              &#8220;
+            </div>
+
+            {/* Close quote mark */}
+            <div
+              className="absolute bottom-4 right-5 text-6xl leading-none 
+                font-serif font-bold"
+              style={{ color: 'hsl(20, 40%, 12%)', lineHeight: 1 }}
+            >
+              &#8221;
+            </div>
+
+            {/* Reviewer name ABOVE quote */}
+            <p
+              className="font-bold text-base text-center mb-1 mt-4"
+              style={{ color: 'hsl(20, 40%, 12%)' }}
+            >
+              {t.name}
+            </p>
+            <p
+              className="text-sm text-center mb-4"
+              style={{ color: 'hsl(20, 20%, 40%)' }}
+            >
+              {t.title}
+            </p>
+
+            {/* Review text */}
+            <p
+              className="text-sm leading-relaxed italic text-center 
+                px-4 mb-4"
+              style={{ color: 'hsl(20, 20%, 30%)' }}
+            >
+              {t.text}
+            </p>
+
+            {/* Stars */}
+            <div className="flex gap-1 justify-center">
               {[...Array(t.rating)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 fill-current" style={{color: 'hsl(48, 100%, 50%)'}} />
+                <Star
+                  key={i}
+                  className="w-5 h-5 fill-current"
+                  style={{ color: 'hsl(48, 100%, 50%)' }}
+                />
               ))}
             </div>
-            <p className="text-sm leading-relaxed italic my-4 text-center" style={{color: 'hsl(20, 20%, 30%)'}}>"{t.text}"</p>
-            <p className="font-bold text-base text-center" style={{color: 'hsl(20, 40%, 12%)'}}>{t.name}</p>
-            <p className="text-sm text-center" style={{color: 'hsl(20, 20%, 40%)'}}>{t.title}</p>
           </div>
 
-          {/* Right Arrow */}
-          <button onClick={next} className="absolute top-1/2 -translate-y-1/2 right-4 md:right-12 w-12 h-12 flex items-center justify-center transition-all hover:scale-110 z-10" style={{color: 'hsl(48, 100%, 50%)'}}>
-            <ChevronRight className="w-10 h-10" />
+          {/* Right arrow */}
+          <button
+            onClick={next}
+            className="absolute right-0 md:right-8 z-10 transition-all 
+              hover:scale-110"
+            style={{ color: 'hsl(48, 100%, 50%)' }}
+          >
+            <ChevronRight className="w-14 h-14 drop-shadow-lg" />
           </button>
+
         </div>
       </div>
     </section>
