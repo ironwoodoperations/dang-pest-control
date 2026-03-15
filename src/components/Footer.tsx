@@ -39,6 +39,12 @@ const serviceLinks = [
   { label: "Snake Control", slug: "snake-control" },
 ];
 
+const linkStyle = { color: 'hsl(30, 15%, 72%)' };
+const headingStyle = { color: 'hsl(var(--primary))' };
+const iconStyle = { color: 'hsl(var(--primary))' };
+const mutedStyle = { color: 'hsl(30, 10%, 55%)' };
+const socialBg = { background: 'hsl(22, 35%, 18%)', color: 'hsl(30, 15%, 72%)' };
+
 const Footer = () => {
   const [biz, setBiz] = useState<BusinessInfo>({});
   const [social, setSocial] = useState<SocialLinks>({});
@@ -62,51 +68,51 @@ const Footer = () => {
   const fullAddress = [biz.address, biz.city, biz.state, biz.zip].filter(Boolean).join(", ");
 
   return (
-    <footer className="bg-foreground text-background">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="py-12" style={{background: 'hsl(22, 45%, 10%)'}}>
+      <div className="container mx-auto px-4" style={{color: 'hsl(30, 20%, 85%)'}}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
               <img src={dangLogo} alt={companyName} className="w-40 h-auto object-contain" />
             </Link>
-            <p className="text-sm opacity-70 leading-relaxed">
+            <p className="text-sm leading-relaxed" style={{color: 'hsl(30, 15%, 72%)'}}>
               Professional pest control services protecting your home and family. Licensed, insured, and locally owned.
             </p>
             <div className="flex gap-3">
               {social.facebook && (
-                <a href={social.facebook} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors">
+                <a href={social.facebook} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110" style={socialBg}>
                   <Facebook className="w-4 h-4" />
                 </a>
               )}
               {social.instagram && (
-                <a href={social.instagram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors">
+                <a href={social.instagram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110" style={socialBg}>
                   <Instagram className="w-4 h-4" />
                 </a>
               )}
               {social.google && (
-                <a href={social.google} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors">
+                <a href={social.google} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110" style={socialBg}>
                   <Star className="w-4 h-4" />
                 </a>
               )}
               {social.yelp && (
-                <a href={social.yelp} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors">
+                <a href={social.yelp} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110" style={socialBg}>
                   <ExternalLink className="w-4 h-4" />
                 </a>
               )}
               {!social.facebook && !social.instagram && !social.google && !social.yelp && (
                 <>
-                  <span className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center opacity-40"><Facebook className="w-4 h-4" /></span>
-                  <span className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center opacity-40"><Instagram className="w-4 h-4" /></span>
+                  <span className="w-9 h-9 rounded-full flex items-center justify-center opacity-40" style={socialBg}><Facebook className="w-4 h-4" /></span>
+                  <span className="w-9 h-9 rounded-full flex items-center justify-center opacity-40" style={socialBg}><Instagram className="w-4 h-4" /></span>
                 </>
               )}
             </div>
             {/* Trust badges */}
             <div className="flex gap-3 pt-2">
-              <a href="https://www.bbb.org/us/tx/tyler/profile/pest-control/dang-pest-control-1075-28152342" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors" title="BBB Accredited">
+              <a href="https://www.bbb.org/us/tx/tyler/profile/pest-control/dang-pest-control-1075-28152342" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110" style={socialBg} title="BBB Accredited">
                 <ShieldCheck className="w-4 h-4" />
               </a>
-              <a href="https://www.tylertexas.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors" title="Tyler Chamber of Commerce">
+              <a href="https://www.tylertexas.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110" style={socialBg} title="Tyler Chamber of Commerce">
                 <Landmark className="w-4 h-4" />
               </a>
             </div>
@@ -114,11 +120,11 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h4 className="font-body font-bold text-sm uppercase tracking-wider mb-4 opacity-60">Services</h4>
+            <h4 className="text-comic text-base mb-4" style={headingStyle}>Services</h4>
             <ul className="space-y-2">
               {serviceLinks.map((s) => (
                 <li key={s.slug}>
-                  <Link to={`/${s.slug}`} className="text-sm opacity-70 hover:opacity-100 transition-opacity">
+                  <Link to={`/${s.slug}`} className="text-sm block mb-2 transition-colors hover:text-primary" style={linkStyle}>
                     {s.label}
                   </Link>
                 </li>
@@ -128,53 +134,57 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-body font-bold text-sm uppercase tracking-wider mb-4 opacity-60">Company</h4>
+            <h4 className="text-comic text-base mb-4" style={headingStyle}>Company</h4>
             <ul className="space-y-2">
-              <li><Link to="/" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Home</Link></li>
-              <li><Link to="/about" className="text-sm opacity-70 hover:opacity-100 transition-opacity">About Us</Link></li>
-              <li><Link to="/quote" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Get a Quote</Link></li>
-              <li><Link to="/contact" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Contact</Link></li>
-              <li><Link to="/service-area" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Service Area</Link></li>
-              <li><Link to="/reviews" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Reviews</Link></li>
-              <li><Link to="/blog" className="text-sm opacity-70 hover:opacity-100 transition-opacity">Blog</Link></li>
-              <li><Link to="/faq" className="text-sm opacity-70 hover:opacity-100 transition-opacity">FAQ</Link></li>
+              <li><Link to="/" className="text-sm block mb-2 transition-colors hover:text-primary" style={linkStyle}>Home</Link></li>
+              <li><Link to="/about" className="text-sm block mb-2 transition-colors hover:text-primary" style={linkStyle}>About Us</Link></li>
+              <li><Link to="/quote" className="text-sm block mb-2 transition-colors hover:text-primary" style={linkStyle}>Get a Quote</Link></li>
+              <li><Link to="/contact" className="text-sm block mb-2 transition-colors hover:text-primary" style={linkStyle}>Contact</Link></li>
+              <li><Link to="/service-area" className="text-sm block mb-2 transition-colors hover:text-primary" style={linkStyle}>Service Area</Link></li>
+              <li><Link to="/reviews" className="text-sm block mb-2 transition-colors hover:text-primary" style={linkStyle}>Reviews</Link></li>
+              <li><Link to="/blog" className="text-sm block mb-2 transition-colors hover:text-primary" style={linkStyle}>Blog</Link></li>
+              <li><Link to="/faq" className="text-sm block mb-2 transition-colors hover:text-primary" style={linkStyle}>FAQ</Link></li>
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="font-body font-bold text-sm uppercase tracking-wider mb-4 opacity-60">Contact</h4>
+            <h4 className="text-comic text-base mb-4" style={headingStyle}>Contact</h4>
             <ul className="space-y-3">
               {biz.phone && (
                 <li>
-                  <a href={`tel:${biz.phone}`} className="flex items-center gap-2 text-sm opacity-70 hover:opacity-100 transition-opacity">
-                    <Phone className="w-4 h-4 shrink-0" /> {biz.phone}
+                  <a href={`tel:${biz.phone}`} className="flex items-center gap-2 text-sm font-bold hover:brightness-110 transition-all" style={{color: 'hsl(var(--primary))'}}>
+                    <Phone className="w-4 h-4 flex-shrink-0" style={iconStyle} /> {biz.phone}
                   </a>
                 </li>
               )}
               {biz.email && (
                 <li>
-                  <a href={`mailto:${biz.email}`} className="flex items-center gap-2 text-sm opacity-70 hover:opacity-100 transition-opacity">
-                    <Mail className="w-4 h-4 shrink-0" /> {biz.email}
+                  <a href={`mailto:${biz.email}`} className="flex items-center gap-2 text-sm transition-colors hover:text-primary" style={linkStyle}>
+                    <Mail className="w-4 h-4 flex-shrink-0" style={iconStyle} /> {biz.email}
                   </a>
                 </li>
               )}
               {fullAddress && (
-                <li className="flex items-start gap-2 text-sm opacity-70">
-                  <MapPin className="w-4 h-4 shrink-0 mt-0.5" /> {fullAddress}
+                <li className="flex items-start gap-2">
+                  <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" style={iconStyle} />
+                  <span className="text-sm" style={linkStyle}>{fullAddress}</span>
                 </li>
               )}
               {biz.hours && (
-                <li className="flex items-start gap-2 text-sm opacity-70">
-                  <Clock className="w-4 h-4 shrink-0 mt-0.5" /> {biz.hours}
+                <li className="flex items-start gap-2">
+                  <Clock className="w-4 h-4 flex-shrink-0 mt-0.5" style={iconStyle} />
+                  <span className="text-sm" style={linkStyle}>{biz.hours}</span>
                 </li>
               )}
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-background/10 mt-10 pt-6 text-center text-xs opacity-50">
+        <div className="mt-10 pt-6 text-center text-xs" style={{borderTop: '1px solid hsl(22, 25%, 20%)', color: 'hsl(30, 10%, 55%)'}}>
           © {new Date().getFullYear()} {companyName}. All rights reserved.
+          <span className="mx-2">·</span>
+          <Link to="/accessibility" className="hover:text-primary transition-colors" style={mutedStyle}>Accessibility</Link>
         </div>
       </div>
     </footer>
