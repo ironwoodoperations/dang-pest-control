@@ -186,7 +186,7 @@
   }
 
   .navbar-link {
-    @apply px-3 py-1.5 text-xs font-bold rounded-full transition-colors;
+    @apply px-4 py-2 text-sm font-bold rounded-full transition-colors;
     color: hsl(var(--foreground));
   }
 
