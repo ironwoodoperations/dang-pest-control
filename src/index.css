@@ -184,14 +184,16 @@
   }
 
   .navbar-pill {
-    background: hsl(var(--yellow-cta));
+    background: hsl(45, 100%, 51%);
     border-radius: 9999px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
   }
 
   .navbar-link {
-    @apply px-4 py-2 text-sm font-bold rounded-full transition-colors;
-    color: hsl(var(--foreground));
+    @apply px-4 py-2 rounded-full transition-colors;
+    color: hsl(20, 40%, 12%);
+    font-weight: 700;
+    font-size: 0.95rem;
   }
 
   .navbar-link:hover {
