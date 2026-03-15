@@ -51,7 +51,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
   };
 
   return (
-    <section className="hero-bg text-white py-14 md:py-20 relative overflow-hidden">
+    <section className="hero-bg text-white pt-8 pb-0 relative overflow-hidden">
       <div className="mx-auto max-w-[1400px] px-4 relative z-10">
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
           <div>
@@ -71,7 +71,10 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
           </div>
 
           <HolidayVideoWrapper>
-            <div className="relative rounded-2xl overflow-hidden aspect-video border-4 border-[hsl(185,100%,45%)] shadow-[0_0_30px_hsl(185,100%,45%,0.5)]">
+            <div
+              className="relative rounded-2xl overflow-hidden aspect-video border-4 shadow-xl"
+              style={{ borderColor: 'hsl(185, 100%, 45%)' }}
+            >
               {!isPlaying ? (
                 <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
                   <img

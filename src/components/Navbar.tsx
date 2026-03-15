@@ -145,7 +145,7 @@ const Navbar = () => {
         </div>
       </header>
 
-      <header className="hero-bg relative z-50 pt-14 pb-0">
+      <header className="hero-bg relative z-50 pt-0 pb-0">
       <div className="mx-auto max-w-[1400px] px-4">
         <nav className="navbar-pill flex items-center justify-between 
           px-6 md:px-8 py-3.5 relative z-0">
@@ -212,10 +212,15 @@ const Navbar = () => {
           </div>
 
           {/* Center logo */}
-          <Link to="/" className="hidden md:block absolute left-1/2 
-            -translate-x-1/2 -top-10 z-10">
-            <img src={dangLogo} alt="Dang Pest Control"
-              className="w-60 h-auto drop-shadow-lg" />
+          <Link
+            to="/"
+            className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-12 z-10"
+          >
+            <img
+              src={dangLogo}
+              alt="Dang Pest Control"
+              className="w-64 h-auto drop-shadow-lg"
+            />
           </Link>
 
           {/* Right: phone + CTA */}
@@ -229,7 +234,7 @@ const Navbar = () => {
                 <div className="text-sm font-bold">(903) 871-0550</div>
               </div>
             </a>
-            <Link to="/quote" className="btn-cta-cyan text-base px-7 py-3">
+            <Link to="/quote" className="btn-cta-cyan text-base px-7 py-4">
               Get Your Quote
             </Link>
           </div>
