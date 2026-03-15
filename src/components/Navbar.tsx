@@ -36,7 +36,7 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
-    <header className="hero-bg relative z-50 pt-14 pb-0">
+    <header className="hero-bg relative z-50 pt-16 pb-0">
       {/* Yellow pill navbar with logo inline */}
       <div className="mx-auto max-w-[1400px] px-4">
         <nav className="navbar-pill flex items-center justify-between px-6 md:px-8 py-3.5 relative z-0">
@@ -109,24 +109,24 @@ const Navbar = () => {
           </div>
 
           {/* Center logo - overlaps above the pill */}
-          <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-10 z-10">
+          <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 -top-14 z-10">
             <img
               src={dangLogo}
               alt="Dang Pest Control"
-              className="w-60 h-auto drop-shadow-lg"
+              className="w-72 h-auto drop-shadow-xl"
             />
           </Link>
 
           {/* Right side: phone + CTA */}
           <div className="hidden md:flex items-center gap-5">
-            <a href="tel:9038710550" className="flex items-center gap-2 text-foreground font-bold">
-              <Phone className="w-5 h-5" />
+            <a href="tel:9038710550" className="flex items-center gap-2" style={{color: 'hsl(20, 40%, 12%)'}}>
+              <Phone className="w-5 h-5" style={{color: 'hsl(20, 40%, 12%)'}} />
               <div className="leading-tight">
-                <div className="text-xs font-semibold">Call us</div>
-                <div className="text-sm font-bold">(903) 871-0550</div>
+                <div className="text-xs font-semibold" style={{color: 'hsl(20, 40%, 12%)'}}>Call us</div>
+                <div className="text-sm font-bold" style={{color: 'hsl(20, 40%, 12%)'}}>(903) 871-0550</div>
               </div>
             </a>
-            <Link to="/quote" className="btn-cta-cyan text-base px-7 py-3">
+            <Link to="/quote" className="inline-flex items-center justify-center font-bold rounded-full px-7 py-2.5 text-sm text-white transition-all duration-200 hover:brightness-110" style={{background: 'hsl(185, 100%, 35%)'}}>
               Get Your Quote
             </Link>
           </div>
@@ -143,7 +143,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-card border-b border-border px-4 pb-4 mx-8 rounded-b-2xl shadow-lg">
+        <div className="md:hidden bg-white border-b border-yellow-200 px-4 pb-4 mx-4 rounded-b-2xl shadow-lg">
           <button
             className="w-full text-left py-2 text-sm font-semibold flex items-center justify-between"
             onClick={() => setOpenDropdown(openDropdown === "pests" ? null : "pests")}
