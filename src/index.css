@@ -121,7 +121,11 @@
 
 @layer components {
   .hero-bg {
-    background: hsl(var(--primary));
+    background-color: hsl(var(--primary));
+    background-image: url('/hero-streaks.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     position: relative;
   }
 
@@ -129,19 +133,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background:
-      repeating-linear-gradient(
-        32deg,
-        transparent 0 140px,
-        hsl(var(--orange-light) / 0.14) 140px 144px,
-        transparent 144px 300px
-      ),
-      repeating-linear-gradient(
-        -32deg,
-        transparent 0 170px,
-        hsl(var(--orange-light) / 0.1) 170px 173px,
-        transparent 173px 340px
-      );
+    background: linear-gradient(hsl(var(--primary) / 0.08), hsl(var(--primary) / 0.08));
     pointer-events: none;
   }
 
