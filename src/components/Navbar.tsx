@@ -45,283 +45,161 @@ const Navbar = () => {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-[100] bg-white 
-        shadow-sm transition-all duration-300 
-        ${scrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
+      {/* Sticky scrolled navbar */}
+      <header className={`fixed top-0 left-0 right-0 z-[100] bg-white shadow-sm transition-all duration-300 ${scrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
         <div className="mx-auto max-w-[1400px] px-4">
-          <div className="flex items-center justify-between px-6 md:px-8 
-            py-3.5 relative">
-
-          {/* Left nav links */}
-          <div className="hidden md:flex items-center gap-2">
-            <div className="relative"
-              onMouseEnter={() => setOpenDropdown("pests")}
-              onMouseLeave={() => setOpenDropdown(null)}>
-              <button className="navbar-link flex items-center gap-1">
-                Pests <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-              {openDropdown === "pests" && (
-                <div className="navbar-dropdown">
-                  {pestLinks.map((l) => (
-                    <Link key={l.href} to={l.href}
-                      className="navbar-dropdown-item">{l.label}</Link>
-                  ))}
-                </div>
-              )}
-            </div>
-            <Link to="/mosquito-control" className="navbar-link">
-              Mosquitos
-            </Link>
-            <div className="relative"
-              onMouseEnter={() => setOpenDropdown("termites")}
-              onMouseLeave={() => setOpenDropdown(null)}>
-              <button className="navbar-link flex items-center gap-1">
-                Termites <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-              {openDropdown === "termites" && (
-                <div className="navbar-dropdown">
-                  {termiteLinks.map((l) => (
-                    <Link key={l.href} to={l.href}
-                      className="navbar-dropdown-item">{l.label}</Link>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="relative"
-              onMouseEnter={() => setOpenDropdown("about")}
-              onMouseLeave={() => setOpenDropdown(null)}>
-              <button className="navbar-link flex items-center gap-1">
-                About <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-              {openDropdown === "about" && (
-                <div className="navbar-dropdown">
-                  {aboutLinks.map((l) => (
-                    <Link key={l.href} to={l.href}
-                      className="navbar-dropdown-item">{l.label}</Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Center small logo */}
-          <Link to="/" className="hidden md:block absolute left-1/2 
-            -translate-x-1/2">
-            <img src={dangLogo} alt="Dang Pest Control"
-              className="w-16 h-auto drop-shadow-md" />
-          </Link>
-
-          {/* Mobile small logo */}
-          <Link to="/" className="md:hidden">
-            <img src={dangLogo} alt="Dang Pest Control"
-              className="w-12 h-auto" />
-          </Link>
-
-          {/* Right: phone + CTA */}
-          <div className="hidden md:flex items-center gap-5">
-            <a href="tel:9038710550"
-              className="flex items-center gap-2 font-bold"
-              style={{ color: 'hsl(20, 40%, 12%)' }}>
-              <Phone className="w-4 h-4" />
-              <div className="leading-tight">
-                <div className="text-xs font-semibold">Call us</div>
-                <div className="text-sm font-bold">(903) 871-0550</div>
+          <div className="flex items-center justify-between px-6 md:px-8 py-3.5 relative">
+            <div className="hidden md:flex items-center gap-2">
+              <div className="relative" onMouseEnter={() => setOpenDropdown("pests")} onMouseLeave={() => setOpenDropdown(null)}>
+                <button className="navbar-link flex items-center gap-1">Pests <ChevronDown className="w-3.5 h-3.5" /></button>
+                {openDropdown === "pests" && (
+                  <div className="navbar-dropdown">
+                    {pestLinks.map((l) => <Link key={l.href} to={l.href} className="navbar-dropdown-item">{l.label}</Link>)}
+                  </div>
+                )}
               </div>
-            </a>
-            <Link to="/quote" className="btn-cta-cyan text-sm px-5 py-2">
-              Get Your Quote
+              <Link to="/mosquito-control" className="navbar-link">Mosquitos</Link>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("termites")} onMouseLeave={() => setOpenDropdown(null)}>
+                <button className="navbar-link flex items-center gap-1">Termites <ChevronDown className="w-3.5 h-3.5" /></button>
+                {openDropdown === "termites" && (
+                  <div className="navbar-dropdown">
+                    {termiteLinks.map((l) => <Link key={l.href} to={l.href} className="navbar-dropdown-item">{l.label}</Link>)}
+                  </div>
+                )}
+              </div>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("about")} onMouseLeave={() => setOpenDropdown(null)}>
+                <button className="navbar-link flex items-center gap-1">About <ChevronDown className="w-3.5 h-3.5" /></button>
+                {openDropdown === "about" && (
+                  <div className="navbar-dropdown">
+                    {aboutLinks.map((l) => <Link key={l.href} to={l.href} className="navbar-dropdown-item">{l.label}</Link>)}
+                  </div>
+                )}
+              </div>
+            </div>
+            <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2">
+              <img src={dangLogo} alt="Dang Pest Control" className="w-16 h-auto drop-shadow-md" />
             </Link>
-          </div>
-
-          {/* Mobile toggle */}
-          <button className="md:hidden"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            style={{ color: 'hsl(20, 40%, 12%)' }}>
-            {mobileOpen
-              ? <X className="w-6 h-6" />
-              : <Menu className="w-6 h-6" />}
-          </button>
+            <Link to="/" className="md:hidden">
+              <img src={dangLogo} alt="Dang Pest Control" className="w-12 h-auto" />
+            </Link>
+            <div className="hidden md:flex items-center gap-5">
+              <a href="tel:9038710550" className="flex items-center gap-2 font-bold" style={{ color: 'hsl(20, 40%, 12%)' }}>
+                <Phone className="w-4 h-4" />
+                <div className="leading-tight">
+                  <div className="text-xs font-semibold">Call us</div>
+                  <div className="text-sm font-bold">(903) 871-0550</div>
+                </div>
+              </a>
+              <Link to="/quote" className="btn-cta-cyan text-sm px-5 py-2">Get Your Quote</Link>
+            </div>
+            <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)} style={{ color: 'hsl(20, 40%, 12%)' }}>
+              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
       </header>
 
-      <header className="hero-bg relative z-50 pt-14 pb-0">
-      <div className="mx-auto max-w-[1400px] px-4">
-        <nav className="navbar-pill flex items-center justify-between 
-          px-6 md:px-8 py-3.5 relative z-0">
+      {/* Hero navbar - yellow pill with logo floating above */}
+      <header className="hero-bg relative z-50" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+        <div className="mx-auto max-w-[1400px] px-4">
+          <nav className="navbar-pill flex items-center justify-between px-6 md:px-10 py-4 relative">
 
-          {/* Desktop nav links */}
-          <div className="hidden md:flex items-center gap-2">
-            <div className="relative"
-              onMouseEnter={() => setOpenDropdown("pests")}
-              onMouseLeave={() => setOpenDropdown(null)}>
-              <button className="navbar-link flex items-center gap-1">
-                Pests <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-              {openDropdown === "pests" && (
-                <div className="navbar-dropdown">
-                  {pestLinks.map((l) => (
-                    <Link key={l.href} to={l.href}
-                      className="navbar-dropdown-item">
-                      {l.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <Link to="/mosquito-control" className="navbar-link">
-              Mosquitos
-            </Link>
-
-            <div className="relative"
-              onMouseEnter={() => setOpenDropdown("termites")}
-              onMouseLeave={() => setOpenDropdown(null)}>
-              <button className="navbar-link flex items-center gap-1">
-                Termites <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-              {openDropdown === "termites" && (
-                <div className="navbar-dropdown">
-                  {termiteLinks.map((l) => (
-                    <Link key={l.href} to={l.href}
-                      className="navbar-dropdown-item">
-                      {l.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="relative"
-              onMouseEnter={() => setOpenDropdown("about")}
-              onMouseLeave={() => setOpenDropdown(null)}>
-              <button className="navbar-link flex items-center gap-1">
-                About <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-              {openDropdown === "about" && (
-                <div className="navbar-dropdown">
-                  {aboutLinks.map((l) => (
-                    <Link key={l.href} to={l.href}
-                      className="navbar-dropdown-item">
-                      {l.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Center logo */}
-          <Link to="/" className="hidden md:block absolute left-1/2 
-            -translate-x-1/2 -top-20 z-10">
-            <img src={dangLogo} alt="Dang Pest Control"
-              className="w-80 h-auto drop-shadow-lg" />
-          </Link>
-
-          {/* Right: phone + CTA */}
-          <div className="hidden md:flex items-center gap-5">
-            <a href="tel:9038710550"
-              className="flex items-center gap-2 font-bold"
-              style={{ color: 'hsl(20, 40%, 12%)' }}>
-              <Phone className="w-5 h-5" />
-              <div className="leading-tight">
-                <div className="text-xs font-semibold">Call us</div>
-                <div className="text-sm font-bold">(903) 871-0550</div>
+            {/* Left nav */}
+            <div className="hidden md:flex items-center gap-2">
+              <div className="relative" onMouseEnter={() => setOpenDropdown("pests")} onMouseLeave={() => setOpenDropdown(null)}>
+                <button className="navbar-link flex items-center gap-1">Pests <ChevronDown className="w-3.5 h-3.5" /></button>
+                {openDropdown === "pests" && (
+                  <div className="navbar-dropdown">
+                    {pestLinks.map((l) => <Link key={l.href} to={l.href} className="navbar-dropdown-item">{l.label}</Link>)}
+                  </div>
+                )}
               </div>
-            </a>
-            <Link to="/quote" className="btn-cta-cyan text-base px-7 py-3">
-              Get Your Quote
+              <Link to="/mosquito-control" className="navbar-link">Mosquitos</Link>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("termites")} onMouseLeave={() => setOpenDropdown(null)}>
+                <button className="navbar-link flex items-center gap-1">Termites <ChevronDown className="w-3.5 h-3.5" /></button>
+                {openDropdown === "termites" && (
+                  <div className="navbar-dropdown">
+                    {termiteLinks.map((l) => <Link key={l.href} to={l.href} className="navbar-dropdown-item">{l.label}</Link>)}
+                  </div>
+                )}
+              </div>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("about")} onMouseLeave={() => setOpenDropdown(null)}>
+                <button className="navbar-link flex items-center gap-1">About <ChevronDown className="w-3.5 h-3.5" /></button>
+                {openDropdown === "about" && (
+                  <div className="navbar-dropdown">
+                    {aboutLinks.map((l) => <Link key={l.href} to={l.href} className="navbar-dropdown-item">{l.label}</Link>)}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Logo — centered, floating above pill */}
+            <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 z-10" style={{ top: '-70px' }}>
+              <img src={dangLogo} alt="Dang Pest Control" style={{ width: '280px' }} className="h-auto drop-shadow-lg" />
             </Link>
-          </div>
 
-          {/* Mobile toggle */}
-          <button className="md:hidden"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            style={{ color: 'hsl(20, 40%, 12%)' }}>
-            {mobileOpen
-              ? <X className="w-6 h-6" />
-              : <Menu className="w-6 h-6" />}
-          </button>
-
-          <span className="md:hidden text-comic text-lg"
-            style={{ color: 'hsl(20, 40%, 12%)' }}>
-            DANG!
-          </span>
-        </nav>
-      </div>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-white border-b border-yellow-200 
-          px-4 pb-4 mx-4 rounded-b-2xl shadow-lg">
-          <button className="w-full text-left py-2 text-sm font-bold 
-            flex justify-between"
-            onClick={() => setOpenDropdown(
-              openDropdown === "pests" ? null : "pests"
-            )}>
-            Pests <ChevronDown className={`w-4 h-4 transition-transform 
-              ${openDropdown === "pests" ? "rotate-180" : ""}`} />
-          </button>
-          {openDropdown === "pests" && (
-            <div className="pl-4">
-              {pestLinks.map((l) => (
-                <Link key={l.href} to={l.href}
-                  className="block py-1.5 text-sm text-muted-foreground 
-                  hover:text-primary"
-                  onClick={() => setMobileOpen(false)}>
-                  {l.label}
-                </Link>
-              ))}
+            {/* Right: phone + CTA */}
+            <div className="hidden md:flex items-center gap-5">
+              <a href="tel:9038710550" className="flex items-center gap-2 font-bold" style={{ color: 'hsl(20, 40%, 12%)' }}>
+                <Phone className="w-5 h-5" />
+                <div className="leading-tight">
+                  <div className="text-xs font-semibold">Call us</div>
+                  <div className="text-sm font-bold">(903) 871-0550</div>
+                </div>
+              </a>
+              <Link
+                to="/quote"
+                className="font-bold transition-all duration-200"
+                style={{
+                  backgroundColor: 'hsl(185, 65%, 42%)',
+                  color: 'white',
+                  borderRadius: '146px',
+                  padding: '10px 28px',
+                  fontSize: '15px',
+                }}
+              >
+                Get Your Quote
+              </Link>
             </div>
-          )}
-          <Link to="/mosquito-control"
-            className="block py-2 text-sm font-bold"
-            onClick={() => setMobileOpen(false)}>
-            Mosquitos
-          </Link>
-          <Link to="/termite-inspections"
-            className="block py-2 text-sm font-bold"
-            onClick={() => setMobileOpen(false)}>
-            Termites
-          </Link>
-          <button className="w-full text-left py-2 text-sm font-bold 
-            flex justify-between"
-            onClick={() => setOpenDropdown(
-              openDropdown === "about" ? null : "about"
-            )}>
-            About <ChevronDown className={`w-4 h-4 transition-transform 
-              ${openDropdown === "about" ? "rotate-180" : ""}`} />
-          </button>
-          {openDropdown === "about" && (
-            <div className="pl-4">
-              {aboutLinks.map((l) => (
-                <Link key={l.href} to={l.href}
-                  className="block py-1.5 text-sm text-muted-foreground 
-                  hover:text-primary"
-                  onClick={() => setMobileOpen(false)}>
-                  {l.label}
-                </Link>
-              ))}
-            </div>
-          )}
-          <Link to="/quote"
-            className="block py-2 text-sm font-bold text-primary"
-            onClick={() => setMobileOpen(false)}>
-            Get Your Quote
-          </Link>
-          <a href="tel:9038710550"
-            className="flex items-center gap-1.5 py-2 text-sm font-bold 
-            text-primary">
-            <Phone className="w-4 h-4" /> (903) 871-0550
-          </a>
-          <a href="sms:9038710550"
-            className="flex items-center gap-1.5 py-2 text-sm font-bold 
-            text-primary">
-            Text Us
-          </a>
+
+            {/* Mobile */}
+            <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)} style={{ color: 'hsl(20, 40%, 12%)' }}>
+              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+            <span className="md:hidden text-comic text-lg" style={{ color: 'hsl(20, 40%, 12%)' }}>DANG!</span>
+          </nav>
         </div>
-      )}
-    </header></>
+
+        {/* Mobile menu */}
+        {mobileOpen && (
+          <div className="md:hidden bg-white border-b border-yellow-200 px-4 pb-4 mx-4 rounded-b-2xl shadow-lg">
+            <button className="w-full text-left py-2 text-sm font-bold flex justify-between"
+              onClick={() => setOpenDropdown(openDropdown === "pests" ? null : "pests")}>
+              Pests <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === "pests" ? "rotate-180" : ""}`} />
+            </button>
+            {openDropdown === "pests" && (
+              <div className="pl-4">
+                {pestLinks.map((l) => <Link key={l.href} to={l.href} className="block py-1.5 text-sm text-muted-foreground hover:text-primary" onClick={() => setMobileOpen(false)}>{l.label}</Link>)}
+              </div>
+            )}
+            <Link to="/mosquito-control" className="block py-2 text-sm font-bold" onClick={() => setMobileOpen(false)}>Mosquitos</Link>
+            <Link to="/termite-inspections" className="block py-2 text-sm font-bold" onClick={() => setMobileOpen(false)}>Termites</Link>
+            <button className="w-full text-left py-2 text-sm font-bold flex justify-between"
+              onClick={() => setOpenDropdown(openDropdown === "about" ? null : "about")}>
+              About <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === "about" ? "rotate-180" : ""}`} />
+            </button>
+            {openDropdown === "about" && (
+              <div className="pl-4">
+                {aboutLinks.map((l) => <Link key={l.href} to={l.href} className="block py-1.5 text-sm text-muted-foreground hover:text-primary" onClick={() => setMobileOpen(false)}>{l.label}</Link>)}
+              </div>
+            )}
+            <Link to="/quote" className="block py-2 text-sm font-bold text-primary" onClick={() => setMobileOpen(false)}>Get Your Quote</Link>
+            <a href="tel:9038710550" className="flex items-center gap-1.5 py-2 text-sm font-bold text-primary"><Phone className="w-4 h-4" /> (903) 871-0550</a>
+            <a href="sms:9038710550" className="flex items-center gap-1.5 py-2 text-sm font-bold text-primary">Text Us</a>
+          </div>
+        )}
+      </header>
+    </>
   );
 };
 

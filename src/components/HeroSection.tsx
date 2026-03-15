@@ -12,7 +12,6 @@ interface HeroSectionProps {
   videoEnd?: string;
 }
 
-// Extract YouTube video ID from various YouTube URL formats
 const extractYouTubeId = (url: string): string | null => {
   if (!url) return null;
   const shortsMatch = url.match(/youtube\.com\/shorts\/([^?&/]+)/);
@@ -51,43 +50,67 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
   };
 
   return (
-    <section
-      className="hero-bg text-white py-14 md:py-20 relative overflow-hidden"
-      style={{ minHeight: "100vh", paddingBottom: "120px" }}
-    >
-      <div className="mx-auto max-w-[1400px] px-4 relative z-10">
-        <div
-          className="grid md:grid-cols-2 gap-8 md:gap-10 items-center"
-          style={{ paddingTop: "320px" }}
-        >
+    <section className="hero-bg text-white relative overflow-hidden" style={{ paddingTop: '40px', paddingBottom: '100px' }}>
+      <div className="mx-auto max-w-[1400px] px-8 relative z-10">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+
+          {/* Left: text content */}
           <div>
             <h1
-              className="text-comic text-7xl md:text-8xl font-extrabold tracking-wide leading-[0.9] mb-6 italic"
-              style={{ color: "hsl(48, 100%, 50%)" }}
+              className="text-comic italic uppercase"
+              style={{
+                color: 'hsl(48, 100%, 50%)',
+                fontSize: '46px',
+                fontWeight: '400',
+                lineHeight: '1.05',
+                marginBottom: '30px',
+              }}
             >
               Super Powered<br />
               Pest Control
             </h1>
-            <p className="text-[15px] md:text-base mb-8 font-body leading-relaxed max-w-lg text-white opacity-95">
+            <p style={{ fontSize: '16px', lineHeight: '1.7', marginBottom: '32px', color: 'white', maxWidth: '480px' }}
+              className="font-body">
               We are a hands-on, personable, relationship-based company. We live, work, worship, and play in the Tyler community. Our innovative pest control practices make us stand out amongst our competitors. Our goal is to be an active part in making our community and the lives of our clients better. We stand by our work and guarantee satisfaction.
             </p>
-            <Link to="/quote" className="inline-flex items-center justify-center font-bold rounded-full px-8 py-3 text-base border-2 border-white text-white hover:bg-white hover:text-primary transition-all duration-200">
+            <Link
+              to="/quote"
+              className="inline-flex items-center justify-center font-bold transition-all duration-200 hover:bg-white hover:text-primary"
+              style={{
+                border: '2px solid white',
+                color: 'white',
+                backgroundColor: 'transparent',
+                borderRadius: '146px',
+                padding: '12px 32px',
+                fontSize: '15px',
+              }}
+            >
               Get Your Quote
             </Link>
           </div>
 
+          {/* Right: video */}
           <HolidayVideoWrapper>
-            <div className="relative rounded-2xl overflow-hidden aspect-video border-4 border-[hsl(185,100%,45%)] shadow-[0_0_30px_hsl(185,100%,45%,0.5)] max-w-[85%] mx-auto">
+            <div
+              className="relative rounded-2xl overflow-hidden"
+              style={{
+                aspectRatio: '16/9',
+                border: '4px solid hsl(185, 100%, 45%)',
+                boxShadow: '0 0 30px hsla(185, 100%, 45%, 0.5)',
+                maxWidth: '90%',
+                marginLeft: 'auto',
+              }}
+            >
               {!isPlaying ? (
                 <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
                   <img
-                    src="/video-poster.webp"
+                    src="https://www.dangpestcontrol.com/wp-content/uploads/2025/06/dang-pest-homepage-img-1.webp"
                     alt="Meet Kirk - Dang Pest Control"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
-                    <div className="w-16 h-16 rounded-full bg-secondary/80 flex items-center justify-center shadow-lg">
-                      <Play className="w-8 h-8 text-secondary-foreground ml-1" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-colors">
+                    <div className="w-16 h-16 rounded-full bg-white/80 flex items-center justify-center shadow-lg">
+                      <Play className="w-8 h-8 text-gray-800 ml-1" />
                     </div>
                   </div>
                 </div>
@@ -106,8 +129,9 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
                       ref={videoRef}
                       className="w-full h-full object-cover"
                       controls
+                      autoPlay
                       playsInline
-                      poster="/video-poster.webp"
+                      poster="https://www.dangpestcontrol.com/wp-content/uploads/2025/06/dang-pest-homepage-img-1.webp"
                     >
                       <source src={videoSrc} type="video/mp4" />
                     </video>
@@ -116,6 +140,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
               )}
             </div>
           </HolidayVideoWrapper>
+
         </div>
       </div>
     </section>
