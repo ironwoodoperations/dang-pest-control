@@ -4,7 +4,14 @@ import interiorService from "@/assets/interior-service.jpg";
 
 const ExpertSection = () => {
   return (
-    <section className="py-16 bg-white">
+    <section 
+      className="py-16" 
+      style={{
+        background: '#ffffff',
+        backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)',
+        backgroundSize: '24px 24px'
+      }}
+    >
       <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
         <div>
           <img
