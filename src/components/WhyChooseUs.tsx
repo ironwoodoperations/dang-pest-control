@@ -30,21 +30,16 @@ const reasons = [
 
 const WhyChooseUs = () => {
   return (
-    <section className="section-orange text-primary-foreground py-16">
+    <section className="py-16" style={{background: 'hsl(30, 40%, 97%)'}}>
       <div className="container mx-auto px-4">
-        <h2 className="text-comic text-3xl md:text-4xl text-center mb-4">Why Choose Dang Pest Control?</h2>
-        <p className="text-center opacity-90 mb-12 max-w-2xl mx-auto">
-          We know you have options when it comes to pest control, but here's what sets us apart.
-        </p>
+        <h2 className="text-comic text-3xl md:text-5xl text-center mb-12" style={{color: 'hsl(20, 40%, 12%)'}}>Why Choose Dang Pest Control?</h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {reasons.map((reason) => (
-            <div key={reason.title} className="flex gap-4">
-              <reason.icon className="w-8 h-8 flex-shrink-0 text-secondary" />
-              <div>
-                <h3 className="text-comic text-lg mb-2">{reason.title}</h3>
-                <p className="text-sm opacity-90">{reason.description}</p>
-              </div>
+            <div key={reason.title} className="flex flex-col items-center text-center gap-3 p-6 bg-white rounded-2xl shadow-sm border border-orange-100">
+              <reason.icon className="w-12 h-12 text-primary flex-shrink-0" />
+              <h3 className="text-comic text-lg" style={{color: 'hsl(20, 40%, 12%)'}}>{reason.title}</h3>
+              <p className="text-sm leading-relaxed" style={{color: 'hsl(20, 20%, 40%)'}}>{reason.description}</p>
             </div>
           ))}
         </div>

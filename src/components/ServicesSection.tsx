@@ -17,24 +17,24 @@ const services = [
 
 const ServicesSection = () => {
   return (
-    <section className="py-16 bg-muted">
+    <section className="bg-white py-16">
       <div className="container mx-auto px-4">
-        <h2 className="text-comic text-3xl md:text-4xl text-center mb-4">Our Pest Control Services</h2>
-        <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+        <h2 className="text-comic text-3xl md:text-5xl text-center mb-4" style={{color: 'hsl(20, 40%, 12%)'}}>Our Pest Control Services</h2>
+        <p className="text-center text-base mb-12 max-w-2xl mx-auto" style={{color: 'hsl(20, 20%, 35%)'}}>
           Using the latest industry techniques, we deliver tailored treatment plans that are highly effective while remaining friendly for your family, pets, and the environment.
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {services.map((service) => (
-            <Link key={service.slug} to={`/${service.slug}`} className="card-service group">
+            <Link key={service.slug} to={`/${service.slug}`} className="bg-white rounded-2xl p-6 shadow-sm border border-orange-100 hover:border-primary hover:shadow-md transition-all duration-200 text-center group">
               <div className="text-4xl mb-3">{service.icon}</div>
-              <h3 className="text-comic text-sm md:text-base">{service.name}</h3>
+              <h3 className="text-comic text-sm md:text-base" style={{color: 'hsl(20, 40%, 12%)'}}>{service.name}</h3>
             </Link>
           ))}
         </div>
 
-        <div className="text-center mt-10">
-          <Link to="/quote" className="btn-cta">Get Your Quote</Link>
+        <div className="text-center">
+          <Link to="/quote" className="inline-flex items-center justify-center font-bold rounded-full px-10 py-3 text-white text-base transition-all duration-200 hover:brightness-110 mt-10 mx-auto block w-fit" style={{background: 'hsl(var(--primary))'}}>Get Your Quote</Link>
         </div>
       </div>
     </section>
