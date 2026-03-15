@@ -51,7 +51,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
   };
 
   return (
-    <section className="hero-bg text-primary-foreground py-12 md:py-20 relative overflow-hidden">
+    <section className="hero-bg text-primary-foreground py-16 md:py-24 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div>
