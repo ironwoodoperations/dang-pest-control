@@ -106,7 +106,7 @@ const AboutPage = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-16 text-white text-center" style={{background: 'hsl(22, 45%, 14%)'}}>
+      <section className="py-16 text-white text-center" style={{background: 'hsl(var(--primary))'}}>
         <div className="container mx-auto px-4">
           <h2 className="text-comic text-3xl md:text-4xl mb-4 text-white">Ready to Get Started?</h2>
           <p className="opacity-90 mb-8 text-white">Contact us today for a free quote and experience the Dang difference.</p>
