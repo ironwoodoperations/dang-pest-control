@@ -36,7 +36,6 @@ const serviceLinks = [
   { label: "Roach Control", slug: "roach-control" },
   { label: "Flea & Tick", slug: "flea-tick-control" },
   { label: "Wasp & Hornet Control", slug: "wasp-hornet-control" },
-  { label: "Snake Control", slug: "snake-control" },
 ];
 
 const linkStyle = { color: 'hsl(20, 30%, 25%)' };
