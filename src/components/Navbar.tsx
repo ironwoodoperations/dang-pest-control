@@ -36,7 +36,7 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
-    <header className="sticky top-0 z-50 shadow-sm" style={{background: 'hsl(45, 100%, 51%)'}}>
+    <header className="sticky top-0 z-50 bg-white shadow-sm py-2">
       {/* Yellow pill navbar with logo inline */}
       <div className="mx-auto max-w-[1400px] px-4 py-2">
         <nav className="navbar-pill flex items-center justify-between px-6 md:px-8 py-3 relative z-0">
