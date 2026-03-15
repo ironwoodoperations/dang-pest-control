@@ -69,9 +69,9 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div>
-            <h1 className="text-comic leading-none mb-6">
-              <span className="text-4xl md:text-5xl lg:text-6xl block">Super Powered</span>
-              <span className="text-5xl md:text-6xl lg:text-7xl block text-secondary mt-1">Pest Control</span>
+            <h1 className="text-comic text-4xl md:text-5xl lg:text-6xl leading-tight mb-6">
+              Super Powered<br />
+              Pest Control
             </h1>
             <p className="text-base md:text-lg mb-8 font-body opacity-90 leading-relaxed max-w-xl">
               We are a hands-on, personable, relationship-based company. We live, work, worship, and play in the Tyler community. Our innovative pest control practices make us stand out amongst our competitors. Our goal is to be an active part in making our community and the lives of our clients better. We stand by our work and guarantee satisfaction.
