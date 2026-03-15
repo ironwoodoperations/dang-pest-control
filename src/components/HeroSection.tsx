@@ -43,46 +43,69 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
   const handlePlay = () => {
     setIsPlaying(true);
     if (!isYouTube) {
-      setTimeout(() => {
-        videoRef.current?.play();
-      }, 100);
+      setTimeout(() => { videoRef.current?.play(); }, 100);
     }
   };
 
   return (
-    <section className="hero-bg text-white relative overflow-hidden" style={{ paddingTop: '40px', paddingBottom: '100px' }}>
+    <section
+      className="hero-bg text-white relative overflow-hidden"
+      style={{ paddingTop: '60px', paddingBottom: '140px' }}
+    >
       <div className="mx-auto max-w-[1400px] px-8 relative z-10">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-
-          {/* Left: text content */}
+        <div
+          className="grid items-center"
+          style={{ gridTemplateColumns: '9fr 11fr', gap: '20px' }}
+        >
+          {/* Left: text */}
           <div>
             <h1
               className="text-comic italic uppercase"
               style={{
                 color: 'hsl(48, 100%, 50%)',
-                fontSize: '46px',
+                fontSize: 'clamp(38px, 5vw, 60px)',
                 fontWeight: '400',
-                lineHeight: '1.05',
-                marginBottom: '30px',
+                lineHeight: '1.0',
+                marginBottom: '24px',
               }}
             >
-              Super Powered<br />
-              Pest Control
+              Super Powered<br />Pest Control
             </h1>
-            <p style={{ fontSize: '16px', lineHeight: '1.7', marginBottom: '32px', color: 'white', maxWidth: '480px' }}
-              className="font-body">
+            <p
+              className="font-body"
+              style={{
+                fontSize: '16px',
+                lineHeight: '1.75',
+                marginBottom: '32px',
+                color: 'white',
+                maxWidth: '420px',
+              }}
+            >
               We are a hands-on, personable, relationship-based company. We live, work, worship, and play in the Tyler community. Our innovative pest control practices make us stand out amongst our competitors. Our goal is to be an active part in making our community and the lives of our clients better. We stand by our work and guarantee satisfaction.
             </p>
             <Link
               to="/quote"
-              className="inline-flex items-center justify-center font-bold transition-all duration-200 hover:bg-white hover:text-primary"
               style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 border: '2px solid white',
                 color: 'white',
                 backgroundColor: 'transparent',
-                borderRadius: '146px',
-                padding: '12px 32px',
+                borderRadius: '999px',
+                padding: '12px 36px',
                 fontSize: '15px',
+                fontWeight: '600',
+                textDecoration: 'none',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => {
+                (e.target as HTMLElement).style.backgroundColor = 'white';
+                (e.target as HTMLElement).style.color = 'hsl(28, 100%, 50%)';
+              }}
+              onMouseLeave={e => {
+                (e.target as HTMLElement).style.backgroundColor = 'transparent';
+                (e.target as HTMLElement).style.color = 'white';
               }}
             >
               Get Your Quote
@@ -92,25 +115,36 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
           {/* Right: video */}
           <HolidayVideoWrapper>
             <div
-              className="relative rounded-2xl overflow-hidden"
               style={{
+                position: 'relative',
+                borderRadius: '16px',
+                overflow: 'hidden',
                 aspectRatio: '16/9',
                 border: '4px solid hsl(185, 100%, 45%)',
                 boxShadow: '0 0 30px hsla(185, 100%, 45%, 0.5)',
-                maxWidth: '90%',
-                marginLeft: 'auto',
               }}
             >
               {!isPlaying ? (
-                <div className="relative w-full h-full cursor-pointer group" onClick={handlePlay}>
+                <div
+                  style={{ position: 'relative', width: '100%', height: '100%', cursor: 'pointer' }}
+                  onClick={handlePlay}
+                >
                   <img
                     src="https://www.dangpestcontrol.com/wp-content/uploads/2025/06/dang-pest-homepage-img-1.webp"
-                    alt="Meet Kirk - Dang Pest Control"
-                    className="w-full h-full object-cover"
+                    alt="Meet Kirk"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-colors">
-                    <div className="w-16 h-16 rounded-full bg-white/80 flex items-center justify-center shadow-lg">
-                      <Play className="w-8 h-8 text-gray-800 ml-1" />
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    backgroundColor: 'rgba(0,0,0,0.1)'
+                  }}>
+                    <div style={{
+                      width: '64px', height: '64px', borderRadius: '50%',
+                      backgroundColor: 'rgba(255,255,255,0.85)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                      <Play style={{ width: '28px', height: '28px', color: '#333', marginLeft: '4px' }} />
                     </div>
                   </div>
                 </div>
@@ -120,14 +154,14 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
                     <iframe
                       src={`https://www.youtube.com/embed/${youtubeId}?${buildYouTubeParams()}`}
                       title="Meet Kirk - Dang Pest Control"
-                      className="w-full h-full"
+                      style={{ width: '100%', height: '100%' }}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     />
                   ) : (
                     <video
                       ref={videoRef}
-                      className="w-full h-full object-cover"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       controls
                       autoPlay
                       playsInline
@@ -140,7 +174,6 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
               )}
             </div>
           </HolidayVideoWrapper>
-
         </div>
       </div>
     </section>

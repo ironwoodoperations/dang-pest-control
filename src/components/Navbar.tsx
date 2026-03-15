@@ -100,7 +100,7 @@ const Navbar = () => {
       </header>
 
       {/* Hero navbar - yellow pill with logo floating above */}
-      <header className="hero-bg relative z-50" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+      <header className="hero-bg relative z-50" style={{ paddingTop: '56px', paddingBottom: '0' }}>
         <div className="mx-auto max-w-[1400px] px-4">
           <nav className="navbar-pill flex items-center justify-between px-6 md:px-10 py-4 relative">
 
@@ -134,8 +134,8 @@ const Navbar = () => {
             </div>
 
             {/* Logo — centered, floating above pill */}
-            <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 z-10" style={{ top: '-70px' }}>
-              <img src={dangLogo} alt="Dang Pest Control" style={{ width: '280px' }} className="h-auto drop-shadow-lg" />
+            <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 z-10" style={{ top: '-60px' }}>
+              <img src={dangLogo} alt="Dang Pest Control" style={{ width: '267px' }} className="h-auto drop-shadow-lg" />
             </Link>
 
             {/* Right: phone + CTA */}
