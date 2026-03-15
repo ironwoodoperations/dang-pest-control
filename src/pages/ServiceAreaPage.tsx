@@ -5,16 +5,41 @@ import { Link } from "react-router-dom";
 import { MapPin, Phone } from "lucide-react";
 
 const cities = [
-  "Tyler", "Longview", "Lindale", "Flint", "Bullard",
-  "Whitehouse", "Hideaway", "Chandler", "Mineola", "Canton",
-  "Jacksonville", "Henderson", "Kilgore", "Gladewater", "Marshall"
+  { name: "Tyler", slug: null },
+  { name: "Longview", slug: "longview-tx" },
+  { name: "Lindale", slug: "lindale-tx" },
+  { name: "Bullard", slug: "bullard-tx" },
+  { name: "Whitehouse", slug: "whitehouse-tx" },
+  { name: "Jacksonville", slug: "jacksonville-tx" },
+  { name: "Arp", slug: null },
+  { name: "Ben Wheeler", slug: null },
+  { name: "Brownsboro", slug: null },
+  { name: "Athens", slug: null },
+  { name: "Canton", slug: null },
+  { name: "Chandler", slug: null },
+  { name: "Chappell Hill", slug: null },
+  { name: "Edom", slug: null },
+  { name: "Flint", slug: null },
+  { name: "Gilmer", slug: null },
+  { name: "Gladewater", slug: null },
+  { name: "Hawkins", slug: null },
+  { name: "Henderson", slug: null },
+  { name: "Hideaway", slug: null },
+  { name: "Holly Lake Ranch", slug: null },
+  { name: "Kilgore", slug: null },
+  { name: "Mineola", slug: null },
+  { name: "Noonday", slug: null },
+  { name: "Quitman", slug: null },
+  { name: "Troup", slug: null },
+  { name: "Van", slug: null },
+  { name: "Winona", slug: null },
 ];
 
 const ServiceAreaPage = () => (
   <div className="min-h-screen">
     <SEO
       title="Service Area | Dang Pest Control"
-      description="Dang Pest Control serves Tyler, TX and surrounding East Texas cities. Check if we service your area."
+      description="Dang Pest Control serves Tyler, TX and surrounding East Texas cities including Longview, Lindale, Bullard, Whitehouse, Jacksonville and more."
       canonical="/service-area"
     />
     <Navbar />
@@ -31,9 +56,15 @@ const ServiceAreaPage = () => (
         <h2 className="text-comic text-3xl mb-8 text-center">Cities We Serve</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
           {cities.map((city) => (
-            <div key={city} className="flex items-center gap-2 p-4 rounded-xl border border-border bg-card">
+            <div key={city.name} className="flex items-center gap-2 p-4 rounded-xl border border-border bg-card">
               <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
-              <span className="font-semibold">{city}, TX</span>
+              {city.slug ? (
+                <Link to={`/${city.slug}`} className="font-semibold hover:text-primary transition-colors">
+                  {city.name}, TX
+                </Link>
+              ) : (
+                <span className="font-semibold">{city.name}, TX</span>
+              )}
             </div>
           ))}
         </div>
