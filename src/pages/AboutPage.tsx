@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { useSiteConfig } from "@/hooks/useSiteConfig";
-import dangSeal from "@/assets/dang-seal.png";
+import interiorService from "@/assets/interior-service.jpg";
 
 const values = [
   {
@@ -76,10 +76,13 @@ const AboutPage = () => {
                 <Phone className="w-5 h-5 mr-2" /> (903) 871-0550
               </a>
               <Link to="/quote" className="btn-cta">Get Your Quote</Link>
+              <Link to="/service-area" className="btn-cta-outline !border-primary !text-primary hover:!bg-primary hover:!text-primary-foreground">
+                View Service Area
+              </Link>
             </div>
           </div>
           <div className="flex justify-center">
-            <img src={dangSeal} alt="Dang Pest Control Seal of Approval" className="w-64 h-64 object-contain animate-float" />
+            <img src={interiorService} alt="Dang Pest Control Technician" className="w-full max-w-md rounded-2xl shadow-lg object-cover" />
           </div>
         </div>
       </section>
