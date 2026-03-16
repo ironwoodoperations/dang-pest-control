@@ -46,7 +46,7 @@ const Navbar = () => {
   return (
     <>
       {/* Sticky scrolled navbar */}
-      <header className={`fixed top-0 left-0 right-0 z-[100] bg-white shadow-sm transition-all duration-300 ${scrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-[100] bg-white shadow-sm transition-all duration-300 ${scrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`} style={{ paddingTop: '8px', paddingBottom: '8px' }}>
         <div className="mx-auto max-w-[1400px] px-4">
           <div className="flex items-center justify-between px-6 md:px-8 py-3.5 relative">
             <div className="hidden md:flex items-center gap-2">
@@ -77,20 +77,39 @@ const Navbar = () => {
               </div>
             </div>
             <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2">
-              <img src={dangLogo} alt="Dang Pest Control" className="w-16 h-auto drop-shadow-md" />
+              <img src={dangLogo} alt="Dang Pest Control" className="w-24 h-auto drop-shadow-md" />
             </Link>
             <Link to="/" className="md:hidden">
               <img src={dangLogo} alt="Dang Pest Control" className="w-12 h-auto" />
             </Link>
             <div className="hidden md:flex items-center gap-5">
-              <a href="tel:9038710550" className="flex items-center gap-2 font-bold" style={{ color: 'hsl(20, 40%, 12%)' }}>
-                <Phone className="w-4 h-4" />
+              <a href="tel:9038710550" className="flex items-center gap-2 font-bold" style={{ color: '#000000' }}>
+                <Phone className="w-5 h-5" style={{ color: '#000000' }} />
                 <div className="leading-tight">
-                  <div className="text-xs font-semibold">Call us</div>
-                  <div className="text-sm font-bold">(903) 871-0550</div>
+                  <div className="text-xs font-black">Call us</div>
+                  <div className="text-sm font-black">(903) 871-0550</div>
                 </div>
               </a>
-              <Link to="/quote" className="btn-cta-cyan text-sm px-5 py-2">Get Your Quote</Link>
+              <Link
+                to="/quote"
+                className="inline-flex items-center justify-center font-bold transition-all duration-200"
+                style={{
+                  backgroundColor: 'white',
+                  color: '#1a1a1a',
+                  border: '2px solid white',
+                  borderRadius: '999px',
+                  padding: '10px 32px',
+                  fontSize: '15px',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.backgroundColor = 'hsl(48, 100%, 50%)';
+                  e.currentTarget.style.borderColor = 'hsl(48, 100%, 50%)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.backgroundColor = 'white';
+                  e.currentTarget.style.borderColor = 'white';
+                }}
+              >Get Your Quote</Link>
             </div>
             <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)} style={{ color: 'hsl(20, 40%, 12%)' }}>
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -140,22 +159,33 @@ const Navbar = () => {
 
             {/* Right: phone + CTA */}
             <div className="hidden md:flex items-center gap-5">
-              <a href="tel:9038710550" className="flex items-center gap-2 font-bold" style={{ color: 'hsl(20, 40%, 12%)' }}>
-                <Phone className="w-5 h-5" />
+              <a href="tel:9038710550" className="flex items-center gap-2 font-bold" style={{ color: '#000000' }}>
+                <Phone className="w-5 h-5" style={{ color: '#000000' }} />
                 <div className="leading-tight">
-                  <div className="text-xs font-semibold">Call us</div>
-                  <div className="text-sm font-bold">(903) 871-0550</div>
+                  <div className="text-xs font-black">Call us</div>
+                  <div className="text-sm font-black">(903) 871-0550</div>
                 </div>
               </a>
               <Link
                 to="/quote"
                 className="font-bold transition-all duration-200"
                 style={{
-                  backgroundColor: 'hsl(185, 65%, 42%)',
-                  color: 'white',
+                  backgroundColor: 'transparent',
+                  color: 'hsl(20, 40%, 12%)',
+                  border: '2px solid hsl(20, 40%, 12%)',
                   borderRadius: '146px',
                   padding: '10px 28px',
                   fontSize: '15px',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.backgroundColor = 'hsl(28, 100%, 50%)';
+                  e.currentTarget.style.borderColor = 'hsl(28, 100%, 50%)';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.borderColor = 'hsl(20, 40%, 12%)';
+                  e.currentTarget.style.color = 'hsl(20, 40%, 12%)';
                 }}
               >
                 Get Your Quote

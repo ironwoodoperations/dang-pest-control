@@ -55,7 +55,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
       <div className="mx-auto max-w-[1400px] px-8 relative z-10">
         <div
           className="grid items-center"
-          style={{ gridTemplateColumns: '9fr 11fr', gap: '20px' }}
+          style={{ gridTemplateColumns: '9fr 11fr', gap: '40px' }}
         >
           {/* Left: text */}
           <div>
@@ -78,34 +78,31 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
                 lineHeight: '1.75',
                 marginBottom: '32px',
                 color: 'white',
-                maxWidth: '420px',
+                maxWidth: '480px',
               }}
             >
               We are a hands-on, personable, relationship-based company. We live, work, worship, and play in the Tyler community. Our innovative pest control practices make us stand out amongst our competitors. Our goal is to be an active part in making our community and the lives of our clients better. We stand by our work and guarantee satisfaction.
             </p>
             <Link
               to="/quote"
+              className="font-bold transition-all duration-200"
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '2px solid white',
-                color: 'white',
                 backgroundColor: 'transparent',
-                borderRadius: '999px',
-                padding: '12px 36px',
+                color: 'white',
+                border: '2px solid white',
+                borderRadius: '146px',
+                padding: '10px 28px',
                 fontSize: '15px',
-                fontWeight: '600',
-                textDecoration: 'none',
-                transition: 'all 0.2s',
               }}
               onMouseEnter={e => {
-                (e.target as HTMLElement).style.backgroundColor = 'white';
-                (e.target as HTMLElement).style.color = 'hsl(28, 100%, 50%)';
+                e.currentTarget.style.backgroundColor = 'hsl(48, 100%, 50%)';
+                e.currentTarget.style.borderColor = 'hsl(48, 100%, 50%)';
+                e.currentTarget.style.color = 'hsl(20, 40%, 12%)';
               }}
               onMouseLeave={e => {
-                (e.target as HTMLElement).style.backgroundColor = 'transparent';
-                (e.target as HTMLElement).style.color = 'white';
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.borderColor = 'white';
+                e.currentTarget.style.color = 'white';
               }}
             >
               Get Your Quote
