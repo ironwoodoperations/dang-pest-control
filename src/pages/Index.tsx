@@ -3,6 +3,7 @@ import HeroSection from "@/components/HeroSection";
 import HolidayBanner from "@/components/HolidayBanner";
 import FeatureStrip from "@/components/FeatureStrip";
 import MidPageVideo from "@/components/MidPageVideo";
+import PestExterminationSection from "@/components/PestExterminationSection";
 import ServicesSection from "@/components/ServicesSection";
 import ExpertSection from "@/components/ExpertSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
@@ -53,6 +54,7 @@ const Index = () => {
       <ServicesSection />
       <WhyChooseUs />
       <MidPageVideo />
+      <PestExterminationSection />
       <TestimonialsSection />
       <CTASection />
       <Footer />

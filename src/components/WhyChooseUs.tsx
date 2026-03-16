@@ -1,35 +1,28 @@
-import { Shield, Heart, Settings, Award, Gift, FileCheck } from "lucide-react";
-
 const reasons = [
   {
-    icon: FileCheck,
+    icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Professional-Licensed.png",
     title: "Professional, Licensed & Highly Trained Technicians",
-    description:
-      "Our technicians bring years of expertise and know-how to deliver results you can trust. As proud members of the National Pest Management Association (NPMA) and Texas Pest Control Association (TPCA), we hold ourselves to the highest industry standards.",
+    description: "Our technicians bring years of expertise and know-how to deliver results you can trust. As proud members of the National Pest Management Association (NPMA) and Texas Pest Control Association (TPCA), we hold ourselves to the highest industry standards.",
   },
   {
-    icon: Shield,
+    icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Family-Pets.png",
     title: "Family & Pet Friendly",
-    description:
-      "Our environmentally-aware practices and products prioritize your loved ones, offering peace of mind with every service.",
+    description: "Our environmentally-aware practices and products prioritize your loved ones, offering peace of mind with every service.",
   },
   {
-    icon: Settings,
+    icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Custom-Plans.png",
     title: "Custom Plans for Lasting Results",
-    description:
-      "We take an Integrated Pest Management approach, considering the factors contributing to the problem. Each plan is tailored to your home's specific needs, focusing on eradicating pests and preventing future infestations.",
+    description: "We take an Integrated Pest Management approach, considering the factors contributing to the problem. Each plan is tailored to your home's specific needs, focusing on eradicating pests and preventing future infestations.",
   },
   {
-    icon: Award,
+    icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Super-Powered.png",
     title: "Super Powered Guarantee",
-    description:
-      "If pests persist between regularly scheduled visits, we'll return to re-treat your property free of charge. That's our commitment to your satisfaction.",
+    description: "If pests persist between regularly scheduled visits, we'll return to re-treat your property free of charge. That's our commitment to your satisfaction.",
   },
   {
-    icon: Gift,
+    icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Referral-Program.png",
     title: "How to Get Free Pest Service!",
-    description:
-      "Want to save money on the cost of your pest control service? For every person you refer to Dang Pest Control that signs up for our general pest control service, you'll get your next month free! There are no limits on referral credits, so you could potentially get free services for life!",
+    description: "Want to save money on the cost of your pest control service? For every person you refer to Dang Pest Control that signs up for our general pest control service, you'll get your next month free! There are no limits on referral credits, so you could potentially get free services for life!",
   },
 ];
 
@@ -37,60 +30,115 @@ const WhyChooseUs = () => {
   return (
     <section
       className="py-16"
-      style={{ background: "hsl(30, 40%, 97%)" }}
+      style={{
+        background: '#ffffff',
+        backgroundImage: `radial-gradient(circle, #d0d0d0 1px, transparent 1px), url('https://aelitedigital.com/wp-dang/wp-content/uploads/2025/03/Professional-background-img.png')`,
+        backgroundSize: '24px 24px, cover',
+        backgroundPosition: 'center, center',
+      }}
     >
-      <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-8">
+      <div className="mx-auto px-8" style={{ maxWidth: '1100px' }}>
 
-          {/* LEFT COLUMN — heading + subtext */}
-          <div className="flex flex-col justify-start pt-2">
-            <p
-              className="text-comic text-sm italic mb-2"
-              style={{ color: "hsl(var(--primary))" }}
-            >
-              WHY CHOOSE US
-            </p>
+        {/* 3-column grid, 2 rows */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gridTemplateRows: 'auto auto',
+            gap: '24px',
+          }}
+        >
+          {/* LEFT COL ROW 1 — Title text */}
+          <div
+            style={{
+              gridColumn: '1',
+              gridRow: '1',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              paddingTop: '8px',
+            }}
+          >
+            <p className="text-comic text-sm italic mb-2" style={{ color: 'hsl(28, 100%, 50%)' }}>WHY CHOOSE US</p>
             <h2
-              className="text-comic text-3xl md:text-4xl mb-4 leading-tight"
-              style={{ color: "hsl(20, 40%, 12%)" }}
+              className="text-comic mb-4 leading-tight"
+              style={{ color: 'hsl(20, 40%, 12%)', fontSize: 'clamp(28px, 3vw, 42px)' }}
             >
               Why Choose Dang Pest Control?
             </h2>
-            <p
-              className="text-sm leading-relaxed"
-              style={{ color: "hsl(20, 20%, 40%)" }}
-            >
-              We know you have options when it comes to pest control,
-              but here's what sets us apart.
+            <p className="text-sm leading-relaxed" style={{ color: 'hsl(20, 20%, 40%)' }}>
+              We know you have options when it comes to pest control, but here's what sets us apart.
             </p>
           </div>
 
-          {/* RIGHT SIDE — 2-col card grid spanning 2 columns */}
-          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {reasons.map((reason) => (
-              <div
-                key={reason.title}
-                className="rounded-2xl p-6"
-                style={{ background: "hsl(30, 20%, 93%)" }}
-              >
-                <reason.icon
-                  className="w-10 h-10 mb-4"
-                  style={{ color: "hsl(var(--primary))" }}
-                />
-                <h3
-                  className="text-comic text-base mb-3"
-                  style={{ color: "hsl(20, 40%, 12%)" }}
-                >
-                  {reason.title}
-                </h3>
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ color: "hsl(20, 20%, 40%)" }}
-                >
-                  {reason.description}
-                </p>
-              </div>
-            ))}
+          {/* MIDDLE COL ROW 1 — Professional card */}
+          <div
+            className="rounded-2xl p-6"
+            style={{
+              gridColumn: '2',
+              gridRow: '1',
+              background: 'hsl(30, 20%, 93%)',
+            }}
+          >
+            <img src={reasons[0].icon} alt={reasons[0].title} className="w-20 h-20 object-contain mb-4" />
+            <h3 className="text-comic text-base mb-3 uppercase" style={{ color: 'hsl(20, 40%, 12%)' }}>{reasons[0].title}</h3>
+            <p className="text-sm leading-relaxed" style={{ color: 'hsl(20, 20%, 40%)' }}>{reasons[0].description}</p>
+          </div>
+
+          {/* RIGHT COL ROW 1 — Family & Pet card */}
+          <div
+            className="rounded-2xl p-6"
+            style={{
+              gridColumn: '3',
+              gridRow: '1',
+              background: 'hsl(30, 20%, 93%)',
+            }}
+          >
+            <img src={reasons[1].icon} alt={reasons[1].title} className="w-20 h-20 object-contain mb-4" />
+            <h3 className="text-comic text-base mb-3 uppercase" style={{ color: 'hsl(20, 40%, 12%)' }}>{reasons[1].title}</h3>
+            <p className="text-sm leading-relaxed" style={{ color: 'hsl(20, 20%, 40%)' }}>{reasons[1].description}</p>
+          </div>
+
+          {/* LEFT COL ROW 2 — How to Get Free Pest Service card */}
+          <div
+            className="rounded-2xl p-6"
+            style={{
+              gridColumn: '1',
+              gridRow: '2',
+              background: 'hsl(30, 20%, 93%)',
+            }}
+          >
+            <img src={reasons[4].icon} alt={reasons[4].title} className="w-20 h-20 object-contain mb-4" />
+            <h3 className="text-comic text-base mb-3 uppercase" style={{ color: 'hsl(20, 40%, 12%)' }}>{reasons[4].title}</h3>
+            <p className="text-sm leading-relaxed" style={{ color: 'hsl(20, 20%, 40%)' }}>{reasons[4].description}</p>
+          </div>
+
+          {/* MIDDLE COL ROW 2 — Custom Plans card */}
+          <div
+            className="rounded-2xl p-6"
+            style={{
+              gridColumn: '2',
+              gridRow: '2',
+              background: 'hsl(30, 20%, 93%)',
+            }}
+          >
+            <img src={reasons[2].icon} alt={reasons[2].title} className="w-20 h-20 object-contain mb-4" />
+            <h3 className="text-comic text-base mb-3 uppercase" style={{ color: 'hsl(20, 40%, 12%)' }}>{reasons[2].title}</h3>
+            <p className="text-sm leading-relaxed" style={{ color: 'hsl(20, 20%, 40%)' }}>{reasons[2].description}</p>
+          </div>
+
+          {/* RIGHT COL ROW 2 — Super Powered card */}
+          <div
+            className="rounded-2xl p-6"
+            style={{
+              gridColumn: '3',
+              gridRow: '2',
+              background: 'hsl(30, 20%, 93%)',
+            }}
+          >
+            <img src={reasons[3].icon} alt={reasons[3].title} className="w-20 h-20 object-contain mb-4" />
+            <h3 className="text-comic text-base mb-3 uppercase" style={{ color: 'hsl(20, 40%, 12%)' }}>{reasons[3].title}</h3>
+            <p className="text-sm leading-relaxed" style={{ color: 'hsl(20, 20%, 40%)' }}>{reasons[3].description}</p>
           </div>
 
         </div>
