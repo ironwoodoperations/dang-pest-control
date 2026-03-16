@@ -47,7 +47,7 @@ const Navbar = () => {
     <>
       {/* Sticky scrolled navbar */}
       <header className={`fixed top-0 left-0 right-0 z-[100] bg-white shadow-sm transition-all duration-300 ${scrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`} style={{ paddingTop: '8px', paddingBottom: '8px' }}>
-        <div className="mx-auto max-w-[1400px] px-4">
+        <div className="mx-auto max-w-[1100px] px-4">
           <div className="flex items-center justify-between px-6 md:px-8 py-3.5 relative">
             <div className="hidden md:flex items-center gap-2">
               <div className="relative" onMouseEnter={() => setOpenDropdown("pests")} onMouseLeave={() => setOpenDropdown(null)}>
@@ -84,7 +84,7 @@ const Navbar = () => {
             </Link>
             <div className="hidden md:flex items-center gap-5">
               <a href="tel:9038710550" className="flex items-center gap-2 font-bold" style={{ color: '#000000' }}>
-                <Phone className="w-5 h-5" style={{ color: '#000000' }} />
+                <Phone className="w-6 h-6" style={{ color: '#000000' }} />
                 <div className="leading-tight">
                   <div className="text-xs font-black">Call us</div>
                   <div className="text-sm font-black">(903) 871-0550</div>
@@ -160,7 +160,7 @@ const Navbar = () => {
             {/* Right: phone + CTA */}
             <div className="hidden md:flex items-center gap-5">
               <a href="tel:9038710550" className="flex items-center gap-2 font-bold" style={{ color: '#000000' }}>
-                <Phone className="w-5 h-5" style={{ color: '#000000' }} />
+                <Phone className="w-6 h-6" style={{ color: '#000000' }} />
                 <div className="leading-tight">
                   <div className="text-xs font-black">Call us</div>
                   <div className="text-sm font-black">(903) 871-0550</div>
@@ -170,9 +170,9 @@ const Navbar = () => {
                 to="/quote"
                 className="font-bold transition-all duration-200"
                 style={{
-                  backgroundColor: 'transparent',
-                  color: 'hsl(20, 40%, 12%)',
-                  border: '2px solid hsl(20, 40%, 12%)',
+                  backgroundColor: 'hsl(185, 65%, 42%)',
+                  color: 'white',
+                  border: '2px solid hsl(185, 65%, 42%)',
                   borderRadius: '146px',
                   padding: '10px 28px',
                   fontSize: '15px',
@@ -183,9 +183,9 @@ const Navbar = () => {
                   e.currentTarget.style.color = 'white';
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.borderColor = 'hsl(20, 40%, 12%)';
-                  e.currentTarget.style.color = 'hsl(20, 40%, 12%)';
+                  e.currentTarget.style.backgroundColor = 'hsl(185, 65%, 42%)';
+                  e.currentTarget.style.borderColor = 'hsl(185, 65%, 42%)';
+                  e.currentTarget.style.color = 'white';
                 }}
               >
                 Get Your Quote

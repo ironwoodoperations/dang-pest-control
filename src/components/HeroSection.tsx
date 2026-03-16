@@ -52,19 +52,19 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
       className="hero-bg text-white relative overflow-hidden"
       style={{ paddingTop: '60px', paddingBottom: '140px' }}
     >
-      <div className="mx-auto max-w-[1400px] px-8 relative z-10">
+      <div className="mx-auto max-w-[1100px] px-12 relative z-10">
         <div
           className="grid items-center"
-          style={{ gridTemplateColumns: '9fr 11fr', gap: '40px' }}
+          style={{ gridTemplateColumns: '42fr 58fr', gap: '40px' }}
         >
           {/* Left: text */}
           <div>
             <h1
               className="text-comic italic uppercase"
               style={{
-                color: 'hsl(48, 100%, 50%)',
+                color: 'hsl(45, 95%, 60%)',
                 fontSize: 'clamp(38px, 5vw, 60px)',
-                fontWeight: '400',
+                fontWeight: '800',
                 lineHeight: '1.0',
                 marginBottom: '24px',
               }}
@@ -74,7 +74,7 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
             <p
               className="font-body"
               style={{
-                fontSize: '16px',
+                fontSize: '18px',
                 lineHeight: '1.75',
                 marginBottom: '32px',
                 color: 'white',
@@ -87,22 +87,22 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
               to="/quote"
               className="font-bold transition-all duration-200"
               style={{
-                backgroundColor: 'transparent',
-                color: 'white',
+                backgroundColor: 'white',
+                color: 'hsl(28, 100%, 50%)',
                 border: '2px solid white',
                 borderRadius: '146px',
                 padding: '10px 28px',
                 fontSize: '15px',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = 'hsl(48, 100%, 50%)';
-                e.currentTarget.style.borderColor = 'hsl(48, 100%, 50%)';
-                e.currentTarget.style.color = 'hsl(20, 40%, 12%)';
+                e.currentTarget.style.backgroundColor = 'hsl(45, 95%, 60%)';
+                e.currentTarget.style.borderColor = 'hsl(45, 95%, 60%)';
+                e.currentTarget.style.color = 'white';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.backgroundColor = 'white';
                 e.currentTarget.style.borderColor = 'white';
-                e.currentTarget.style.color = 'white';
+                e.currentTarget.style.color = 'hsl(28, 100%, 50%)';
               }}
             >
               Get Your Quote
