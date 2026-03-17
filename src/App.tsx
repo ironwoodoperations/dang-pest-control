@@ -20,6 +20,7 @@ import AccessibilityPage from "./pages/AccessibilityPage";
 import AdminOnboarding from "./pages/AdminOnboarding";
 import FloatingTextUs from "./components/FloatingTextUs";
 import MosquitoControl from "./pages/MosquitoControl";
+import SpiderControl from "./pages/SpiderControl";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/locations/:slug" element={<RedirectLegacy />} />
           {/* Dynamic slug router for services & locations */}
           <Route path="/mosquito-control" element={<MosquitoControl />} />
+          <Route path="/spider-control" element={<SpiderControl />} />
           <Route path="/:slug" element={<SlugRouter />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
