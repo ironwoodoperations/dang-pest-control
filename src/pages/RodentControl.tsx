@@ -8,32 +8,39 @@ const STEP_COLORS = [
   'hsl(45, 95%, 52%)',
   'hsl(185, 65%, 42%)',
   'hsl(140, 55%, 42%)',
+  'hsl(280, 55%, 45%)',
 ];
 
 const steps = [
   {
     num: 'STEP 1',
     title: 'Thorough Inspection',
-    desc: 'Our technicians carefully inspect your property to identify signs of infestation, entry points, and rodent activity. From roof rats scaling your walls to Norway rats burrowing beneath your property, we pinpoint exactly what you're dealing with.',
+    desc: 'Our technicians carefully inspect your property to identify signs of infestation, entry points, and rodent activity.',
     icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Control-Process-img1.png',
   },
   {
     num: 'STEP 2',
     title: 'Integrated Pest Management (IPM) Plan',
-    desc: 'We customize a strategy to address your rodent issue at its root with environmentally protective methods. This includes recommendations for exclusion work and customer-specific action steps tailored to your property.',
+    desc: 'We customize a strategy to address your rodent issue at its root with environmentally protective methods. This includes recommendations for exclusion work and customer-specific action steps.',
     icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Control-Process-img2.png',
   },
   {
     num: 'STEP 3',
     title: 'Effective Treatment',
-    desc: 'We use a combination of exclusion, baiting, trapping, and other advanced methods to remove the infestation. Every treatment is designed to eliminate rodents at the source while protecting your family and pets.',
-    icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Control-Process-img3.png',
+    desc: 'We use a combination of exclusion, baiting, trapping, and other advanced methods to remove the infestation.',
+    icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Process-img.png',
   },
   {
     num: 'STEP 4',
-    title: 'Monitoring & Prevention',
-    desc: "Rodent control doesn't stop at eradication. We continuously monitor to ensure successful results and adapt your plan if needed. Our comprehensive service also includes guidance on maintaining a rodent-free environment, from sealing entry points to minimizing attractants.",
+    title: 'Monitoring & Evaluation',
+    desc: "Rodent control doesn't stop at eradication. We continuously monitor to ensure successful results and adapt your plan if needed.",
     icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Control-Process-img4.png',
+  },
+  {
+    num: 'STEP 5',
+    title: 'Preventative Care',
+    desc: 'Our comprehensive service includes guidance on maintaining a rodent-free environment, from sealing up entry points to minimizing attractants.',
+    icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Control-Process-img3.png',
   },
 ];
 
@@ -55,8 +62,8 @@ const whyCards = [
   },
   {
     icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Guarantee.png',
-    title: 'Environmentally Responsible Solutions',
-    desc: 'Our Integrated Pest Management approach prioritizes environmentally friendly solutions while effectively eliminating pests from your property.',
+    title: 'Comprehensive Approach',
+    desc: 'Our Integrated Pest Management approach prioritizes environmentally friendly solutions while effectively eliminating rodents from your property—we\'re not just a "spray and go" company.',
   },
 ];
 
@@ -188,12 +195,13 @@ const RodentControl = () => {
               Rodent Control Services
             </h2>
             <p style={{ fontSize: '16px', lineHeight: 1.75, marginBottom: '28px', color: '#444', marginTop: 0 }}>
-              When it comes to pests, few are as concerning as rodents. Whether it's roof rats scaling your walls,
-              Norway rats burrowing beneath your property, or house mice nesting near your food supply, the damage
-              they cause can be significant. At{' '}
+              When it comes to pests, few are as concerning as rodents. Whether it's roof rats scaling your
+              walls, Norway rats burrowing beneath your property, or house mice nesting near your food supply,
+              the damage they cause can be significant. From property destruction to health hazards, rodent
+              infestations demand immediate, effective action. At{' '}
               <a href="/" style={{ color: '#000', textDecoration: 'underline' }}>Dang Pest Control</a>,
-              our comprehensive rodent control services are designed to eliminate the problem and prevent it from
-              coming back. We serve Tyler, TX, and the surrounding areas. Call us today at{' '}
+              our comprehensive rodent control services are designed to eliminate the problem and prevent it
+              from coming back. We serve Tyler, TX, and the surrounding areas. Call us today at{' '}
               <a href="tel:(903) 871-0550" style={{ color: '#000', fontWeight: '700' }}>(903) 871-0550</a>{' '}
               and{' '}
               <a href="/quote" style={{ color: '#000', textDecoration: 'underline' }}>get your quote</a>.
@@ -318,6 +326,37 @@ const RodentControl = () => {
             ))}
           </div>
 
+          {/* Habitats & Health Risks */}
+          <div style={{ background: '#fff', borderRadius: '8px', padding: '40px', marginTop: '28px' }}>
+            <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 30px)', marginBottom: '16px', marginTop: 0 }}>
+              Rodent Habitats &amp; Harborage
+            </h2>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', marginBottom: '32px', marginTop: 0 }}>
+              Mice and rats are experts at finding shelter, especially in human-made structures. These rodents thrive in dark, hidden spaces and can make their homes in attics, crawl spaces, basements, and even within wall voids. Outdoors, they are drawn to areas with dense ground cover, brushy hedges, and woodpiles. Roof rats, in particular, are notorious climbers often entering homes through trees touching rooftops, making attics a preferred nesting site. Norway rats, on the other hand, are burrowers, frequently found in basements, sewer systems, and other damp, dark areas. Blocking access to these harborage areas is essential for rodent management. At Dang Pest Control, our trained technicians specialize in identifying and sealing entry points, ensuring rodents no longer have easy access to your property.
+            </p>
+            <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 30px)', marginBottom: '16px', marginTop: 0 }}>
+              Health Risks Related to Mice &amp; Rats
+            </h2>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', marginBottom: '12px', marginTop: 0 }}>
+              Rodents pose the possibility of severe health threats to humans, often transmitting dangerous diseases. Here are some of the most critical health risks associated with rodents:
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', marginBottom: '10px', marginTop: 0 }}>
+              <strong>Hantavirus:</strong> Spread through contact with droppings or urine, this disease can lead to severe respiratory issues and even death.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', marginBottom: '10px', marginTop: 0 }}>
+              <strong>Leptospirosis:</strong> This bacterial infection is transmitted through rat urine and causes symptoms like fever and muscle aches.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', marginBottom: '10px', marginTop: 0 }}>
+              <strong>Salmonellosis:</strong> Caused by exposure to rodent feces, this bacterial infection results in severe diarrhea and abdominal cramps.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', marginBottom: '10px', marginTop: 0 }}>
+              <strong>Rat-bite Fever:</strong> Passed through bites or scratches, this infection leads to fever, joint pain, and chills.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', marginBottom: 0, marginTop: 0 }}>
+              Additionally, rodent allergens such as droppings and urine can aggravate allergies and asthma, posing risks to children and those with respiratory conditions.
+            </p>
+          </div>
+
           {/* Centered CTA button */}
           <div style={{ textAlign: 'center', paddingTop: '50px' }}>
             <a
@@ -374,7 +413,7 @@ const RodentControl = () => {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          MORE THAN RODENTS — text left, dotted image right
+          MORE THAN RODENT CONTROL — text left, dotted image right
       ══════════════════════════════════════════════════════ */}
       <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{
@@ -385,32 +424,25 @@ const RodentControl = () => {
         }}>
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
-              More Than Just Rodents
+              More Than Rodent Control
             </h2>
-            <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '14px', color: '#444', marginTop: 0 }}>
-              Think you might have unwanted furry visitors? Keep an eye out for these signs of infestation:
-              <strong> droppings</strong> (shiny black for rats, small with pointed ends for mice),{' '}
-              <strong>chewed holes</strong> in walls, floors, wires, or food packaging,{' '}
-              <strong>noises</strong> like scampering behind walls after dark, and{' '}
-              <strong>urine odors or greasy marks</strong> left along baseboards.
-            </p>
             <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '28px', color: '#444', marginTop: 0 }}>
-              While rodents are a common pest, our expertise doesn't stop there. We also provide{' '}
-              <a href="/pest-control" style={{ color: '#000', textDecoration: 'underline' }}>professional pest control</a>{' '}
-              for{' '}
+              Our{' '}
+              <a href="/pest-control" style={{ color: '#000', textDecoration: 'underline' }}>expert pest control services</a>{' '}
+              also cover{' '}
               <a href="/ant-control" style={{ color: '#000', textDecoration: 'underline' }}>ants</a>,{' '}
               <a href="/spider-control" style={{ color: '#000', textDecoration: 'underline' }}>spiders</a>,{' '}
               <a href="/wasp-hornet-control" style={{ color: '#000', textDecoration: 'underline' }}>wasps and hornets</a>,{' '}
               <a href="/scorpion-control" style={{ color: '#000', textDecoration: 'underline' }}>scorpions</a>,{' '}
               <a href="/mosquito-control" style={{ color: '#000', textDecoration: 'underline' }}>mosquitos</a>,{' '}
               <a href="/flea-tick-control" style={{ color: '#000', textDecoration: 'underline' }}>fleas and ticks</a>,{' '}
-              <a href="/roach-control" style={{ color: '#000', textDecoration: 'underline' }}>cockroaches</a>, and{' '}
-              <a href="/bed-bug-control" style={{ color: '#000', textDecoration: 'underline' }}>bed bugs</a>.
-              Need{' '}
+              <a href="/roach-control" style={{ color: '#000', textDecoration: 'underline' }}>cockroaches</a>,{' '}
+              <a href="/bed-bug-control" style={{ color: '#000', textDecoration: 'underline' }}>bed bugs</a>,
+              and more. Need{' '}
               <a href="/termite-inspections" style={{ color: '#000', textDecoration: 'underline' }}>termite inspections</a>{' '}
               or{' '}
               <a href="/termite-control" style={{ color: '#000', textDecoration: 'underline' }}>termite treatment</a>?
-              We do that, too!
+              We've got you covered!
             </p>
             <a
               href="/quote"
@@ -450,7 +482,7 @@ const RodentControl = () => {
             }}>
               <img
                 src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/house-mouse.jpg"
-                alt="Eastern House Mouse and Rodent Control Services Tyler TX"
+                alt="Eastern House Mouse Rodent Control Services in Tyler TX"
                 style={{ width: '100%', display: 'block' }}
               />
             </div>
@@ -459,7 +491,7 @@ const RodentControl = () => {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          PROTECT YOUR PROPERTY CTA — orange clipPath + halftone + clouds
+          RODENT-FREE CTA — orange clipPath + halftone + clouds
       ══════════════════════════════════════════════════════ */}
       <style>{`
         .rodent-cta-phone { background: hsl(28,100%,50%) !important; color: #fff !important; border: 2px solid hsl(28,100%,50%) !important; }
@@ -471,19 +503,10 @@ const RodentControl = () => {
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.12) 1.5px, transparent 1.5px)', backgroundSize: '18px 18px', pointerEvents: 'none', zIndex: 0 }} />
         <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: '900px', margin: '0 auto' }}>
           <h2 style={{ fontFamily: '"Bangers", cursive', fontSize: 'clamp(36px, 5vw, 60px)', fontStyle: 'italic', color: 'hsl(45, 95%, 60%)', letterSpacing: '0.04em', marginBottom: '20px', marginTop: 0, lineHeight: 1.1, WebkitTextStroke: '3px #000000', textShadow: '3px 3px 0 #000000' }}>
-            PROTECT YOUR PROPERTY TODAY
+            RODENT-FREE LIVING STARTS HERE
           </h2>
           <p style={{ fontSize: '16px', lineHeight: 1.8, color: 'rgba(0,0,0,0.72)', marginBottom: '28px', marginTop: 0 }}>
-            Don't let rodents wreak havoc in your home or business. With Dang Pest Control, you get tailored
-            solutions that work, delivered by professionals you can trust. Located in Tyler, TX, we proudly
-            serve the surrounding areas, including{' '}
-            <a href="/longview-tx" style={{ color: '#000' }}>Longview</a>,{' '}
-            <a href="/jacksonville-tx" style={{ color: '#000' }}>Jacksonville</a>,{' '}
-            <a href="/lindale-tx" style={{ color: '#000' }}>Lindale</a>,{' '}
-            <a href="/bullard-tx" style={{ color: '#000' }}>Bullard</a>,{' '}
-            <a href="/whitehouse-tx" style={{ color: '#000' }}>Whitehouse</a>, and more. Call us today at{' '}
-            <a href="tel:(903) 871-0550" style={{ color: '#000', fontWeight: '700' }}>(903) 871-0550</a>{' '}
-            and <a href="/quote" style={{ color: '#000' }}>get your quote</a>.
+            Don't let rodents wreak havoc in your home or business. With Dang Pest Control, you get tailored solutions that work, delivered by professionals you can trust. Located in Tyler, TX, we proudly serve homeowners and property managers throughout nearby areas, including <a href="/longview-tx" style={{ color: '#000' }}>Longview</a>, <a href="/jacksonville-tx" style={{ color: '#000' }}>Jacksonville</a>, <a href="/lindale-tx" style={{ color: '#000' }}>Lindale</a>, <a href="/bullard-tx" style={{ color: '#000' }}>Bullard</a>, <a href="/whitehouse-tx" style={{ color: '#000' }}>Whitehouse</a>, and more. Call us today at <a href="tel:(903) 871-0550" style={{ color: '#000', fontWeight: '700' }}>(903) 871-0550</a> and <a href="/quote" style={{ color: '#000' }}>get your quote</a>.
           </p>
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <a href="tel:(903) 871-0550" className="rodent-cta-phone" style={{ padding: '13px 28px', borderRadius: '50px', fontWeight: '700', textDecoration: 'none', fontSize: '15px', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>(903) 871-0550</a>
