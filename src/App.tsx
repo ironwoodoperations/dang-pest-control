@@ -19,6 +19,7 @@ import ContactPage from "./pages/ContactPage";
 import AccessibilityPage from "./pages/AccessibilityPage";
 import AdminOnboarding from "./pages/AdminOnboarding";
 import FloatingTextUs from "./components/FloatingTextUs";
+import MosquitoControl from "./pages/MosquitoControl";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/services/:slug" element={<RedirectLegacy />} />
           <Route path="/locations/:slug" element={<RedirectLegacy />} />
           {/* Dynamic slug router for services & locations */}
+          <Route path="/mosquito-control" element={<MosquitoControl />} />
           <Route path="/:slug" element={<SlugRouter />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
