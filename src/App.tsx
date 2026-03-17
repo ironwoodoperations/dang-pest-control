@@ -21,6 +21,10 @@ import AdminOnboarding from "./pages/AdminOnboarding";
 import FloatingTextUs from "./components/FloatingTextUs";
 import MosquitoControl from "./pages/MosquitoControl";
 import SpiderControl from "./pages/SpiderControl";
+import AntControl from "./pages/AntControl";
+import WaspHornetControl from "./pages/WaspHornetControl";
+import RoachControl from "./pages/RoachControl";
+import FleaTickControl from "./pages/FleaTickControl";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +55,10 @@ const App = () => (
           {/* Dynamic slug router for services & locations */}
           <Route path="/mosquito-control" element={<MosquitoControl />} />
           <Route path="/spider-control" element={<SpiderControl />} />
+          <Route path="/ant-control" element={<AntControl />} />
+          <Route path="/wasp-hornet-control" element={<WaspHornetControl />} />
+          <Route path="/roach-control" element={<RoachControl />} />
+          <Route path="/flea-tick-control" element={<FleaTickControl />} />
           <Route path="/:slug" element={<SlugRouter />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

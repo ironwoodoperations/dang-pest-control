@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Phone, Menu, X, ChevronDown } from "lucide-react";
 import dangLogo from "@/assets/dang-logo.png";
@@ -34,8 +34,6 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
-  // ✅ FIX: ref to hold the close timer so we can cancel it on re-enter
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,19 +43,6 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // ✅ FIX: open immediately, cancel any pending close
-  const handleMouseEnter = (name: string) => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    setOpenDropdown(name);
-  };
-
-  // ✅ FIX: delay close by 150ms so cursor has time to reach the dropdown
-  const handleMouseLeave = () => {
-    closeTimer.current = setTimeout(() => {
-      setOpenDropdown(null);
-    }, 150);
-  };
-
   return (
     <>
       {/* Sticky scrolled navbar */}
@@ -65,7 +50,7 @@ const Navbar = () => {
         <div className="mx-auto max-w-[1100px] px-4">
           <div className="flex items-center justify-between px-6 md:px-8 py-3.5 relative">
             <div className="hidden md:flex items-center gap-2">
-              <div className="relative" onMouseEnter={() => handleMouseEnter("pests")} onMouseLeave={handleMouseLeave}>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("pests")} onMouseLeave={() => setOpenDropdown(null)}>
                 <button className="navbar-link flex items-center gap-1">Pests <ChevronDown className="w-3.5 h-3.5" /></button>
                 {openDropdown === "pests" && (
                   <div className="navbar-dropdown">
@@ -74,7 +59,7 @@ const Navbar = () => {
                 )}
               </div>
               <Link to="/mosquito-control" className="navbar-link">Mosquitos</Link>
-              <div className="relative" onMouseEnter={() => handleMouseEnter("termites")} onMouseLeave={handleMouseLeave}>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("termites")} onMouseLeave={() => setOpenDropdown(null)}>
                 <button className="navbar-link flex items-center gap-1">Termites <ChevronDown className="w-3.5 h-3.5" /></button>
                 {openDropdown === "termites" && (
                   <div className="navbar-dropdown">
@@ -82,7 +67,7 @@ const Navbar = () => {
                   </div>
                 )}
               </div>
-              <div className="relative" onMouseEnter={() => handleMouseEnter("about")} onMouseLeave={handleMouseLeave}>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("about")} onMouseLeave={() => setOpenDropdown(null)}>
                 <button className="navbar-link flex items-center gap-1">About <ChevronDown className="w-3.5 h-3.5" /></button>
                 {openDropdown === "about" && (
                   <div className="navbar-dropdown">
@@ -140,7 +125,7 @@ const Navbar = () => {
 
             {/* Left nav */}
             <div className="hidden md:flex items-center gap-2">
-              <div className="relative" onMouseEnter={() => handleMouseEnter("pests")} onMouseLeave={handleMouseLeave}>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("pests")} onMouseLeave={() => setOpenDropdown(null)}>
                 <button className="navbar-link flex items-center gap-1">Pests <ChevronDown className="w-3.5 h-3.5" /></button>
                 {openDropdown === "pests" && (
                   <div className="navbar-dropdown">
@@ -149,7 +134,7 @@ const Navbar = () => {
                 )}
               </div>
               <Link to="/mosquito-control" className="navbar-link">Mosquitos</Link>
-              <div className="relative" onMouseEnter={() => handleMouseEnter("termites")} onMouseLeave={handleMouseLeave}>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("termites")} onMouseLeave={() => setOpenDropdown(null)}>
                 <button className="navbar-link flex items-center gap-1">Termites <ChevronDown className="w-3.5 h-3.5" /></button>
                 {openDropdown === "termites" && (
                   <div className="navbar-dropdown">
@@ -157,7 +142,7 @@ const Navbar = () => {
                   </div>
                 )}
               </div>
-              <div className="relative" onMouseEnter={() => handleMouseEnter("about")} onMouseLeave={handleMouseLeave}>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("about")} onMouseLeave={() => setOpenDropdown(null)}>
                 <button className="navbar-link flex items-center gap-1">About <ChevronDown className="w-3.5 h-3.5" /></button>
                 {openDropdown === "about" && (
                   <div className="navbar-dropdown">
