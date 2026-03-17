@@ -453,93 +453,28 @@ const SpiderControl = () => {
       {/* ══════════════════════════════════════════════════════
           SPIDER-FREE LIVING CTA — yellow diagonal
       ══════════════════════════════════════════════════════ */}
-      <section
-        style={{
-          position: 'relative',
-          background: 'hsl(48, 100%, 50%)',
-          padding: '80px 40px 80px',
-          clipPath: 'polygon(0 8%, 100% 0, 100% 92%, 0 100%)',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Halftone dots */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.12) 1.5px, transparent 1.5px)',
-          backgroundSize: '18px 18px',
-          pointerEvents: 'none',
-        }} />
-
-        <div style={{
-          position: 'relative',
-          zIndex: 1,
-          maxWidth: '900px',
-          margin: '0 auto',
-          paddingTop: '20px',
-          paddingBottom: '20px',
-        }}>
-          <h2 style={{
-            fontFamily: '"Bangers", cursive',
-            fontSize: 'clamp(36px, 5vw, 60px)',
-            fontStyle: 'italic',
-            color: 'hsl(20, 40%, 12%)',
-            letterSpacing: '0.04em',
-            marginBottom: '20px',
-            marginTop: 0,
-            lineHeight: 1.1,
-            textShadow: '2px 2px 0 rgba(0,0,0,0.15)',
-          }}>
-            Spider-Free Living Starts Here
+      <style>{`
+        .spider-cta-phone { background: hsl(28,100%,50%) !important; color: #fff !important; border: 2px solid hsl(28,100%,50%) !important; }
+        .spider-cta-phone:hover { background: #fff !important; color: hsl(20,40%,12%) !important; }
+        .spider-cta-quote { background: #fff !important; color: hsl(28,100%,50%) !important; border: 2px solid #fff !important; }
+        .spider-cta-quote:hover { background: hsl(45,95%,52%) !important; color: #fff !important; }
+      `}</style>
+      <section style={{ position: 'relative', background: 'hsl(28, 100%, 50%)', padding: '100px 40px 260px', clipPath: 'polygon(0 0, 100% 8%, 100% 100%, 0 100%)', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.12) 1.5px, transparent 1.5px)', backgroundSize: '18px 18px', pointerEvents: 'none', zIndex: 0 }} />
+        <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: '900px', margin: '0 auto' }}>
+          <h2 style={{ fontFamily: '"Bangers", cursive', fontSize: 'clamp(36px, 5vw, 60px)', fontStyle: 'italic', color: 'hsl(45, 95%, 60%)', letterSpacing: '0.04em', marginBottom: '20px', marginTop: 0, lineHeight: 1.1, WebkitTextStroke: '3px #000000', textShadow: '3px 3px 0 #000000' }}>
+            SPIDER-FREE LIVING STARTS HERE
           </h2>
           <p style={{ fontSize: '16px', lineHeight: 1.8, color: 'rgba(0,0,0,0.72)', marginBottom: '28px', marginTop: 0 }}>
-            Reclaim your home or property with Dang Pest Control's expert spider pest control services. Whether
-            you're dealing with a minor issue or a full infestation, our proven methods ensure effective and
-            lasting results. Located in Tyler, TX, we proudly serve homeowners and property managers throughout
-            nearby areas, including{' '}
-            <a href="/longview-tx" style={{ color: '#000', textDecoration: 'underline' }}>Longview</a>,{' '}
-            <a href="/jacksonville-tx" style={{ color: '#000', textDecoration: 'underline' }}>Jacksonville</a>,{' '}
-            <a href="/lindale-tx" style={{ color: '#000', textDecoration: 'underline' }}>Lindale</a>,{' '}
-            <a href="/bullard-tx" style={{ color: '#000', textDecoration: 'underline' }}>Bullard</a>,{' '}
-            <a href="/whitehouse-tx" style={{ color: '#000', textDecoration: 'underline' }}>Whitehouse</a>,
-            and more. Call us today at{' '}
-            <a href="tel:(903) 871-0550" style={{ color: '#000', fontWeight: '700' }}>(903) 871-0550</a>{' '}
-            and{' '}
-            <a href="/quote" style={{ color: '#000', textDecoration: 'underline' }}>get your quote</a>.
+            Reclaim your home or property with Dang Pest Control's expert spider pest control services. Whether you're dealing with a minor issue or a full infestation, our proven methods ensure effective and lasting results. Located in Tyler, TX, we proudly serve homeowners and property managers throughout nearby areas, including <a href="/longview-tx" style={{ color: '#000' }}>Longview</a>, <a href="/jacksonville-tx" style={{ color: '#000' }}>Jacksonville</a>, <a href="/lindale-tx" style={{ color: '#000' }}>Lindale</a>, <a href="/bullard-tx" style={{ color: '#000' }}>Bullard</a>, <a href="/whitehouse-tx" style={{ color: '#000' }}>Whitehouse</a>, and more. Call us today at <a href="tel:(903) 871-0550" style={{ color: '#000', fontWeight: '700' }}>(903) 871-0550</a> and <a href="/quote" style={{ color: '#000' }}>get your quote</a>.
           </p>
-          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-            <a
-              href="tel:(903) 871-0550"
-              style={{
-                padding: '13px 28px',
-                border: '2px solid hsl(20, 40%, 12%)',
-                borderRadius: '50px',
-                fontWeight: '700',
-                color: 'hsl(20, 40%, 12%)',
-                textDecoration: 'none',
-                fontSize: '15px',
-                background: 'rgba(255,255,255,0.5)',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              (903) 871-0550
-            </a>
-            <a
-              href="/quote"
-              style={{
-                padding: '13px 28px',
-                background: 'hsl(28, 100%, 50%)',
-                borderRadius: '50px',
-                fontWeight: '700',
-                color: '#fff',
-                textDecoration: 'none',
-                fontSize: '15px',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              Get Your Quote
-            </a>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <a href="tel:(903) 871-0550" className="spider-cta-phone" style={{ padding: '13px 28px', borderRadius: '50px', fontWeight: '700', textDecoration: 'none', fontSize: '15px', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>(903) 871-0550</a>
+            <a href="/quote" className="spider-cta-quote" style={{ padding: '13px 28px', borderRadius: '50px', fontWeight: '700', textDecoration: 'none', fontSize: '15px', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>Get Your Quote</a>
           </div>
+        </div>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
+          <img src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
         </div>
       </section>
 

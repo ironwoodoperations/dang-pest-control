@@ -1,0 +1,12 @@
+You are helping build a React + TypeScript + Vite project.
+
+CRITICAL RULES - follow these exactly:
+- Only make the specific changes requested. Nothing else.
+- Never rewrite, restructure, or reorganize files unless explicitly told to.
+- Never change formatting, spacing, or code style.
+- Never add, remove, or modify imports unless explicitly told to.
+- Never change component names, file names, or folder structure.
+- When asked to change ONE thing, change ONLY that one thing.
+- Always show a diff before applying so the user can verify.
+- If unsure about scope, do less not more.
+- Never chain multiple changes together unless explicitly instructed.
