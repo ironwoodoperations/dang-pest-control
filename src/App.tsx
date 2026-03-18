@@ -26,6 +26,9 @@ import WaspHornetControl from "./pages/WaspHornetControl";
 import RoachControl from "./pages/RoachControl";
 import FleaTickControl from "./pages/FleaTickControl";
 import RodentControl from "./pages/RodentControl";
+import ScorpionControl from "./pages/ScorpionControl";
+import BedBugControl from "./pages/BedBugControl";
+import PestControlPage from "./pages/PestControlPage";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +64,9 @@ const App = () => (
           <Route path="/roach-control" element={<RoachControl />} />
           <Route path="/flea-tick-control" element={<FleaTickControl />} />
           <Route path="/rodent-control" element={<RodentControl />} />
+          <Route path="/scorpion-control" element={<ScorpionControl />} />
+          <Route path="/bed-bug-control" element={<BedBugControl />} />
+          <Route path="/pest-control" element={<PestControlPage />} />
           <Route path="/:slug" element={<SlugRouter />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
