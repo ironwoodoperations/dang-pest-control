@@ -5,13 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import QuotePage from "./pages/QuotePage";
-import AboutPage from "./pages/AboutPage";
+import About from "./pages/About";
 import AdminPage from "./pages/AdminPage";
 import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
 import SlugRouter from "./pages/SlugRouter";
 import RedirectLegacy from "./pages/RedirectLegacy";
-import ServiceAreaPage from "./pages/ServiceAreaPage";
+import ServiceArea from "./pages/ServiceArea";
 import ReviewsPage from "./pages/ReviewsPage";
 import BlogPage from "./pages/BlogPage";
 import FAQPage from "./pages/FAQPage";
@@ -29,6 +29,7 @@ import RodentControl from "./pages/RodentControl";
 import ScorpionControl from "./pages/ScorpionControl";
 import BedBugControl from "./pages/BedBugControl";
 import TermiteControl from "./pages/TermiteControl";
+import TermiteInspections from "./pages/TermiteInspections";
 import PestControlPage from "./pages/PestControlPage";
 
 const queryClient = new QueryClient();
@@ -43,8 +44,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/quote" element={<QuotePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/service-area" element={<ServiceAreaPage />} />
+          <Route path="/service-area" element={<ServiceArea />} />
           <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPage />} />
@@ -69,6 +69,8 @@ const App = () => (
           <Route path="/scorpion-control" element={<ScorpionControl />} />
           <Route path="/bed-bug-control" element={<BedBugControl />} />
           <Route path="/pest-control" element={<PestControlPage />} />
+          <Route path="/termite-inspections" element={<TermiteInspections />} />
+          <Route path="/about" element={<About />} />
           <Route path="/:slug" element={<SlugRouter />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

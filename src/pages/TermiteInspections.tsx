@@ -7,7 +7,7 @@ const whyCards = [
   {
     icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Proven-Results.png',
     title: 'Professional Expertise',
-    desc: "Our licensed termite inspectors are well-trained in handling both subterranean and drywood termites prevalent in East Texas. We're part of the National Pest Management Association (NPMA) and the Texas Pest Control Association (TPCA).",
+    desc: "Our licensed termite inspectors are well-trained in handling both subterranean termites and drywood termites that are prevalent in East Texas. We're part of trusted organizations, including the National Pest Management Association (NPMA) and the Texas Pest Control Association (TPCA).",
   },
   {
     icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Comprehensive.png',
@@ -51,12 +51,30 @@ const TermiteInspections = () => {
           overflow: 'hidden',
         }}
       >
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.18) 1.5px, transparent 1.5px)', backgroundSize: '18px 18px', pointerEvents: 'none' }} />
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.18) 1.5px, transparent 1.5px)',
+          backgroundSize: '18px 18px',
+          pointerEvents: 'none',
+        }} />
+
         <div style={{ textAlign: 'center', position: 'relative', zIndex: 2, padding: '0 20px 30px' }}>
-          <h1 style={{ fontFamily: '"Bangers", cursive', fontSize: 'clamp(56px, 9vw, 100px)', color: 'hsl(45, 95%, 60%)', fontStyle: 'italic', letterSpacing: '0.05em', WebkitTextStroke: '3px #000000', textShadow: '3px 3px 0 #000000', margin: 0, lineHeight: 1 }}>
+          <h1 style={{
+            fontFamily: '"Bangers", cursive',
+            fontSize: 'clamp(56px, 9vw, 100px)',
+            color: 'hsl(45, 95%, 60%)',
+            fontStyle: 'italic',
+            letterSpacing: '0.05em',
+            WebkitTextStroke: '3px #000000',
+            textShadow: '3px 3px 0 #000000',
+            margin: 0,
+            lineHeight: 1,
+          }}>
             TERMITE INSPECTIONS
           </h1>
         </div>
+
         <div style={{ position: 'absolute', bottom: -1, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
           <img src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
         </div>
@@ -66,19 +84,43 @@ const TermiteInspections = () => {
           INTRO — image left, text right
       ══════════════════════════════════════════════════════ */}
       <section style={{ padding: '80px 40px 60px', maxWidth: '1200px', margin: '0 auto', background: '#ffffff', backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
-          <div style={{ border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '60px',
+          alignItems: 'center',
+        }}>
+          <div style={{
+            border: '4px solid rgb(255, 213, 39)',
+            borderRadius: '6px',
+            overflow: 'hidden',
+            boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
+          }}>
             <img
               src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/subterranean-termite-inspections.jpg"
               alt="Subterranean Termite Inspections in Tyler TX"
               style={{ width: '100%', display: 'block' }}
             />
           </div>
+
           <div>
-            <p style={{ fontFamily: '"Bangers", cursive', color: 'hsl(28, 100%, 50%)', fontSize: '18px', letterSpacing: '0.12em', fontStyle: 'italic', marginBottom: '6px', marginTop: 0 }}>
+            <p style={{
+              fontFamily: '"Bangers", cursive',
+              color: 'hsl(28, 100%, 50%)',
+              fontSize: '18px',
+              letterSpacing: '0.12em',
+              fontStyle: 'italic',
+              marginBottom: '6px',
+              marginTop: 0,
+            }}>
               TERMITE INSPECTIONS
             </p>
-            <h2 style={{ fontSize: 'clamp(26px, 2.8vw, 38px)', fontWeight: '800', marginBottom: '18px', marginTop: 0 }}>
+            <h2 style={{
+              fontSize: 'clamp(26px, 2.8vw, 38px)',
+              fontWeight: '800',
+              marginBottom: '18px',
+              marginTop: 0,
+            }}>
               Professional Termite Inspections
             </h2>
             <p style={{ fontSize: '16px', lineHeight: 1.75, marginBottom: '28px', color: '#444', marginTop: 0 }}>
@@ -86,16 +128,40 @@ const TermiteInspections = () => {
               <a href="/" style={{ color: '#000', textDecoration: 'underline' }}>Dang Pest Control</a>,
               our licensed termite inspectors specialize in protecting your home with thorough termite inspections,{' '}
               <a href="/termite-control" style={{ color: '#000', textDecoration: 'underline' }}>state-of-the-art treatments</a>,
-              and proactive prevention plans. We serve Tyler, TX, and the surrounding areas. Take the first step in protecting your property today. Call us today at{' '}
+              and proactive prevention plans. We serve Tyler, TX, and the surrounding areas. Call us today at{' '}
               <a href="tel:(903) 871-0550" style={{ color: '#000', fontWeight: '700' }}>(903) 871-0550</a>{' '}
               and{' '}
               <a href="/quote" style={{ color: '#000', textDecoration: 'underline' }}>get your quote</a>.
             </p>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <a href="tel:(903) 871-0550" style={{ padding: '13px 28px', border: '2px solid hsl(20, 40%, 12%)', borderRadius: '50px', fontWeight: '700', color: 'hsl(20, 40%, 12%)', textDecoration: 'none', fontSize: '15px', whiteSpace: 'nowrap' }}>
+              <a
+                href="tel:(903) 871-0550"
+                style={{
+                  padding: '13px 28px',
+                  border: '2px solid hsl(20, 40%, 12%)',
+                  borderRadius: '50px',
+                  fontWeight: '700',
+                  color: 'hsl(20, 40%, 12%)',
+                  textDecoration: 'none',
+                  fontSize: '15px',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 (903) 871-0550
               </a>
-              <a href="/quote" style={{ padding: '13px 28px', background: 'hsl(28, 100%, 50%)', borderRadius: '50px', fontWeight: '700', color: '#fff', textDecoration: 'none', fontSize: '15px', whiteSpace: 'nowrap' }}>
+              <a
+                href="/quote"
+                style={{
+                  padding: '13px 28px',
+                  background: 'hsl(28, 100%, 50%)',
+                  borderRadius: '50px',
+                  fontWeight: '700',
+                  color: '#fff',
+                  textDecoration: 'none',
+                  fontSize: '15px',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 Get Your Quote
               </a>
             </div>
@@ -104,22 +170,66 @@ const TermiteInspections = () => {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          COMPREHENSIVE INSPECTIONS — text left, image right
+          COMPREHENSIVE TERMITE INSPECTIONS
       ══════════════════════════════════════════════════════ */}
       <section style={{ padding: '70px 40px 0', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '50px', alignItems: 'center', marginBottom: '60px' }}>
+        <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
+          Comprehensive Termite Inspections
+        </h2>
+        <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', marginTop: 0, marginBottom: 0 }}>
+          Our licensed termite inspectors conduct an in-depth evaluation of your property, including both the interior and exterior areas. We leave no stone unturned, looking for telltale signs of termites such as mud tubes, hollow wood, discarded wings, bubbling paint, stuck doors, and even head-banging sounds from soldier termites. Whether you're a homeowner, realtor, homebuyer, or home seller, we'll provide a detailed report on any termite structural damage inspection results we uncover, along with customized recommendations for treatment and prevention.
+        </p>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          IDENTIFYING TERMITES — text left, image right
+      ══════════════════════════════════════════════════════ */}
+      <section style={{ padding: '50px 40px 0', maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '60px',
+          alignItems: 'center',
+        }}>
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
-              Comprehensive Termite Inspections
+              Identifying Termites
             </h2>
             <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '16px', color: '#444', marginTop: 0 }}>
-              Our licensed termite inspectors conduct an in-depth evaluation of your property, including both the interior and exterior areas. We leave no stone unturned, looking for telltale signs of termites such as mud tubes, hollow wood, discarded wings, bubbling paint, stuck doors, and even head-banging sounds from soldier termites.
+              Termites are small, resilient insects that can cause significant structural damage to homes and businesses. Recognizing the signs of termites early is critical for preventing costly repairs and protecting your property. Termites are often mistaken for other insects, such as flying ants, but several key traits distinguish them:
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '10px', color: '#444', marginTop: 0 }}>
+              <strong>Antennae:</strong> Termite antennae are straight with bead-like segments, whereas ants have bent, elbow-like antennae.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '10px', color: '#444', marginTop: 0 }}>
+              <strong>Body:</strong> Termites have soft, light-colored bodies and a broadly connected abdomen and thorax. Flying ants, on the other hand, are darker and feature a narrow, pinched waist.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '16px', color: '#444', marginTop: 0 }}>
+              <strong>Wings:</strong> Winged termites, or swarmers, have front and hind wings that are equal in size, unlike ants, whose forewings are larger than their hindwings.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '10px', color: '#444', marginTop: 0 }}>
+              Termites serve specific roles within a colony, and these roles impact their physical appearance.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '10px', color: '#444', marginTop: 0 }}>
+              <strong>Winged Termites (Swarmers):</strong> These are reproductive termites responsible for starting new colonies. Their color ranges from pale yellow to reddish-brown or black, depending on the species.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '10px', color: '#444', marginTop: 0 }}>
+              <strong>Worker Termites:</strong> Wingless and white or creamy white in color, they undertake foraging and construction responsibilities within the colony.
+            </p>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '10px', color: '#444', marginTop: 0 }}>
+              <strong>Soldier Termites:</strong> Creamy white with a darker, reinforced head and large mandibles, these termites defend the colony.
             </p>
             <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', marginTop: 0, marginBottom: 0 }}>
-              Whether you're a homeowner, realtor, homebuyer, or home seller, we'll provide a detailed report on any termite structural damage inspection results we uncover, along with customized recommendations for treatment and prevention.
+              <strong>King and Queen Termites:</strong> These are the largest members of a colony. Egg-laying queens can grow to several inches in length, while kings are slightly smaller.
             </p>
           </div>
-          <div style={{ border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
+
+          <div style={{
+            border: '4px solid rgb(255, 213, 39)',
+            borderRadius: '6px',
+            overflow: 'hidden',
+            boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
+          }}>
             <img
               src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Ants-vs-Termites.png"
               alt="Identifying Termites in Tyler TX"
@@ -127,86 +237,99 @@ const TermiteInspections = () => {
             />
           </div>
         </div>
+      </section>
 
-        {/* IDENTIFYING TERMITES */}
-        <div style={{ marginBottom: '50px' }}>
-          <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
-            Identifying Termites
-          </h2>
-          <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '14px', color: '#444', marginTop: 0 }}>
-            Termites are small, resilient insects that can cause significant structural damage to homes and businesses. Recognizing the signs of termites early is critical for preventing costly repairs. Termites are often mistaken for flying ants, but several key traits distinguish them:
+      {/* ══════════════════════════════════════════════════════
+          SIGNS OF A TERMITE INFESTATION
+      ══════════════════════════════════════════════════════ */}
+      <section style={{ padding: '50px 40px 0', maxWidth: '1200px', margin: '0 auto' }}>
+        <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
+          Signs of a Termite Infestation
+        </h2>
+        <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '16px', color: '#444', marginTop: 0 }}>
+          Termites are often called "silent destroyers" because they can cause severe damage without immediate detection. Look for these common signs of termite activity at your property:
+        </p>
+        {[
+          ['Mud Tubes', 'Termites build mud tubes to travel between their underground colonies and above-ground food sources. These can often be found along wood beams, walls, or in crawl spaces.'],
+          ['Hollow Wood', 'Termites consume wood from the inside out, leaving a thin outer shell. Tapping on damaged wood may produce a hollow sound. Check areas like joists, beams, and walls for such signs.'],
+          ['Discarded Wings', 'Swarmers shed their wings after flight. Look for discarded wings near windowsills, doorways, or around the foundation of your property.'],
+          ['Termite Droppings (Frass)', 'Tiny pellet-like droppings near doors or wooden furniture could indicate termites are nearby.'],
+          ['Stuck Windows or Doors', 'Termites target exposed wood around frames, often warping the structure and making them harder to open or close.'],
+          ['Bubbling Paint', 'Uneven or bubbling paint may signal moisture buildup caused by termites or water damage.'],
+          ['Buckling Wood', 'Damaged wood may start to warp or buckle as termites eat through it.'],
+          ['Head Banging Sounds', 'Soldier termites are known to bang their heads against wood to signal danger to the colony.'],
+        ].map(([label, body], i) => (
+          <p key={i} style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '12px', color: '#444', marginTop: 0 }}>
+            <strong>{label}:</strong> {body}
           </p>
-          {[
-            ['Antennae', 'Termite antennae are straight with bead-like segments, whereas ants have bent, elbow-like antennae.'],
-            ['Body', 'Termites have soft, light-colored bodies and a broadly connected abdomen and thorax. Flying ants are darker and feature a narrow, pinched waist.'],
-            ['Wings', 'Winged termites have front and hind wings that are equal in size, unlike ants, whose forewings are larger than their hindwings.'],
-            ['Winged Termites (Swarmers)', 'Reproductive termites responsible for starting new colonies. Color ranges from pale yellow to reddish-brown or black.'],
-            ['Worker Termites', 'Wingless and white or creamy white in color, they undertake foraging and construction responsibilities within the colony.'],
-            ['Soldier Termites', 'Creamy white with a darker, reinforced head and large mandibles, these termites defend the colony.'],
-            ['King and Queen Termites', 'The largest members of a colony. Egg-laying queens can grow to several inches in length, while kings are slightly smaller.'],
-          ].map(([label, body], i) => (
-            <p key={i} style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '10px', color: '#444', marginTop: 0 }}>
-              <strong>{label}:</strong> {body}
-            </p>
-          ))}
-        </div>
+        ))}
+      </section>
 
-        {/* SIGNS OF INFESTATION */}
-        <div style={{ marginBottom: '50px' }}>
-          <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
-            Signs of a Termite Infestation
-          </h2>
-          <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '14px', color: '#444', marginTop: 0 }}>
-            Termites are often called "silent destroyers" because they can cause severe damage without immediate detection. Look for these common signs of termite activity at your property:
-          </p>
-          {[
-            ['Mud Tubes', 'Termites build mud tubes to travel between their underground colonies and above-ground food sources. These can often be found along wood beams, walls, or in crawl spaces.'],
-            ['Hollow Wood', 'Termites consume wood from the inside out, leaving a thin outer shell. Tapping on damaged wood may produce a hollow sound. Check areas like joists, beams, and walls.'],
-            ['Discarded Wings', 'Swarmers shed their wings after flight. Look for discarded wings near windowsills, doorways, or around the foundation of your property.'],
-            ['Termite Droppings (Frass)', 'Tiny pellet-like droppings near doors or wooden furniture could indicate termites are nearby.'],
-            ['Stuck Windows or Doors', 'Termites target exposed wood around frames, often warping the structure and making them harder to open or close.'],
-            ['Bubbling Paint', 'Uneven or bubbling paint may signal moisture buildup caused by termites or water damage.'],
-            ['Buckling Wood', 'Damaged wood may start to warp or buckle as termites eat through it.'],
-            ['Head Banging Sounds', 'Soldier termites are known to bang their heads against wood to signal danger to the colony.'],
-          ].map(([label, body], i) => (
-            <p key={i} style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '10px', color: '#444', marginTop: 0 }}>
-              <strong>{label}:</strong> {body}
-            </p>
-          ))}
-        </div>
-
-        {/* PROFESSIONAL INSPECTIONS CTA */}
-        <div style={{ paddingBottom: '70px' }}>
-          <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
-            Professional Termite Inspections
-          </h2>
-          <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '28px', color: '#444', marginTop: 0 }}>
-            It is critical to have termite issues evaluated by a professional. At Dang Pest Control, our licensed technicians will conduct a comprehensive inspection of both exterior and interior areas of your property. Based on the inspection, we'll determine the scope of the infestation and recommend the most effective course of treatment.
-          </p>
-          <div style={{ textAlign: 'center' }}>
-            <a href="/quote" style={{ display: 'inline-block', padding: '16px 52px', background: 'hsl(28, 100%, 50%)', borderRadius: '50px', fontWeight: '700', color: '#fff', textDecoration: 'none', fontSize: '16px' }}>
-              Get Your Quote
-            </a>
-          </div>
-        </div>
+      {/* ══════════════════════════════════════════════════════
+          PROFESSIONAL TERMITE INSPECTIONS — text + CTA
+      ══════════════════════════════════════════════════════ */}
+      <section style={{ padding: '50px 40px 0', maxWidth: '1200px', margin: '0 auto' }}>
+        <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
+          Professional Termite Inspections
+        </h2>
+        <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '28px', color: '#444', marginTop: 0 }}>
+          It is critical to have termite issues evaluated by a professional. At Dang Pest Control, our licensed technicians will conduct a comprehensive inspection of both exterior and interior areas of your property. Based on the inspection, we'll determine the scope of the infestation and recommend the most effective course of treatment.
+        </p>
+        <a
+          href="/quote"
+          style={{
+            display: 'inline-block',
+            padding: '14px 40px',
+            background: 'hsl(28, 100%, 50%)',
+            borderRadius: '50px',
+            fontWeight: '700',
+            color: '#fff',
+            textDecoration: 'none',
+            fontSize: '16px',
+          }}
+        >
+          Get Your Quote
+        </a>
       </section>
 
       {/* ══════════════════════════════════════════════════════
           WHY CHOOSE US — white bg, 5 gray cards
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 40px 70px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '40px', alignItems: 'center', marginBottom: '36px' }}>
+      <section style={{ padding: '70px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 2fr',
+          gap: '40px',
+          alignItems: 'center',
+          marginBottom: '36px',
+        }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', margin: 0 }}>
             Why Choose Us?
           </h2>
           <p style={{ fontSize: '16px', color: '#444', lineHeight: 1.7, margin: 0 }}>
-            When it comes to termite inspection and treatment, experience matters. Here's why homeowners trust us:
+            When it comes to termite inspection and treatment, experience matters. Here's why homeowners trust us in a market saturated with pest control options:
           </p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '20px' }}>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+          gap: '20px',
+        }}>
           {whyCards.map((card, i) => (
-            <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
-              <img src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
+            <div
+              key={i}
+              style={{
+                background: '#f3f3f1',
+                borderRadius: '8px',
+                padding: '28px 20px',
+              }}
+            >
+              <img
+                src={card.icon}
+                alt={card.title}
+                style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }}
+              />
               <h3 style={{ fontWeight: '800', fontSize: '16px', marginBottom: '10px', marginTop: 0 }}>{card.title}</h3>
               <p style={{ fontSize: '14px', lineHeight: 1.7, color: '#555', margin: 0 }}>{card.desc}</p>
             </div>
@@ -217,11 +340,16 @@ const TermiteInspections = () => {
       {/* ══════════════════════════════════════════════════════
           CALL US TODAY — text left, dotted image right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '20px 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '60px',
+          alignItems: 'center',
+        }}>
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
-              Call Us Today & Protect What Matters
+              Call Us Today &amp; Protect What Matters
             </h2>
             <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '28px', color: '#444', marginTop: 0 }}>
               Don't wait until termites cause irreparable damage to your home or property. Whether you're buying, selling, or ensuring your home is termite-free long-term, our expertise makes all the difference. Located in Tyler, TX, we proudly serve customers in{' '}
@@ -230,18 +358,47 @@ const TermiteInspections = () => {
               <a href="/lindale-tx" style={{ color: '#000', textDecoration: 'underline' }}>Lindale</a>,{' '}
               <a href="/bullard-tx" style={{ color: '#000', textDecoration: 'underline' }}>Bullard</a>,{' '}
               <a href="/whitehouse-tx" style={{ color: '#000', textDecoration: 'underline' }}>Whitehouse</a>,
-              and beyond. Call us today at{' '}
+              and beyond. Take the first step in protecting your home and loved ones today. Call us today at{' '}
               <a href="tel:(903) 871-0550" style={{ color: '#000', fontWeight: '700' }}>(903) 871-0550</a>{' '}
               and{' '}
               <a href="/quote" style={{ color: '#000', textDecoration: 'underline' }}>get your quote</a>.
             </p>
-            <a href="/quote" style={{ display: 'inline-block', padding: '14px 40px', background: 'hsl(28, 100%, 50%)', borderRadius: '50px', fontWeight: '700', color: '#fff', textDecoration: 'none', fontSize: '16px' }}>
+            <a
+              href="/quote"
+              style={{
+                display: 'inline-block',
+                padding: '14px 40px',
+                background: 'hsl(28, 100%, 50%)',
+                borderRadius: '50px',
+                fontWeight: '700',
+                color: '#fff',
+                textDecoration: 'none',
+                fontSize: '16px',
+              }}
+            >
               Get Your Quote
             </a>
           </div>
+
+          {/* Image with dotted bg */}
           <div style={{ position: 'relative', padding: '20px' }}>
-            <div style={{ position: 'absolute', inset: 0, background: '#fff', backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)', backgroundSize: '22px 22px', borderRadius: '8px', zIndex: 0 }} />
-            <div style={{ position: 'relative', zIndex: 1, border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: '#fff',
+              backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)',
+              backgroundSize: '22px 22px',
+              borderRadius: '8px',
+              zIndex: 0,
+            }} />
+            <div style={{
+              position: 'relative',
+              zIndex: 1,
+              border: '4px solid rgb(255, 213, 39)',
+              borderRadius: '6px',
+              overflow: 'hidden',
+              boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
+            }}>
               <img
                 src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/termites-inspections.jpg"
                 alt="Home Termite Inspection Services in Tyler TX"
@@ -249,24 +406,6 @@ const TermiteInspections = () => {
               />
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════
-          EAST TEXAS CTA — yellow diagonal section
-      ══════════════════════════════════════════════════════ */}
-      <section style={{ position: 'relative', background: 'hsl(48, 100%, 50%)', padding: '100px 40px 90px', clipPath: 'polygon(0 9%, 100% 0, 100% 100%, 0 100%)', marginTop: '-30px', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.12) 1.5px, transparent 1.5px)', backgroundSize: '18px 18px', pointerEvents: 'none' }} />
-        <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: '820px', margin: '0 auto', paddingTop: '20px' }}>
-          <h2 style={{ fontFamily: '"Bangers", cursive', fontSize: 'clamp(42px, 6vw, 76px)', fontStyle: 'italic', color: 'hsl(20, 40%, 12%)', letterSpacing: '0.04em', marginBottom: '24px', marginTop: 0, lineHeight: 1.1, textShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>
-            PROTECT YOUR EAST TEXAS<br />HOME TODAY
-          </h2>
-          <p style={{ fontSize: '16px', lineHeight: 1.8, color: 'rgba(0,0,0,0.72)', marginBottom: '12px', marginTop: 0 }}>
-            East Texas heat, humidity, and piney woods conditions create the perfect environment for pests year-round. Don't wait until a small problem becomes a major infestation.
-          </p>what
-          <p style={{ fontSize: '16px', lineHeight: 1.8, color: 'rgba(0,0,0,0.72)', margin: 0 }}>
-            Dang Pest Control provides safe, effective, and recurring protection for homes across Tyler, Whitehouse, Bullard, Lindale, Flint, and surrounding communities.
-          </p>
         </div>
       </section>
 
