@@ -5,6 +5,7 @@ const PrivacyPolicy = () => {
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
       <Navbar />
+      <main>
 
       <section style={{ padding: '60px 40px 80px', maxWidth: '900px', margin: '0 auto' }}>
         <h1 style={{ fontWeight: '800', fontSize: '32px', marginBottom: '8px', marginTop: 0 }}>Privacy Policy</h1>
@@ -37,6 +38,7 @@ const PrivacyPolicy = () => {
         ))}
       </section>
 
+      </main>
       <Footer />
     </div>
   );

@@ -100,6 +100,7 @@ const QuotePage = () => {
         canonical="/quote"
       />
       <Navbar />
+      <main>
 
       {/* Header */}
       <section style={{
@@ -224,6 +225,7 @@ const QuotePage = () => {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

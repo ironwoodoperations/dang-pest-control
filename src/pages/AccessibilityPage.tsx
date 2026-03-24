@@ -10,6 +10,7 @@ const AccessibilityPage = () => (
       canonical="/accessibility"
     />
     <Navbar />
+    <main>
 
     <section className="hero-bg text-primary-foreground py-20 text-center">
       <div className="container mx-auto px-4">
@@ -38,6 +39,7 @@ const AccessibilityPage = () => (
       </div>
     </section>
 
+    </main>
     <Footer />
   </div>
 );

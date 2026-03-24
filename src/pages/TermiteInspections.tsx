@@ -37,6 +37,7 @@ const TermiteInspections = () => {
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
       <Navbar />
+      <main>
 
       {/* ══════════════════════════════════════════════════════
           HERO BANNER
@@ -421,6 +422,7 @@ const TermiteInspections = () => {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

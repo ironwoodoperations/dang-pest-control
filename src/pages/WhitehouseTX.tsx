@@ -27,6 +27,7 @@ const WhitehouseTX = () => {
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
       <Navbar />
+      <main>
 
       {/* HERO */}
       <section style={{ position: 'relative', background: `url(/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`, paddingTop: '80px', paddingBottom: '200px', minHeight: '420px', overflow: 'hidden' }}>
@@ -149,6 +150,7 @@ const WhitehouseTX = () => {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

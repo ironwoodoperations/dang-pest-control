@@ -91,11 +91,11 @@ const Navbar = () => {
                 )}
               </div>
             </div>
-            <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2">
-              <img src={dangLogo} alt="Dang Pest Control" className="w-24 h-auto drop-shadow-md" />
+            <Link to="/" aria-label="Dang Pest Control home" className="hidden md:block absolute left-1/2 -translate-x-1/2">
+              <img src={dangLogo} alt="Dang Pest Control" width={96} height={96} className="w-24 h-auto drop-shadow-md" />
             </Link>
-            <Link to="/" className="md:hidden">
-              <img src={dangLogo} alt="Dang Pest Control" className="w-12 h-auto" />
+            <Link to="/" aria-label="Dang Pest Control home" className="md:hidden">
+              <img src={dangLogo} alt="Dang Pest Control" width={48} height={48} className="w-12 h-auto" />
             </Link>
             <div className="hidden md:flex items-center gap-5">
               <a href="tel:9038710550" className="flex items-center gap-2 font-bold" style={{ color: '#000000' }}>
@@ -126,7 +126,7 @@ const Navbar = () => {
                 }}
               >Get Your Quote</Link>
             </div>
-            <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)} style={{ color: 'hsl(20, 40%, 12%)' }}>
+            <button className="md:hidden" aria-label={mobileOpen ? "Close menu" : "Open menu"} onClick={() => setMobileOpen(!mobileOpen)} style={{ color: 'hsl(20, 40%, 12%)' }}>
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
@@ -168,8 +168,8 @@ const Navbar = () => {
             </div>
 
             {/* Logo — centered, floating above pill */}
-            <Link to="/" className="hidden md:block absolute left-1/2 -translate-x-1/2 z-10" style={{ top: '-60px' }}>
-              <img src={dangLogo} alt="Dang Pest Control" style={{ width: '267px' }} className="h-auto drop-shadow-lg" />
+            <Link to="/" aria-label="Dang Pest Control home" className="hidden md:block absolute left-1/2 -translate-x-1/2 z-10" style={{ top: '-60px' }}>
+              <img src={dangLogo} alt="Dang Pest Control" width={267} height={120} style={{ width: '267px' }} className="h-auto drop-shadow-lg" />
             </Link>
 
             {/* Right: phone + CTA */}
@@ -208,7 +208,7 @@ const Navbar = () => {
             </div>
 
             {/* Mobile */}
-            <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)} style={{ color: 'hsl(20, 40%, 12%)' }}>
+            <button className="md:hidden" aria-label={mobileOpen ? "Close menu" : "Open menu"} onClick={() => setMobileOpen(!mobileOpen)} style={{ color: 'hsl(20, 40%, 12%)' }}>
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
             <span className="md:hidden text-comic text-lg" style={{ color: 'hsl(20, 40%, 12%)' }}>DANG!</span>

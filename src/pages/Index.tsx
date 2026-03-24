@@ -48,6 +48,7 @@ const Index = () => {
       />
       <HolidayBanner />
       <Navbar />
+      <main>
       <HeroSection dynamicVideoUrl={heroVideoUrl} dynamicVideoType={heroVideoType} videoStart={heroVideoStart} videoEnd={heroVideoEnd} />
       <FeatureStrip />
       <ExpertSection />
@@ -57,6 +58,7 @@ const Index = () => {
       <PestExterminationSection />
       <TestimonialsSection />
       <CTASection />
+      </main>
       <Footer />
     </div>
   );

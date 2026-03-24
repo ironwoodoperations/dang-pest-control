@@ -20,8 +20,8 @@ const Footer = () => {
           </div>
 
           <div className="flex flex-col items-center text-center gap-4">
-            <Link to="/">
-              <img src={dangLogo} alt="Dang Pest Control" className="w-80 h-auto object-contain" />
+            <Link to="/" aria-label="Dang Pest Control home">
+              <img src={dangLogo} alt="Dang Pest Control" width={320} height={120} className="w-80 h-auto object-contain" />
             </Link>
             <p className="text-sm leading-relaxed max-w-xs" style={{ color: 'hsl(20, 20%, 40%)' }}>
               At Dang Pest Control, we know pest problems can seriously disrupt your life. That's why we offer a wide array of reliable pest control services tailored to meet your specific needs.
@@ -42,16 +42,16 @@ const Footer = () => {
         </div>
 
         <div className="flex justify-center gap-4 mt-10">
-          <a href="https://www.facebook.com/DangPestControl" target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full flex items-center justify-center text-white transition-all hover:brightness-110" style={{ backgroundColor: 'hsl(28, 100%, 50%)' }}>
+          <a href="https://www.facebook.com/DangPestControl" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-14 h-14 rounded-full flex items-center justify-center text-white transition-all hover:brightness-110" style={{ backgroundColor: 'hsl(28, 100%, 50%)' }}>
             <Facebook className="w-6 h-6" />
           </a>
-          <a href="https://instagram.com/dangpestcontrol" target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full flex items-center justify-center text-white transition-all hover:brightness-110" style={{ backgroundColor: 'hsl(28, 100%, 50%)' }}>
+          <a href="https://instagram.com/dangpestcontrol" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-14 h-14 rounded-full flex items-center justify-center text-white transition-all hover:brightness-110" style={{ backgroundColor: 'hsl(28, 100%, 50%)' }}>
             <Instagram className="w-6 h-6" />
           </a>
-          <a href="https://www.linkedin.com/company/dangpestcontrol/" target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full flex items-center justify-center text-white transition-all hover:brightness-110" style={{ backgroundColor: 'hsl(28, 100%, 50%)' }}>
+          <a href="https://www.linkedin.com/company/dangpestcontrol/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="w-14 h-14 rounded-full flex items-center justify-center text-white transition-all hover:brightness-110" style={{ backgroundColor: 'hsl(28, 100%, 50%)' }}>
             <Linkedin className="w-6 h-6" />
           </a>
-          <a href="https://x.com/dangpestcontrol" target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full flex items-center justify-center text-white transition-all hover:brightness-110" style={{ backgroundColor: 'hsl(28, 100%, 50%)' }}>
+          <a href="https://x.com/dangpestcontrol" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" className="w-14 h-14 rounded-full flex items-center justify-center text-white transition-all hover:brightness-110" style={{ backgroundColor: 'hsl(28, 100%, 50%)' }}>
             <X className="w-6 h-6" />
           </a>
         </div>
