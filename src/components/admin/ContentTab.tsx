@@ -12,9 +12,21 @@ import { Save, ArrowLeft, Video, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { serviceKeys, servicesData } from "@/data/servicesData";
 
+const nonServicePages = [
+  { slug: "/", label: "Home" },
+  { slug: "/about", label: "About Us" },
+  { slug: "/contact", label: "Contact" },
+  { slug: "/quote", label: "Get a Quote" },
+  { slug: "/faq", label: "FAQ" },
+  { slug: "/blog", label: "Blog" },
+  { slug: "/reviews", label: "Reviews" },
+  { slug: "/service-area", label: "Service Area" },
+];
+
 interface PageContent {
   id?: string;
   slug: string;
+  label?: string;
   title: string | null;
   subtitle: string | null;
   intro: string | null;
@@ -39,6 +51,21 @@ const ContentTab = () => {
     const { data } = await supabase.from("page_content").select("*").eq("tenant_id", tenantId);
     const existingMap = new Map((data || []).map((d: any) => [d.slug, d]));
 
+    // Build non-service page entries
+    const nonServiceMerged = nonServicePages.map((p) => {
+      const existing = existingMap.get(p.slug);
+      return {
+        id: existing?.id,
+        slug: p.slug,
+        label: p.label,
+        title: existing?.title || null,
+        subtitle: existing?.subtitle || null,
+        intro: existing?.intro || null,
+        video_url: existing?.video_url || null,
+        video_type: existing?.video_type || "youtube",
+      };
+    });
+
     // Merge with all service keys so every page shows up
     const merged = serviceKeys.map((key) => {
       const existing = existingMap.get(key);
@@ -52,7 +79,7 @@ const ContentTab = () => {
         video_type: existing?.video_type || "youtube",
       };
     });
-    setPages(merged);
+    setPages([...nonServiceMerged, ...merged]);
   };
 
   const handleEdit = (page: PageContent) => {
@@ -131,7 +158,7 @@ const ContentTab = () => {
               <CardHeader className="pb-2">
                 <CardTitle className="font-body text-sm flex items-center gap-2" style={{ color: "hsl(var(--admin-orange))" }}>
                   <FileText className="w-4 h-4" style={{ color: "hsl(var(--admin-orange))" }} />
-                  {defaultData?.subtitle || page.slug}
+                  {page.label || defaultData?.subtitle || page.slug}
                 </CardTitle>
               </CardHeader>
               <CardContent>
