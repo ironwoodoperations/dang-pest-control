@@ -11,10 +11,14 @@ interface LocationData {
   slug: string;
   city: string;
   hero_title: string;
+  hero_description: string;
   intro: string;
   local_pest_description: string;
   map_embed_url: string;
   local_testimonial_quote: string;
+  meta_title: string;
+  meta_description: string;
+  is_live: boolean;
 }
 
 const servicesList = [
@@ -46,8 +50,8 @@ const LocationPage = () => {
     window.scrollTo(0, 0);
     const fetchData = async () => {
       const [{ data: loc }, { data: all }] = await Promise.all([
-        supabase.from("location_data").select("*").eq("slug", slug!).maybeSingle(),
-        supabase.from("location_data").select("slug, city"),
+        supabase.from("location_data").select("*").eq("slug", slug!).eq("is_live", true).maybeSingle(),
+        supabase.from("location_data").select("slug, city").eq("is_live", true),
       ]);
       if (loc) setLocation(loc as LocationData);
       if (all) setAllLocations(all as { slug: string; city: string }[]);
@@ -81,8 +85,8 @@ const LocationPage = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title={seoTitle || `Pest Control in ${location.city}, TX`}
-        description={seoDescription || `Professional pest control services in ${location.city}, TX. Family-owned, licensed & insured. Call (903) 871-0550 for a free quote.`}
+        title={location.meta_title || seoTitle || `Pest Control in ${location.city}, TX`}
+        description={location.meta_description || seoDescription || `Professional pest control services in ${location.city}, TX. Family-owned, licensed & insured. Call (903) 871-0550 for a free quote.`}
         canonical={`/${slug}`}
         jsonLd={{
           "@context": "https://schema.org",

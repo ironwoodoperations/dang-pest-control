@@ -15,11 +15,12 @@ const SlugRouter = () => {
       setIsLocation(false);
       return;
     }
-    // Check if slug exists in location_data
+    // Check if slug exists in location_data and is live
     supabase
       .from("location_data")
       .select("slug")
       .eq("slug", slug)
+      .eq("is_live", true)
       .maybeSingle()
       .then(({ data }) => {
         setIsLocation(!!data);

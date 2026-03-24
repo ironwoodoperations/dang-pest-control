@@ -113,11 +113,15 @@ export type Database = {
           city: string
           created_at: string
           hero_title: string
+          hero_description: string
           id: string
           intro: string
+          is_live: boolean
           local_pest_description: string
           local_testimonial_quote: string
           map_embed_url: string
+          meta_title: string
+          meta_description: string
           slug: string
           tenant_id: string | null
           updated_at: string
@@ -126,11 +130,15 @@ export type Database = {
           city: string
           created_at?: string
           hero_title?: string
+          hero_description?: string
           id?: string
           intro?: string
+          is_live?: boolean
           local_pest_description?: string
           local_testimonial_quote?: string
           map_embed_url?: string
+          meta_title?: string
+          meta_description?: string
           slug: string
           tenant_id?: string | null
           updated_at?: string
@@ -139,11 +147,15 @@ export type Database = {
           city?: string
           created_at?: string
           hero_title?: string
+          hero_description?: string
           id?: string
           intro?: string
+          is_live?: boolean
           local_pest_description?: string
           local_testimonial_quote?: string
           map_embed_url?: string
+          meta_title?: string
+          meta_description?: string
           slug?: string
           tenant_id?: string | null
           updated_at?: string

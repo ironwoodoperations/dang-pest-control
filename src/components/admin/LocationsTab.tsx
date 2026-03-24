@@ -16,20 +16,28 @@ interface LocationRow {
   slug: string;
   city: string;
   hero_title: string;
+  hero_description: string;
   intro: string;
   local_pest_description: string;
   map_embed_url: string;
   local_testimonial_quote: string;
+  meta_title: string;
+  meta_description: string;
+  is_live: boolean;
 }
 
 const emptyLocation: LocationRow = {
   slug: "",
   city: "",
   hero_title: "",
+  hero_description: "",
   intro: "",
   local_pest_description: "",
   map_embed_url: "",
   local_testimonial_quote: "",
+  meta_title: "",
+  meta_description: "",
+  is_live: true,
 };
 
 const LocationsTab = () => {
@@ -68,10 +76,14 @@ const LocationsTab = () => {
       slug: editing.slug,
       city: editing.city,
       hero_title: editing.hero_title,
+      hero_description: editing.hero_description,
       intro: editing.intro,
       local_pest_description: editing.local_pest_description,
       map_embed_url: editing.map_embed_url,
       local_testimonial_quote: editing.local_testimonial_quote,
+      meta_title: editing.meta_title,
+      meta_description: editing.meta_description,
+      is_live: editing.is_live,
       tenant_id: tenantId,
     };
 
@@ -132,6 +144,7 @@ const LocationsTab = () => {
                 <TableHead>City</TableHead>
                 <TableHead>Slug</TableHead>
                 <TableHead>Hero Title</TableHead>
+                <TableHead>Live</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -146,6 +159,11 @@ const LocationsTab = () => {
                   </TableCell>
                   <TableCell className="text-muted-foreground">/{loc.slug}</TableCell>
                   <TableCell className="text-muted-foreground truncate max-w-[200px]">{loc.hero_title}</TableCell>
+                  <TableCell>
+                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${loc.is_live ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-500'}`}>
+                      {loc.is_live ? "Live" : "Draft"}
+                    </span>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" size="sm" onClick={() => handleEdit(loc)}>
@@ -160,7 +178,7 @@ const LocationsTab = () => {
               ))}
               {locations.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                     No locations yet. Click "Add Location" to create one.
                   </TableCell>
                 </TableRow>
@@ -181,7 +199,14 @@ const LocationsTab = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>City Name</Label>
-                  <Input value={editing.city} onChange={(e) => updateField("city", e.target.value)} placeholder="Longview" />
+                  <Input value={editing.city} onChange={(e) => {
+                    const city = e.target.value;
+                    setEditing({
+                      ...editing,
+                      city,
+                      ...(isNew ? { slug: city.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-tx' } : {}),
+                    });
+                  }} placeholder="Longview" />
                 </div>
                 <div className="space-y-2">
                   <Label>URL Slug</Label>
@@ -192,6 +217,11 @@ const LocationsTab = () => {
               <div className="space-y-2">
                 <Label>Hero Title</Label>
                 <Input value={editing.hero_title} onChange={(e) => updateField("hero_title", e.target.value)} placeholder="Expert Pest Control in Longview, TX" />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Hero Description</Label>
+                <Textarea value={editing.hero_description} onChange={(e) => updateField("hero_description", e.target.value)} rows={2} placeholder="Short description shown below hero title..." />
               </div>
 
               <div className="space-y-2">
@@ -212,6 +242,29 @@ const LocationsTab = () => {
               <div className="space-y-2">
                 <Label>Local Testimonial Quote</Label>
                 <Textarea value={editing.local_testimonial_quote} onChange={(e) => updateField("local_testimonial_quote", e.target.value)} rows={3} placeholder="A review from a customer in this city..." />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Meta Title (SEO)</Label>
+                <Input value={editing.meta_title} onChange={(e) => updateField("meta_title", e.target.value)} placeholder="Pest Control in Longview, TX | Dang Pest Control" />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Meta Description (SEO)</Label>
+                <Textarea value={editing.meta_description} onChange={(e) => updateField("meta_description", e.target.value)} rows={2} placeholder="Professional pest control services in Longview, TX..." />
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={editing.is_live}
+                  onClick={() => setEditing({ ...editing, is_live: !editing.is_live })}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${editing.is_live ? 'bg-green-500' : 'bg-gray-300'}`}
+                >
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${editing.is_live ? 'translate-x-6' : 'translate-x-1'}`} />
+                </button>
+                <Label>{editing.is_live ? "Live" : "Draft"}</Label>
               </div>
 
               <Button onClick={handleSave} disabled={saving || !editing.slug || !editing.city} className="w-full gap-2">
