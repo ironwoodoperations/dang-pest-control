@@ -150,7 +150,7 @@ const LocationPage = () => {
                 loading="lazy"
                 width={600}
                 height={400}
-                src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Exterior-Under-Eve-Flowers-scaled-e1745951054326.jpg"
+                src={(location as any).intro_image_url || "/exterior-treatment.jpg"}
                 alt={`Pest Control Technician Providing Services in ${location.city} TX`}
                 style={{ width: '100%', display: 'block' }}
               />
