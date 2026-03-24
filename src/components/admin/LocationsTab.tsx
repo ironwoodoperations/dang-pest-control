@@ -8,8 +8,20 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Pencil, Plus, Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+const SERVICE_AREA_CITIES = [
+  "Tyler", "Longview", "Lindale", "Bullard", "Whitehouse", "Jacksonville",
+  "Arp", "Ben Wheeler", "Brownsboro", "Athens", "Canton", "Chandler",
+  "Chappell Hill", "Edom", "Flint", "Gilmer", "Gladewater", "Hawkins",
+  "Henderson", "Hideaway", "Holly Lake Ranch", "Kilgore", "Mineola",
+  "Noonday", "Quitman", "Troup", "Van", "Winona",
+];
+
+const cityToSlug = (city: string) =>
+  city.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") + "-tx";
 
 interface LocationRow {
   id?: string;
@@ -196,23 +208,47 @@ const LocationsTab = () => {
           </SheetHeader>
           {editing && (
             <div className="space-y-4 mt-6">
-              <div className="grid grid-cols-2 gap-4">
+              {isNew ? (
                 <div className="space-y-2">
-                  <Label>City Name</Label>
-                  <Input value={editing.city} onChange={(e) => {
-                    const city = e.target.value;
-                    setEditing({
-                      ...editing,
-                      city,
-                      ...(isNew ? { slug: city.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-tx' } : {}),
-                    });
-                  }} placeholder="Longview" />
+                  <Label>City</Label>
+                  <Select
+                    value={editing.city}
+                    onValueChange={(city) => {
+                      setEditing({
+                        ...editing,
+                        city,
+                        slug: cityToSlug(city),
+                        hero_title: `Pest Control in ${city}, TX`,
+                      });
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a city..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SERVICE_AREA_CITIES
+                        .filter((c) => !locations.some((l) => l.slug === cityToSlug(c)))
+                        .map((c) => (
+                          <SelectItem key={c} value={c}>{c}</SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  {editing.slug && (
+                    <p className="text-xs text-muted-foreground">Slug: /{editing.slug}</p>
+                  )}
                 </div>
-                <div className="space-y-2">
-                  <Label>URL Slug</Label>
-                  <Input value={editing.slug} onChange={(e) => updateField("slug", e.target.value)} placeholder="longview-tx" disabled={!isNew} />
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>City Name</Label>
+                    <Input value={editing.city} disabled />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>URL Slug</Label>
+                    <Input value={editing.slug} disabled />
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="space-y-2">
                 <Label>Hero Title</Label>

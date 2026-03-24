@@ -1,41 +1,36 @@
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { Link } from "react-router-dom";
 import { MapPin, Phone } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const cities = [
-  { name: "Tyler", slug: null },
-  { name: "Longview", slug: "longview-tx" },
-  { name: "Lindale", slug: "lindale-tx" },
-  { name: "Bullard", slug: "bullard-tx" },
-  { name: "Whitehouse", slug: "whitehouse-tx" },
-  { name: "Jacksonville", slug: "jacksonville-tx" },
-  { name: "Arp", slug: null },
-  { name: "Ben Wheeler", slug: null },
-  { name: "Brownsboro", slug: null },
-  { name: "Athens", slug: null },
-  { name: "Canton", slug: null },
-  { name: "Chandler", slug: null },
-  { name: "Chappell Hill", slug: null },
-  { name: "Edom", slug: null },
-  { name: "Flint", slug: null },
-  { name: "Gilmer", slug: null },
-  { name: "Gladewater", slug: null },
-  { name: "Hawkins", slug: null },
-  { name: "Henderson", slug: null },
-  { name: "Hideaway", slug: null },
-  { name: "Holly Lake Ranch", slug: null },
-  { name: "Kilgore", slug: null },
-  { name: "Mineola", slug: null },
-  { name: "Noonday", slug: null },
-  { name: "Quitman", slug: null },
-  { name: "Troup", slug: null },
-  { name: "Van", slug: null },
-  { name: "Winona", slug: null },
+  "Tyler", "Longview", "Lindale", "Bullard", "Whitehouse", "Jacksonville",
+  "Arp", "Ben Wheeler", "Brownsboro", "Athens", "Canton", "Chandler",
+  "Chappell Hill", "Edom", "Flint", "Gilmer", "Gladewater", "Hawkins",
+  "Henderson", "Hideaway", "Holly Lake Ranch", "Kilgore", "Mineola",
+  "Noonday", "Quitman", "Troup", "Van", "Winona",
 ];
 
-const ServiceAreaPage = () => (
+const ServiceAreaPage = () => {
+  const [liveSlugs, setLiveSlugs] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    supabase
+      .from("location_data")
+      .select("slug")
+      .eq("is_live", true)
+      .then(({ data }) => {
+        if (data) setLiveSlugs(new Set(data.map((r: { slug: string }) => r.slug)));
+      });
+  }, []);
+
+  const cityToSlug = (city: string) =>
+    city.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") + "-tx";
+
+  return (
   <div className="min-h-screen">
     <SEO
       title="Service Area | Dang Pest Control"
@@ -55,18 +50,22 @@ const ServiceAreaPage = () => (
       <div className="container mx-auto px-4 max-w-4xl">
         <h2 className="text-comic text-3xl mb-8 text-center" style={{color: 'hsl(20, 40%, 12%)'}}>Cities We Serve</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
-          {cities.map((city) => (
-            <div key={city.name} className="flex items-center gap-2 p-4 rounded-xl border border-orange-100 bg-white hover:border-primary transition-colors">
-              <MapPin className="w-4 h-4 flex-shrink-0" style={{color: 'hsl(var(--primary))'}} />
-              {city.slug ? (
-                <Link to={`/${city.slug}`} className="font-semibold hover:text-primary transition-colors" style={{color: 'hsl(20, 40%, 12%)'}}>
-                  {city.name}, TX
-                </Link>
-              ) : (
-                <span className="font-semibold" style={{color: 'hsl(20, 40%, 12%)'}}>{city.name}, TX</span>
-              )}
-            </div>
-          ))}
+          {cities.map((city) => {
+            const slug = cityToSlug(city);
+            const isLive = liveSlugs.has(slug);
+            return (
+              <div key={city} className="flex items-center gap-2 p-4 rounded-xl border border-orange-100 bg-white hover:border-primary transition-colors">
+                <MapPin className="w-4 h-4 flex-shrink-0" style={{color: 'hsl(var(--primary))'}} />
+                {isLive ? (
+                  <Link to={`/${slug}`} className="font-semibold hover:text-primary transition-colors" style={{color: 'hsl(20, 40%, 12%)'}}>
+                    {city}, TX
+                  </Link>
+                ) : (
+                  <span className="font-semibold" style={{color: 'hsl(20, 40%, 12%)'}}>{city}, TX</span>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         <div className="text-center rounded-2xl p-8 mt-8" style={{background: 'hsl(30, 40%, 96%)'}}>
@@ -86,6 +85,7 @@ const ServiceAreaPage = () => (
 
     <Footer />
   </div>
-);
+  );
+};
 
 export default ServiceAreaPage;

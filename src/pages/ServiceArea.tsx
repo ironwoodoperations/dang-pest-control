@@ -1,38 +1,32 @@
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { supabase } from '@/integrations/supabase/client';
 
-const locations = [
-  { name: 'Tyler, TX', href: null },
-  { name: 'Longview, TX', href: '/longview-tx' },
-  { name: 'Lindale, TX', href: '/lindale-tx' },
-  { name: 'Bullard, TX', href: '/bullard-tx' },
-  { name: 'Whitehouse, TX', href: '/whitehouse-tx' },
-  { name: 'Jacksonville, TX', href: '/jacksonville-tx' },
-  { name: 'Arp, TX', href: null },
-  { name: 'Ben Wheeler, TX', href: null },
-  { name: 'Brownsboro, TX', href: null },
-  { name: 'Athens, TX', href: null },
-  { name: 'Canton, TX', href: null },
-  { name: 'Chandler, TX', href: null },
-  { name: 'Chappell Hill, TX', href: null },
-  { name: 'Edom, TX', href: null },
-  { name: 'Flint, TX', href: null },
-  { name: 'Gilmer, TX', href: null },
-  { name: 'Gladewater, TX', href: null },
-  { name: 'Hawkins, TX', href: null },
-  { name: 'Henderson, TX', href: null },
-  { name: 'Hideaway, TX', href: null },
-  { name: 'Holly Lake Ranch, TX', href: null },
-  { name: 'Kilgore, TX', href: null },
-  { name: 'Mineola, TX', href: null },
-  { name: 'Noonday, TX', href: null },
-  { name: 'Quitman, TX', href: null },
-  { name: 'Troup, TX', href: null },
-  { name: 'Van, TX', href: null },
-  { name: 'Winona, TX', href: null },
+const cities = [
+  "Tyler", "Longview", "Lindale", "Bullard", "Whitehouse", "Jacksonville",
+  "Arp", "Ben Wheeler", "Brownsboro", "Athens", "Canton", "Chandler",
+  "Chappell Hill", "Edom", "Flint", "Gilmer", "Gladewater", "Hawkins",
+  "Henderson", "Hideaway", "Holly Lake Ranch", "Kilgore", "Mineola",
+  "Noonday", "Quitman", "Troup", "Van", "Winona",
 ];
 
+const cityToSlug = (city: string) =>
+  city.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-tx';
+
 const ServiceArea = () => {
+  const [liveSlugs, setLiveSlugs] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    supabase
+      .from('location_data')
+      .select('slug')
+      .eq('is_live', true)
+      .then(({ data }) => {
+        if (data) setLiveSlugs(new Set(data.map((r: { slug: string }) => r.slug)));
+      });
+  }, []);
+
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
       <Navbar />
@@ -108,23 +102,26 @@ const ServiceArea = () => {
           gap: '40px 20px',
           textAlign: 'center',
         }}>
-          {locations.map((loc, i) => (
-            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-              {/* Pin icon */}
-              <svg width="36" height="44" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 0C8.06 0 0 8.06 0 18C0 31.5 18 44 18 44C18 44 36 31.5 36 18C36 8.06 27.94 0 18 0ZM18 24C14.69 24 12 21.31 12 18C12 14.69 14.69 12 18 12C21.31 12 24 14.69 24 18C24 21.31 21.31 24 18 24Z" fill="hsl(28, 100%, 50%)"/>
-              </svg>
-              {loc.href ? (
-                <a href={loc.href} style={{ fontWeight: '700', fontSize: '16px', color: 'hsl(20, 40%, 12%)', textDecoration: 'underline' }}>
-                  {loc.name}
-                </a>
-              ) : (
-                <span style={{ fontWeight: '700', fontSize: '16px', color: 'hsl(20, 40%, 12%)' }}>
-                  {loc.name}
-                </span>
-              )}
-            </div>
-          ))}
+          {cities.map((city) => {
+            const slug = cityToSlug(city);
+            const isLive = liveSlugs.has(slug);
+            return (
+              <div key={city} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                <svg width="36" height="44" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 0C8.06 0 0 8.06 0 18C0 31.5 18 44 18 44C18 44 36 31.5 36 18C36 8.06 27.94 0 18 0ZM18 24C14.69 24 12 21.31 12 18C12 14.69 14.69 12 18 12C21.31 12 24 14.69 24 18C24 21.31 21.31 24 18 24Z" fill="hsl(28, 100%, 50%)"/>
+                </svg>
+                {isLive ? (
+                  <a href={`/${slug}`} style={{ fontWeight: '700', fontSize: '16px', color: 'hsl(20, 40%, 12%)', textDecoration: 'underline' }}>
+                    {city}, TX
+                  </a>
+                ) : (
+                  <span style={{ fontWeight: '700', fontSize: '16px', color: 'hsl(20, 40%, 12%)' }}>
+                    {city}, TX
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
       </section>
 
