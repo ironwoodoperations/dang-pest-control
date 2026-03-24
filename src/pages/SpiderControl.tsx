@@ -92,7 +92,7 @@ const SpiderControl = () => {
       <section
         style={{
           position: 'relative',
-          background: `url(https://www.dangpestcontrol.com/wp-content/uploads/2025/06/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`,
+          background: `url(/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`,
           paddingTop: '80px',
           paddingBottom: '200px',
           minHeight: '420px',
@@ -128,6 +128,9 @@ const SpiderControl = () => {
         {/* Cloud bottom image */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
           <img
+            fetchPriority="high"
+            width={1200}
+            height={50}
             src="/banner-img.png"
             alt=""
             style={{ width: '100%', display: 'block' }}
@@ -160,6 +163,9 @@ const SpiderControl = () => {
             boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
           }}>
             <img
+              loading="lazy"
+              width={600}
+              height={400}
               src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/black-widow.jpg"
               alt="Black Widow Spider Control Services in Tyler TX"
               style={{ width: '100%', display: 'block' }}
@@ -288,6 +294,9 @@ const SpiderControl = () => {
                     <h3 style={{ fontWeight: '800', fontSize: '17px', margin: 0 }}>{step.title}</h3>
                   </div>
                   <img
+                    loading="lazy"
+                    width={58}
+                    height={58}
                     src={step.icon}
                     alt={step.title}
                     style={{
@@ -361,6 +370,9 @@ const SpiderControl = () => {
               }}
             >
               <img
+                loading="lazy"
+                width={56}
+                height={56}
                 src={card.icon}
                 alt={card.title}
                 style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }}
@@ -441,6 +453,9 @@ const SpiderControl = () => {
               boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
             }}>
               <img
+                loading="lazy"
+                width={600}
+                height={400}
                 src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/brown-recluse.jpg"
                 alt="Brown Recluse Spider Control Services in Tyler TX"
                 style={{ width: '100%', display: 'block' }}
@@ -474,7 +489,7 @@ const SpiderControl = () => {
           </div>
         </div>
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
-          <img src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
+          <img loading="lazy" width={1200} height={50} src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
         </div>
       </section>
 

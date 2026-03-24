@@ -92,7 +92,7 @@ const AntControl = () => {
       <section
         style={{
           position: 'relative',
-          background: `url(https://www.dangpestcontrol.com/wp-content/uploads/2025/06/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`,
+          background: `url(/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`,
           paddingTop: '80px',
           paddingBottom: '200px',
           minHeight: '420px',
@@ -124,7 +124,7 @@ const AntControl = () => {
         </div>
 
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
-          <img src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
+          <img fetchPriority="high" width={1200} height={50} src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
         </div>
       </section>
 
@@ -152,6 +152,9 @@ const AntControl = () => {
             boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
           }}>
             <img
+              loading="lazy"
+              width={600}
+              height={400}
               src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/carpenter-ant.jpg"
               alt="Carpenter Ant Control Services Tyler TX"
               style={{ width: '100%', display: 'block' }}
@@ -275,6 +278,9 @@ const AntControl = () => {
                     <h3 style={{ fontWeight: '800', fontSize: '17px', margin: 0 }}>{step.title}</h3>
                   </div>
                   <img
+                    loading="lazy"
+                    width={58}
+                    height={58}
                     src={step.icon}
                     alt={step.title}
                     style={{
@@ -378,6 +384,9 @@ const AntControl = () => {
           {whyCards.map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img
+                loading="lazy"
+                width={56}
+                height={56}
                 src={card.icon}
                 alt={card.title}
                 style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }}
@@ -449,6 +458,9 @@ const AntControl = () => {
               boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
             }}>
               <img
+                loading="lazy"
+                width={600}
+                height={400}
                 src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/fire-ants.jpg"
                 alt="Fire Ant Control Services in Tyler TX"
                 style={{ width: '100%', display: 'block' }}
@@ -489,7 +501,7 @@ const AntControl = () => {
           </div>
         </div>
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
-          <img src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
+          <img loading="lazy" width={1200} height={50} src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
         </div>
       </section>
 

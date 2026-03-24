@@ -92,7 +92,7 @@ const ScorpionControl = () => {
       <section
         style={{
           position: 'relative',
-          background: `url(https://www.dangpestcontrol.com/wp-content/uploads/2025/06/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`,
+          background: `url(/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`,
           paddingTop: '80px',
           paddingBottom: '200px',
           minHeight: '420px',
@@ -124,7 +124,7 @@ const ScorpionControl = () => {
         </div>
 
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
-          <img src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
+          <img fetchPriority="high" width={1200} height={50} src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
         </div>
       </section>
 
@@ -152,6 +152,9 @@ const ScorpionControl = () => {
             boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
           }}>
             <img
+              loading="lazy"
+              width={600}
+              height={400}
               src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/striped-bark-scorpion-1.jpg"
               alt="Scorpion Control Services in Tyler TX"
               style={{ width: '100%', display: 'block' }}
@@ -253,7 +256,7 @@ const ScorpionControl = () => {
                     </p>
                     <h3 style={{ fontWeight: '800', fontSize: '17px', margin: 0 }}>{step.title}</h3>
                   </div>
-                  <img src={step.icon} alt={step.title} style={{ width: '58px', height: '58px', objectFit: 'contain', background: STEP_COLORS[i], borderRadius: '6px', padding: '8px', flexShrink: 0 }} />
+                  <img loading="lazy" width={58} height={58} src={step.icon} alt={step.title} style={{ width: '58px', height: '58px', objectFit: 'contain', background: STEP_COLORS[i], borderRadius: '6px', padding: '8px', flexShrink: 0 }} />
                 </div>
                 <div style={{ flex: 1, borderLeft: `4px solid ${STEP_COLORS[i]}`, margin: '16px 24px 0 24px', paddingLeft: '14px', paddingBottom: '24px' }}>
                   <p style={{ fontSize: '14px', lineHeight: 1.75, color: '#555', margin: 0 }}>{step.desc}</p>
@@ -281,7 +284,7 @@ const ScorpionControl = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
           {whyCards.map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
-              <img src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
+              <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
               <h3 style={{ fontWeight: '800', fontSize: '16px', marginBottom: '10px', marginTop: 0 }}>{card.title}</h3>
               <p style={{ fontSize: '14px', lineHeight: 1.7, color: '#555', margin: 0 }}>{card.desc}</p>
             </div>
@@ -313,7 +316,7 @@ const ScorpionControl = () => {
           <div style={{ position: 'relative', padding: '20px' }}>
             <div style={{ position: 'absolute', inset: 0, background: '#fff', backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)', backgroundSize: '22px 22px', borderRadius: '8px', zIndex: 0 }} />
             <div style={{ position: 'relative', zIndex: 1, border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
-              <img src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/striped-bark-scorpion-2.jpg" alt="Striped Bark Scorpion Control Services in Tyler TX" style={{ width: '100%', display: 'block' }} />
+              <img loading="lazy" width={600} height={400} src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/striped-bark-scorpion-2.jpg" alt="Striped Bark Scorpion Control Services in Tyler TX" style={{ width: '100%', display: 'block' }} />
             </div>
           </div>
         </div>

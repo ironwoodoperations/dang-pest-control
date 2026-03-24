@@ -44,7 +44,7 @@ const TermiteInspections = () => {
       <section
         style={{
           position: 'relative',
-          background: `url(https://www.dangpestcontrol.com/wp-content/uploads/2025/06/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`,
+          background: `url(/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`,
           paddingTop: '80px',
           paddingBottom: '200px',
           minHeight: '420px',
@@ -76,7 +76,7 @@ const TermiteInspections = () => {
         </div>
 
         <div style={{ position: 'absolute', bottom: -1, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
-          <img src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
+          <img fetchPriority="high" width={1200} height={50} src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
         </div>
       </section>
 
@@ -97,6 +97,9 @@ const TermiteInspections = () => {
             boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
           }}>
             <img
+              loading="lazy"
+              width={600}
+              height={400}
               src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/subterranean-termite-inspections.jpg"
               alt="Subterranean Termite Inspections in Tyler TX"
               style={{ width: '100%', display: 'block' }}
@@ -231,6 +234,9 @@ const TermiteInspections = () => {
             boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
           }}>
             <img
+              loading="lazy"
+              width={600}
+              height={400}
               src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Ants-vs-Termites.png"
               alt="Identifying Termites in Tyler TX"
               style={{ width: '100%', display: 'block' }}
@@ -326,6 +332,9 @@ const TermiteInspections = () => {
               }}
             >
               <img
+                loading="lazy"
+                width={56}
+                height={56}
                 src={card.icon}
                 alt={card.title}
                 style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }}
@@ -400,6 +409,9 @@ const TermiteInspections = () => {
               boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
             }}>
               <img
+                loading="lazy"
+                width={600}
+                height={400}
                 src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/termites-inspections.jpg"
                 alt="Home Termite Inspection Services in Tyler TX"
                 style={{ width: '100%', display: 'block' }}

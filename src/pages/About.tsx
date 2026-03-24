@@ -14,7 +14,7 @@ const About = () => {
       <section
         style={{
           position: 'relative',
-          background: `url(https://www.dangpestcontrol.com/wp-content/uploads/2025/06/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`,
+          background: `url(/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`,
           paddingTop: '80px',
           paddingBottom: '200px',
           minHeight: '420px',
@@ -46,7 +46,7 @@ const About = () => {
         </div>
 
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
-          <img src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
+          <img fetchPriority="high" width={1200} height={50} src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
         </div>
       </section>
 
@@ -74,6 +74,9 @@ const About = () => {
             boxShadow: '8px 8px 0 rgba(0,0,0,0.1)',
           }}>
             <img
+              loading="lazy"
+              width={600}
+              height={400}
               src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Kirk-and-Claire.jpg.webp"
               alt="Kirk and Claire - Owners of Dang Pest Control"
               style={{ width: '100%', display: 'block' }}
@@ -170,7 +173,7 @@ const About = () => {
           </div>
         </div>
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
-          <img src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
+          <img loading="lazy" width={1200} height={50} src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
         </div>
       </section>
 

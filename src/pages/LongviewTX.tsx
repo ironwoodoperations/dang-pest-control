@@ -3,33 +3,58 @@ import Footer from '@/components/Footer';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
-const services = [
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/General.jpg', title: 'General\nPest Control', desc: 'Reliable solutions for all common household pests.', href: '/pest-control' },
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/ant.jpg', title: 'Ant\nPest Control', desc: 'Keep ants out of your home for good.', href: '/ant-control' },
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/spider.jpg', title: 'Spider\nPest Control', desc: 'Removing dangerous and invasive spiders effectively.', href: '/spider-control' },
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/Wasps-Hornet.jpg', title: 'Wasp & Hornet\nPest Control', desc: 'Fast, effective removal of nests near your home.', href: '/wasp-hornet-control' },
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/Scorpion.jpg', title: 'Scorpion\nPest Control', desc: 'Specialized methods to handle scorpion infestations.', href: '/scorpion-control' },
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/Rodent.jpg', title: 'Rodent\nPest Control', desc: 'Comprehensive strategies to protect your property from mice.', href: '/rodent-control' },
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/Mosquito.jpg', title: 'Mosquito\nPest Control', desc: 'Enjoy your outdoor space without pesky mosquito bites.', href: '/mosquito-control' },
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/Flea.jpg', title: 'Flea & Tick\nPest Control', desc: 'Protect your home and pets from these annoying pests.', href: '/flea-tick-control' },
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/Roach.jpg', title: 'Roach\nPest Control', desc: 'Eliminate disease-carrying cockroaches from your home.', href: '/roach-control' },
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/Bed-Bug.jpg', title: 'Bed Bug\nPest Control', desc: 'Thorough treatments to ensure your beds are pest-free.', href: '/bed-bug-control' },
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/Termite.jpg', title: 'Termite Control', desc: 'Prevent damage and protect your property value with effective termite treatments.', href: '/termite-control' },
-  { img: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/04/Termite.jpg', title: 'Termite Inspections', desc: 'Early detection and prevention of costly termite damage.', href: '/termite-inspections' },
+const serviceCards = [
+  {
+    color: 'hsl(28, 100%, 50%)',
+    title: 'General Pest Control',
+    desc: <>Protect your home from <strong>ants</strong>, <strong>spiders</strong>, <strong>roaches</strong>, and other common pests with treatments designed to address the specific conditions in your area.</>,
+    href: '/pest-control',
+  },
+  {
+    color: 'hsl(45, 95%, 52%)',
+    title: 'Mosquito Pest Control',
+    desc: <>Don't let mosquitos ruin your outdoor spaces. We use proven methods to <strong>reduce mosquito populations</strong>, so you can enjoy your yard worry-free.</>,
+    href: '/mosquito-control',
+  },
+  {
+    color: 'hsl(185, 65%, 42%)',
+    title: 'Termite Inspections & Control',
+    desc: <>Termites can silently eat away at your home's structure and value. Whether you need a <strong>thorough termite inspection</strong> or <strong>effective termite treatment</strong>, we've got you covered.</>,
+    href: '/termite-inspections',
+  },
+  {
+    color: 'hsl(140, 55%, 42%)',
+    title: 'Bed Bug Control',
+    desc: <>Say goodbye to sleepless nights. Our expert team will <strong>eliminate bed bugs</strong> from your home quickly and effectively.</>,
+    href: '/bed-bug-control',
+  },
+  {
+    color: 'hsl(28, 100%, 50%)',
+    title: 'Rodent Pest Control',
+    desc: <>Mice and rats can cause damage and spread disease. Our <strong>rodent control plans</strong> will remove these unwanted guests and prevent them from coming back.</>,
+    href: '/rodent-control',
+  },
+  {
+    color: 'hsl(45, 95%, 52%)',
+    title: 'Other Pest Solutions',
+    desc: <>From <strong>fleas and ticks</strong> to <strong>wasps and hornets</strong>, and <strong>scorpions</strong>, we provide tailored solutions for a variety of pests that may invade your home.</>,
+    href: '/pest-control',
+  },
 ];
 
 const whyCards = [
-  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Proven-Results.png', title: 'Expertise You Can Rely On', desc: 'Our licensed and highly trained technicians bring years of experience in pest control. Backed by membership in the National Pest Management Association (NPMA) and the Texas Pest Control Association (TPCA), we promise professional, effective services every time.' },
-  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Comprehensive.png', title: 'Family & Pet Friendly Treatments', desc: 'Your family is our top priority. We use environmentally friendly products and methods to eliminate pests without putting your loved ones or pets at risk.' },
-  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Safety.png', title: 'Custom Solutions for Every Home', desc: "Every pest problem is unique. That's why we create customized treatment plans to not only eliminate existing pests but prevent future infestations." },
-  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Guarantee.png', title: 'Super Powered Guarantee', desc: "If pests persist between regularly scheduled treatments, we'll re-treat your home for free. That's our promise to keep your home pest-free—no excuses." },
-  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Super-Powered.png', title: 'Referral Program', desc: 'Love our service? Refer friends or family and earn money for every customer who signs up for recurring services!' },
-  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Custom-Plans.png', title: 'Preserving Property Value', desc: 'By controlling pests like termites and rodents, we help protect your property\'s value and prevent costly damage before it happens.' },
+  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Proven-Results.png', title: 'Family-Owned & Trusted Locally', desc: "We're not a big corporation—we're a family-owned business that cares deeply about the well-being of our neighbors in Longview." },
+  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Comprehensive.png', title: 'Licensed & Highly Trained Technicians', desc: 'Our team of certified, insured technicians uses their expertise and cutting-edge methods to resolve pest issues effectively and responsibly.' },
+  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Safety.png', title: 'Pet & Child Friendly Solutions', desc: 'Your family is our top priority. We use products designed to be child and pet friendly while effectively eliminating pests.' },
+  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Guarantee.png', title: 'Custom Treatment Plans', desc: "We understand every home and pest problem is unique. That's why we develop tailored solutions to not only eradicate pests but also prevent their return." },
+  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Super-Powered.png', title: 'Super Powered Guarantee', desc: "Pests persist? No problem. With our Super Powered Guarantee, we provide free re-treatments between regularly scheduled visits, ensuring peace of mind." },
+  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Custom-Plans.png', title: 'Referral Program', desc: 'Get rewarded for your loyalty! Earn money for each new customer you refer who signs up for recurring services.' },
+  { icon: 'https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Family-Pets.png', title: 'Trusted Member of NPMA & TPCA', desc: 'As proud members of the National Pest Management Association and the Texas Pest Control Association, we are committed to the highest industry standards.' },
 ];
 
 // ─── COMPONENT ───────────────────────────────────────────────────────────────
 
-const JacksonvilleTX = () => {
+const LongviewTX = () => {
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
       <Navbar />
@@ -58,7 +83,7 @@ const JacksonvilleTX = () => {
             margin: 0,
             lineHeight: 1.05,
           }}>
-            PEST CONTROL SERVICES IN<br />JACKSONVILLE, TX
+            PEST CONTROL SERVICES IN<br />LONGVIEW, TX
           </h1>
         </div>
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
@@ -76,19 +101,21 @@ const JacksonvilleTX = () => {
               loading="lazy"
               width={600}
               height={400}
-              src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Exterior-Flow-Zone-Sprayer-scaled-e1746808085557.jpg"
-              alt="Pest Control Technician Providing Services in Jacksonville TX"
+              src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Exterior-Eve-Pool-scaled-e1746807481885.jpg"
+              alt="Pest Control Services in Longview TX"
               style={{ width: '100%', display: 'block' }}
             />
           </div>
           <div>
             <h2 style={{ fontSize: 'clamp(24px, 2.5vw, 36px)', fontWeight: '800', marginBottom: '18px', marginTop: 0 }}>
-              Professional Pest &amp; Termite Control Services in Jacksonville, TX
+              Local Pest &amp; Termite Control Services in Longview, TX
             </h2>
             <p style={{ fontSize: '16px', lineHeight: 1.75, marginBottom: '28px', color: '#444', marginTop: 0 }}>
-              East Texas may be beautiful, but it's also the perfect environment for pests to thrive.{' '}
-              <a href="/" style={{ color: '#000', textDecoration: 'underline' }}>Dang Pest Control</a>{' '}
-              is here to take care of the problem once and for all. Our experienced technicians use effective treatments to eliminate pests and prevent their return. Serving Jacksonville, TX, and surrounding areas, our family-owned, local business is committed to making your life easier with services you can trust. Call us today at{' '}
+              Your home should feel like a safe haven—but pests make that hard to achieve. At{' '}
+              <a href="/" style={{ color: '#000', textDecoration: 'underline' }}>Dang Pest Control</a>,
+              we offer{' '}
+              <a href="/pest-control" style={{ color: '#000', textDecoration: 'underline' }}>expert pest control solutions</a>{' '}
+              tailored to your needs, ensuring health, comfort, and the protection of your loved ones. Serving Longview, TX, and surrounding areas, our family-owned, local business is committed to making your life easier with services you can trust. Call us today at{' '}
               <a href="tel:(903) 871-0550" style={{ color: '#000', fontWeight: '700' }}>(903) 871-0550</a>{' '}
               and <a href="/quote" style={{ color: '#000', textDecoration: 'underline' }}>get your quote</a>.
             </p>
@@ -101,41 +128,63 @@ const JacksonvilleTX = () => {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          OUR SERVICES INCLUDE
+          SERVICES WE OFFER — L-bracket cards
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '60px 40px 0', background: '#f3f3f1' }}>
+      <section style={{ padding: '60px 40px', background: '#f3f3f1' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h2 style={{ fontWeight: '800', fontSize: 'clamp(24px, 2.5vw, 36px)', textAlign: 'center', marginBottom: '40px', marginTop: 0 }}>
-            Our Services Include
+          <h2 style={{ fontWeight: '800', fontSize: 'clamp(24px, 2.5vw, 36px)', textAlign: 'center', marginBottom: '16px', marginTop: 0 }}>
+            Services We Offer in Longview
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '40px 30px' }}>
-            {services.map((s, i) => (
-              <a key={i} href={s.href} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                <img loading="lazy" width={120} height={120} src={s.img} alt={s.title.replace('\n', ' ')} style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '4px', marginBottom: '14px', display: 'block' }} />
-                <h3 style={{ fontWeight: '800', fontSize: '16px', marginBottom: '8px', marginTop: 0, lineHeight: 1.3 }}>
-                  {s.title.split('\n').map((line, j) => <span key={j}>{line}{j === 0 && s.title.includes('\n') ? <br /> : ''}</span>)}
-                </h3>
-                <p style={{ fontSize: '14px', lineHeight: 1.6, color: '#555', margin: 0 }}>{s.desc}</p>
+          <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', textAlign: 'center', marginBottom: '48px', marginTop: 0, maxWidth: '900px', margin: '0 auto 48px' }}>
+            Our comprehensive pest control services are designed to target the pests unique to the East Texas environment and prevent their return. Whether you're dealing with dangerous pests like scorpions or disease-carrying mosquitos, our skilled technicians will create a customized treatment plan to solve your problem.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+            {serviceCards.map((card, i) => (
+              <a key={i} href={card.href} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div style={{ background: '#fff', borderRadius: '4px', padding: '28px 28px 0 28px', position: 'relative' }}>
+                  <h3 style={{ fontWeight: '800', fontSize: '20px', marginBottom: '12px', marginTop: 0 }}>{card.title}</h3>
+                  <p style={{ fontSize: '15px', lineHeight: 1.75, color: '#444', marginBottom: '24px', marginTop: 0 }}>{card.desc}</p>
+                  {/* L-bracket bottom-right */}
+                  <div style={{ position: 'relative', height: '12px', marginLeft: '-28px', marginRight: '-28px' }}>
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: '50%',
+                      right: 0,
+                      height: '4px',
+                      background: card.color,
+                      borderRadius: '0 0 4px 0',
+                    }} />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      right: 0,
+                      width: '4px',
+                      height: '40px',
+                      background: card.color,
+                      transform: 'translateY(0)',
+                    }} />
+                  </div>
+                </div>
               </a>
             ))}
           </div>
-          <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', textAlign: 'center', marginTop: '40px', marginBottom: '28px' }}>
-            With our Integrated Pest Management Plans, we go beyond short-term fixes. By identifying environmental factors and pest habits, we tailor sustainable solutions to keep your home pest-free.
-          </p>
-          <div style={{ textAlign: 'center', paddingBottom: '60px' }}>
+
+          <div style={{ textAlign: 'center', marginTop: '48px' }}>
             <a href="/quote" style={{ display: 'inline-block', padding: '14px 40px', background: 'hsl(28, 100%, 50%)', borderRadius: '50px', fontWeight: '700', color: '#fff', textDecoration: 'none', fontSize: '16px' }}>Get Your Quote</a>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          WHY CHOOSE DANG PEST CONTROL — 6 cards
+          WHY CHOOSE DANG PEST CONTROL — 7 cards (4+3)
       ══════════════════════════════════════════════════════ */}
       <section style={{ padding: '70px 40px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '40px', alignItems: 'center', marginBottom: '36px' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', margin: 0 }}>Why Choose Dang Pest Control?</h2>
           <p style={{ fontSize: '16px', color: '#444', lineHeight: 1.7, margin: 0 }}>
-            When it comes to protecting your property and loved ones, trust matters. Here's why homeowners and property managers across Jacksonville, TX, choose Dang Pest Control:
+            When it comes to protecting your home and family, you deserve a service you can rely on. Here's what sets us apart from the rest:
           </p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '20px' }}>
@@ -159,17 +208,20 @@ const JacksonvilleTX = () => {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          CONTACT TODAY — text left, dotted image right
+          PROTECT YOUR HOME — text left, dotted image right
       ══════════════════════════════════════════════════════ */}
       <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
-              Contact Dang Pest Control Today
+              Protect Your Home with Confidence
             </h2>
+            <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '16px', color: '#444', marginTop: 0 }}>
+              At Dang Pest Control, we understand that the environment in Longview provides the perfect conditions for pests like termites, rodents, and mosquitos to thrive. Protecting your property from these nuisances means maintaining your family's comfort and health.
+            </p>
             <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '28px', color: '#444', marginTop: 0 }}>
-              Don't spend another day worrying about pests in your home. Whether you need a one-time treatment or long-term prevention, Dang Pest Control has you covered. Located in Tyler, TX, we proudly serve the surrounding areas, including Jacksonville,{' '}
-              <a href="/longview-tx" style={{ color: '#000', textDecoration: 'underline' }}>Longview</a>,{' '}
+              Whether you need to eliminate disease-carrying pests, preserve your property value, or simply enjoy your home worry-free, we'll design an effective plan tailored to your needs. Our proactive, environmentally protective approach ensures long-term solutions—not just temporary fixes. Located in Tyler, TX, Dang Pest Control serves clients throughout the area, including Longview,{' '}
+              <a href="/jacksonville-tx" style={{ color: '#000', textDecoration: 'underline' }}>Jacksonville</a>,{' '}
               <a href="/lindale-tx" style={{ color: '#000', textDecoration: 'underline' }}>Lindale</a>,{' '}
               <a href="/bullard-tx" style={{ color: '#000', textDecoration: 'underline' }}>Bullard</a>,{' '}
               <a href="/whitehouse-tx" style={{ color: '#000', textDecoration: 'underline' }}>Whitehouse</a>,
@@ -187,8 +239,8 @@ const JacksonvilleTX = () => {
                 loading="lazy"
                 width={600}
                 height={400}
-                src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Exterior-Solo-Spreader-scaled-e1746808147308.jpg"
-                alt="Home Pest and Termite Control in Jacksonville TX"
+                src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Interior-Pantry-Flashlight-with-Sprayer-scaled-e1746807757708.jpg"
+                alt="Pest and Termite Control Services in Longview TX"
                 style={{ width: '100%', display: 'block' }}
               />
             </div>
@@ -201,4 +253,4 @@ const JacksonvilleTX = () => {
   );
 };
 
-export default JacksonvilleTX;
+export default LongviewTX;
