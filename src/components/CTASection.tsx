@@ -14,7 +14,7 @@ const CTASection = () => {
     <section className="relative text-white text-center">
       <div className="relative">
         <img
-          src="https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Longview.png"
+          src="/longview.webp"
           alt=""
           className="w-full block"
         />

@@ -1,26 +1,26 @@
 const reasons = [
   {
-    icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Professional-Licensed.png",
+    icon: "/why-professional.webp",
     title: "Professional, Licensed & Highly Trained Technicians",
     description: "Our technicians bring years of expertise and know-how to deliver results you can trust. As proud members of the National Pest Management Association (NPMA) and Texas Pest Control Association (TPCA), we hold ourselves to the highest industry standards.",
   },
   {
-    icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Family-Pets.png",
+    icon: "/why-family.webp",
     title: "Family & Pet Friendly",
     description: "Our environmentally-aware practices and products prioritize your loved ones, offering peace of mind with every service.",
   },
   {
-    icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Custom-Plans.png",
+    icon: "/why-custom.webp",
     title: "Custom Plans for Lasting Results",
     description: "We take an Integrated Pest Management approach, considering the factors contributing to the problem. Each plan is tailored to your home's specific needs, focusing on eradicating pests and preventing future infestations.",
   },
   {
-    icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Super-Powered.png",
+    icon: "/why-superpowered.webp",
     title: "Super Powered Guarantee",
     description: "If pests persist between regularly scheduled visits, we'll return to re-treat your property free of charge. That's our commitment to your satisfaction.",
   },
   {
-    icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Referral-Program.png",
+    icon: "/why-referral.webp",
     title: "How to Get Free Pest Service!",
     description: "Want to save money on the cost of your pest control service? For every person you refer to Dang Pest Control that signs up for our general pest control service, you'll get your next month free! There are no limits on referral credits, so you could potentially get free services for life!",
   },
@@ -32,7 +32,7 @@ const WhyChooseUs = () => {
       className="py-16"
       style={{
         background: '#ffffff',
-        backgroundImage: `radial-gradient(circle, #d0d0d0 1px, transparent 1px), url('https://aelitedigital.com/wp-dang/wp-content/uploads/2025/03/Professional-background-img.png')`,
+        backgroundImage: `radial-gradient(circle, #d0d0d0 1px, transparent 1px), url('/why-bg.webp')`,
         backgroundSize: '24px 24px, cover',
         backgroundPosition: 'center, center',
       }}

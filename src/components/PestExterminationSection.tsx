@@ -32,7 +32,7 @@ const PestExterminationSection = () => {
         </div>
         <div>
           <img
-            src="https://www.dangpestcontrol.com/wp-content/uploads/2025/04/Exterior-Under-Eve-Flowers-scaled-e1745951054326.jpg"
+            src="/exterior-treatment.jpg"
             alt="Pest Control Technician Applying Exterior Treatment"
             className="w-full rounded-2xl object-cover"
             style={{ border: '6px solid hsl(28, 100%, 50%)' }}
