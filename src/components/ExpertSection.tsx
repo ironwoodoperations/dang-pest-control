@@ -17,6 +17,8 @@ const ExpertSection = () => {
           <img
             src={interiorService}
             alt="Pest Control Service Technician Spraying in Kitchen"
+            width="644"
+            height="418"
             className="w-full rounded-2xl object-cover"
             style={{border: '6px solid hsl(var(--primary))'}}
           />
@@ -32,7 +34,7 @@ const ExpertSection = () => {
             <a href="tel:9038710550" className="inline-flex items-center gap-2 font-bold rounded-full px-7 py-2.5 text-sm border-2 transition-all hover:bg-foreground hover:text-white" style={{borderColor: 'hsl(20, 40%, 12%)', color: 'hsl(20, 40%, 12%)'}}>
               <Phone className="w-4 h-4" /> (903) 871-0550
             </a>
-            <Link to="/quote" className="inline-flex items-center justify-center font-bold rounded-full px-7 py-2.5 text-sm text-white transition-all hover:brightness-110" style={{background: 'hsl(var(--primary))'}}>
+            <Link to="/quote" className="inline-flex items-center justify-center font-bold rounded-full px-7 py-2.5 text-white transition-all hover:brightness-110" style={{background: 'hsl(var(--primary))', fontSize: '1rem'}}>
               Get Your Quote
             </Link>
           </div>

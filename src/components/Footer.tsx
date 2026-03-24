@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 items-start">
 
           <div className="md:pl-16 pr-8" style={{ borderRight: '1px solid #e5e5e5', paddingLeft: '16rem', paddingRight: '3rem' }}>
-            <h4 className="font-bold text-base mb-6" style={{ color: '#000000' }}>Services</h4>
+            <h3 className="font-bold text-base mb-6" style={{ color: '#000000' }}>Services</h3>
             <ul className="space-y-3">
               <li><Link to="/pest-control" className="text-sm font-bold transition-colors hover:text-primary" style={{ color: '#000000' }}>Pest Control</Link></li>
               <li><Link to="/mosquito-control" className="text-sm font-bold transition-colors hover:text-primary" style={{ color: '#000000' }}>Mosquitos</Link></li>
@@ -29,7 +29,7 @@ const Footer = () => {
           </div>
 
           <div className="md:text-right md:pr-16 pl-8" style={{ borderLeft: '1px solid #e5e5e5', paddingLeft: '3rem', paddingRight: '16rem' }}>
-            <h4 className="font-bold text-base mb-6" style={{ color: '#000000' }}>About</h4>
+            <h3 className="font-bold text-base mb-6" style={{ color: '#000000' }}>About</h3>
             <ul className="space-y-3">
               <li><Link to="/about" className="text-sm font-bold transition-colors hover:text-primary" style={{ color: '#000000' }}>About Us</Link></li>
               <li><Link to="/faq" className="text-sm font-bold transition-colors hover:text-primary" style={{ color: '#000000' }}>FAQs</Link></li>

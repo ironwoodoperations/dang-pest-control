@@ -18,7 +18,7 @@ const FeatureStrip = () => {
         <div className="flex flex-col items-center gap-4 border-x border-orange-100 px-6">
           <img src={servicesIcon} alt="Super Hero Response Team" className="w-16 h-16 object-contain" />
           <div>
-            <h3 className="text-comic text-xl mb-1" style={{color: 'hsl(20, 40%, 12%)'}}>Super Hero Response Team!</h3>
+            <h2 className="text-comic text-xl mb-1" style={{color: 'hsl(20, 40%, 12%)'}}>Super Hero Response Team!</h2>
             <p className="text-sm leading-relaxed" style={{color: 'hsl(20, 20%, 35%)'}}>Committed to Excellent Customer Service & Communication!</p>
           </div>
         </div>

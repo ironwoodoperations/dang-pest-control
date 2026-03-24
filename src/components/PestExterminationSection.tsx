@@ -24,8 +24,8 @@ const PestExterminationSection = () => {
           </p>
           <Link
             to="/quote"
-            className="inline-flex items-center justify-center font-bold rounded-full px-8 py-3 text-sm text-white transition-all hover:brightness-110"
-            style={{ backgroundColor: 'hsl(28, 100%, 50%)' }}
+            className="inline-flex items-center justify-center font-bold rounded-full px-8 py-3 text-white transition-all hover:brightness-110"
+            style={{ backgroundColor: 'hsl(28, 100%, 50%)', fontSize: '1rem' }}
           >
             Get Your Quote
           </Link>
@@ -34,6 +34,8 @@ const PestExterminationSection = () => {
           <img
             src="/exterior-treatment.jpg"
             alt="Pest Control Technician Applying Exterior Treatment"
+            width="644"
+            height="419"
             className="w-full rounded-2xl object-cover"
             style={{ border: '6px solid hsl(28, 100%, 50%)' }}
           />
