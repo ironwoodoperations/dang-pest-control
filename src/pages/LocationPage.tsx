@@ -1,5 +1,4 @@
 import { useParams, Link } from "react-router-dom";
-import { Phone, Shield, Heart, Award, Users, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -22,21 +21,19 @@ interface LocationData {
 }
 
 const servicesList = [
-  { name: "General Pest Control", slug: "pest-control", description: "Protect your home from ants, spiders, roaches, and other common pests." },
+  { name: "General Pest Control", slug: "pest-control", description: "Reliable solutions for all common household pests." },
   { name: "Mosquito Control", slug: "mosquito-control", description: "Proven methods to reduce mosquito populations so you can enjoy your yard." },
   { name: "Termite Inspections & Control", slug: "termite-inspections", description: "Thorough inspections and effective treatments to protect your home's structure." },
-  { name: "Bed Bug Control", slug: "bed-bug-control", description: "Expert elimination of bed bugs from your home quickly and effectively." },
-  { name: "Rodent Control", slug: "rodent-control", description: "Remove mice and rats and prevent them from coming back." },
-  { name: "Flea & Tick Control", slug: "flea-tick-control", description: "Tailored solutions for fleas, ticks, wasps, hornets, and scorpions." },
+  { name: "Spider Control", slug: "spider-control", description: "Removing dangerous and invasive spiders effectively." },
+  { name: "Ant Control", slug: "ant-control", description: "Keep ants out of your home for good." },
+  { name: "Rodent Control", slug: "rodent-control", description: "Comprehensive strategies to protect your property from rodents." },
 ];
 
-const whyChoose = [
-  { icon: Users, title: "Family-Owned & Trusted Locally", description: "We're not a big corporation—we're a family-owned business that cares deeply about the well-being of our neighbors." },
-  { icon: Shield, title: "Licensed & Highly Trained", description: "Our team of certified, insured technicians uses expertise and cutting-edge methods to resolve pest issues effectively." },
-  { icon: Heart, title: "Pet & Child Friendly", description: "Your family is our top priority. We use products designed to be safe while effectively eliminating pests." },
-  { icon: Settings, title: "Custom Treatment Plans", description: "We develop tailored solutions to not only eradicate pests but also prevent their return." },
-  { icon: Award, title: "Super Powered Guarantee", description: "Pests persist? No problem. We provide free re-treatments between regularly scheduled visits." },
-  { icon: Users, title: "Referral Program", description: "Get rewarded for your loyalty! Earn a free month for each new customer you refer." },
+const whyCards = [
+  { icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Proven-Results.png", title: "Local Expertise", desc: "Family-owned and operated, we know East Texas pest pressures inside and out." },
+  { icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Safety.png", title: "Safe for Families & Pets", desc: "EPA-approved products that are tough on pests but gentle for your home." },
+  { icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Guarantee.png", title: "Super Powered Guarantee", desc: "Pests come back between visits? So do we — free of charge." },
+  { icon: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Super-Powered.png", title: "Referral Rewards", desc: "Refer a neighbor and earn a free month of service." },
 ];
 
 const LocationPage = () => {
@@ -62,10 +59,10 @@ const LocationPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen">
+      <div style={{ minHeight: '100vh' }}>
         <Navbar />
-        <div className="flex items-center justify-center py-32">
-          <p className="text-muted-foreground">Loading...</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '128px 0' }}>
+          <p style={{ color: '#999' }}>Loading...</p>
         </div>
         <Footer />
       </div>
@@ -74,16 +71,18 @@ const LocationPage = () => {
 
   if (!location) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <Navbar />
-        <h1 className="text-comic text-4xl mb-4">Location Not Found</h1>
-        <Link to="/" className="btn-cta">Return Home</Link>
+        <h1 style={{ fontFamily: '"Bangers", cursive', fontSize: '36px', marginBottom: '16px' }}>Location Not Found</h1>
+        <a href="/" style={{ padding: '12px 32px', background: 'hsl(28, 100%, 50%)', borderRadius: '50px', fontWeight: '700', color: '#fff', textDecoration: 'none' }}>Return Home</a>
       </div>
     );
   }
 
+  const defaultIntro = `Pests don't wait, and neither should you. Dang Pest Control understands the unique environment and pest pressures in East Texas. Whether it's termites, mosquitoes, or general pests, we have you covered with family-friendly solutions and a Super Powered Guarantee.`;
+
   return (
-    <div className="min-h-screen">
+    <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
       <SEO
         title={location.meta_title || seoTitle || `Pest Control in ${location.city}, TX`}
         description={location.meta_description || seoDescription || `Professional pest control services in ${location.city}, TX. Family-owned, licensed & insured. Call (903) 871-0550 for a free quote.`}
@@ -97,126 +96,235 @@ const LocationPage = () => {
         }}
       />
       <Navbar />
+      <main>
 
-      <section className="hero-bg text-primary-foreground py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-comic text-4xl md:text-5xl mb-4">{location.hero_title}</h1>
-          <p className="text-lg opacity-90 max-w-2xl mx-auto mb-8">{location.intro}</p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a href="tel:9038710550" className="btn-cta-outline">
-              <Phone className="w-5 h-5 mr-2" /> (903) 871-0550
-            </a>
-            <Link to="/quote" className="btn-cta">Get Your Quote</Link>
-          </div>
+      {/* ══════════════════════════════════════════════════════
+          SECTION 1 — HERO
+      ══════════════════════════════════════════════════════ */}
+      <section style={{
+        position: 'relative',
+        background: `url(/moblie_banner.webp) center/cover no-repeat, hsl(28, 100%, 50%)`,
+        paddingTop: '80px',
+        paddingBottom: '200px',
+        minHeight: '420px',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.18) 2px, transparent 2px)',
+          backgroundSize: '20px 20px',
+          pointerEvents: 'none',
+        }} />
+        <div style={{ textAlign: 'center', position: 'relative', zIndex: 2, padding: '0 20px 30px' }}>
+          <h1 style={{
+            fontFamily: '"Bangers", cursive',
+            fontSize: 'clamp(48px, 7vw, 90px)',
+            color: 'hsl(45, 95%, 60%)',
+            fontStyle: 'italic',
+            letterSpacing: '0.05em',
+            WebkitTextStroke: '3px #000',
+            textShadow: '3px 3px 0 #000',
+            margin: 0,
+            lineHeight: 1.05,
+          }}>
+            PEST CONTROL SERVICES IN<br />{location.city.toUpperCase()}, TX
+          </h1>
+        </div>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 1 }}>
+          <img fetchPriority="high" width={1200} height={50} src="/banner-img.png" alt="" style={{ width: '100%', display: 'block' }} />
         </div>
       </section>
 
-      {/* Services */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-comic text-3xl md:text-4xl text-center mb-4">Services We Offer in {location.city}</h2>
-          <p className="text-center text-muted-foreground mb-12">
-            Our comprehensive pest control services are designed to target the pests unique to the East Texas environment and prevent their return.
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {servicesList.map((service) => (
-              <Link key={service.slug} to={`/${service.slug}`} className="card-service text-left">
-                <h3 className="text-comic text-lg mb-2">{service.name}</h3>
-                <p className="text-sm text-muted-foreground">{service.description}</p>
-              </Link>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Link to="/quote" className="btn-cta">Get Your Quote</Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Service Area Map */}
-      {location.map_embed_url && (
-        <section className="py-16 bg-muted">
-          <div className="container mx-auto px-4">
-            <h2 className="text-comic text-3xl md:text-4xl text-center mb-4">Our Service Area in {location.city}</h2>
-            <p className="text-center text-muted-foreground mb-8">
-              We proudly serve {location.city} and the surrounding East Texas communities.
-            </p>
-            <div className="rounded-xl overflow-hidden shadow-lg max-w-4xl mx-auto aspect-video">
-              <iframe
-                title={`Map of ${location.city}, TX service area`}
-                src={location.map_embed_url}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
+      {/* ══════════════════════════════════════════════════════
+          SECTION 2 — INTRO (image left, text right)
+      ══════════════════════════════════════════════════════ */}
+      <section style={{
+        background: '#ffffff',
+        backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
+      }}>
+        <div style={{ padding: '80px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+            <div style={{ border: '5px solid hsl(45, 95%, 60%)', borderRadius: '8px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
+              <img
                 loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
+                width={600}
+                height={400}
+                src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Exterior-Under-Eve-Flowers-scaled-e1745951054326.jpg"
+                alt={`Pest Control Technician Providing Services in ${location.city} TX`}
+                style={{ width: '100%', display: 'block' }}
               />
             </div>
+            <div>
+              <h2 style={{ fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: '800', marginBottom: '18px', marginTop: 0 }}>
+                Professional Pest &amp; Termite Control Services in {location.city}, TX
+              </h2>
+              <p style={{ fontSize: '16px', lineHeight: 1.75, marginBottom: '28px', color: '#444', marginTop: 0 }}>
+                {location.intro || defaultIntro}
+              </p>
+              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                <a href="tel:9038710550" style={{
+                  padding: '13px 28px', border: '2px solid hsl(20, 40%, 12%)', borderRadius: '50px',
+                  fontWeight: '700', color: 'hsl(20, 40%, 12%)', textDecoration: 'none', fontSize: '15px', whiteSpace: 'nowrap',
+                }}>
+                  (903) 871-0550
+                </a>
+                <a href="/quote" style={{
+                  padding: '13px 28px', background: 'hsl(28, 100%, 50%)', borderRadius: '50px',
+                  fontWeight: '700', color: '#fff', textDecoration: 'none', fontSize: '15px', whiteSpace: 'nowrap',
+                }}>
+                  Get Your Quote
+                </a>
+              </div>
+            </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
-      {/* Why Choose Us */}
-      <section className="section-orange text-primary-foreground py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-comic text-3xl md:text-4xl text-center mb-12">Why Choose Dang Pest Control?</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {whyChoose.map((item) => (
-              <div key={item.title} className="flex gap-4">
-                <item.icon className="w-8 h-8 flex-shrink-0 text-secondary" />
-                <div>
-                  <h3 className="text-comic text-lg mb-2">{item.title}</h3>
-                  <p className="text-sm opacity-90">{item.description}</p>
-                </div>
+      {/* ══════════════════════════════════════════════════════
+          SECTION 3 — OUR SERVICES
+      ══════════════════════════════════════════════════════ */}
+      <section style={{ background: '#f1f1ef', padding: '70px 40px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <h2 style={{
+            fontFamily: '"Bangers", cursive',
+            fontSize: 'clamp(32px, 4vw, 52px)',
+            fontStyle: 'italic',
+            textAlign: 'center',
+            marginBottom: '40px',
+            marginTop: 0,
+          }}>
+            Services We Offer in {location.city}
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+            {servicesList.map((service) => (
+              <a
+                key={service.slug}
+                href={`/${service.slug}`}
+                style={{
+                  background: '#fff', border: '2px solid #e5e5e5', borderRadius: '10px',
+                  padding: '24px', textDecoration: 'none', color: 'inherit',
+                  transition: 'border-color 0.2s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'hsl(28, 100%, 50%)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e5e5e5'; }}
+              >
+                <h3 style={{ fontFamily: '"Bangers", cursive', fontSize: '18px', marginBottom: '8px', marginTop: 0 }}>
+                  {service.name}
+                </h3>
+                <p style={{ fontSize: '14px', lineHeight: 1.6, color: '#555', margin: 0 }}>
+                  {service.description}
+                </p>
+              </a>
+            ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '40px' }}>
+            <a href="/quote" style={{
+              display: 'inline-block', padding: '14px 40px', background: 'hsl(28, 100%, 50%)',
+              borderRadius: '50px', fontWeight: '700', color: '#fff', textDecoration: 'none', fontSize: '16px',
+            }}>
+              Get Your Quote
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          SECTION 4 — WHY CHOOSE US (4 cards)
+      ══════════════════════════════════════════════════════ */}
+      <section style={{ background: '#fff', padding: '70px 40px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', textAlign: 'center', marginBottom: '40px', marginTop: 0 }}>
+            Why Choose Dang Pest Control?
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+            {whyCards.map((card, i) => (
+              <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
+                <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
+                <h3 style={{ fontWeight: '800', fontSize: '16px', marginBottom: '10px', marginTop: 0 }}>{card.title}</h3>
+                <p style={{ fontSize: '14px', lineHeight: 1.7, color: '#555', margin: 0 }}>{card.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Local Testimonial */}
-      {location.local_testimonial_quote && (
-        <section className="py-16 bg-muted">
-          <div className="container mx-auto px-4 max-w-2xl text-center">
-            <h2 className="text-comic text-2xl mb-6">What {location.city} Residents Say</h2>
-            <blockquote className="text-lg italic text-muted-foreground leading-relaxed">
-              "{location.local_testimonial_quote}"
-            </blockquote>
-            <p className="mt-4 text-sm font-semibold text-foreground">— A {location.city} Customer</p>
-          </div>
-        </section>
-      )}
-
-      {/* Local Pest Description CTA */}
-      <section className="section-dark text-primary-foreground py-16 text-center">
-        <div className="container mx-auto px-4">
-          <h2 className="text-comic text-3xl md:text-4xl mb-4">Protect Your {location.city} Home</h2>
-          <p className="opacity-90 mb-8 max-w-2xl mx-auto">{location.local_pest_description}</p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a href="tel:9038710550" className="btn-cta-outline">
-              <Phone className="w-5 h-5 mr-2" /> (903) 871-0550
+      {/* ══════════════════════════════════════════════════════
+          SECTION 5 — PROTECT YOUR HOME CTA
+      ══════════════════════════════════════════════════════ */}
+      <section style={{
+        background: 'hsl(28, 100%, 50%)',
+        padding: '80px 40px',
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.18) 2px, transparent 2px)',
+          backgroundSize: '20px 20px',
+          pointerEvents: 'none',
+        }} />
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '760px', margin: '0 auto' }}>
+          <h2 style={{
+            fontFamily: '"Bangers", cursive',
+            fontSize: 'clamp(36px, 5vw, 62px)',
+            fontStyle: 'italic',
+            color: 'hsl(45, 95%, 60%)',
+            WebkitTextStroke: '2px #000',
+            textShadow: '2px 2px 0 #000',
+            marginBottom: '16px', marginTop: 0,
+          }}>
+            PROTECT YOUR {location.city.toUpperCase()} HOME TODAY
+          </h2>
+          <p style={{ fontSize: '16px', color: '#fff', marginBottom: '32px', lineHeight: 1.7 }}>
+            {location.local_pest_description || `Don't let pests take over your ${location.city} home. Our licensed technicians deliver fast, effective service backed by our Super Powered Guarantee.`}
+          </p>
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a href="tel:9038710550" style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              padding: '14px 32px', borderRadius: '50px',
+              border: '2px solid #fff', color: '#fff',
+              fontWeight: '700', fontSize: '15px', textDecoration: 'none',
+            }}>
+              (903) 871-0550
             </a>
-            <Link to="/quote" className="btn-cta">Get Your Quote</Link>
+            <a href="/quote" style={{
+              display: 'inline-flex', alignItems: 'center',
+              padding: '14px 32px', borderRadius: '50px',
+              background: 'hsl(45, 95%, 60%)', color: 'hsl(20, 40%, 12%)',
+              fontWeight: '700', fontSize: '15px', textDecoration: 'none',
+              border: '2px solid #000',
+            }}>
+              Get Your Quote
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Other Locations */}
-      <section className="py-12">
-        <div className="container mx-auto px-4 text-center">
-          <h3 className="text-comic text-xl mb-4">We Also Serve</h3>
-          <div className="flex flex-wrap justify-center gap-4">
-            {allLocations
-              .filter((loc) => loc.slug !== slug)
-              .map((loc) => (
-                <Link key={loc.slug} to={`/${loc.slug}`} className="text-primary font-semibold hover:underline">
-                  {loc.city}, TX
-                </Link>
-              ))}
-          </div>
+      {/* ══════════════════════════════════════════════════════
+          SECTION 6 — WE ALSO SERVE
+      ══════════════════════════════════════════════════════ */}
+      <section style={{ padding: '60px 40px', maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+        <h3 style={{ fontFamily: '"Bangers", cursive', fontSize: '22px', marginBottom: '20px', marginTop: 0 }}>We Also Serve</h3>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '16px' }}>
+          {allLocations
+            .filter((loc) => loc.slug !== slug)
+            .map((loc) => (
+              <Link
+                key={loc.slug}
+                to={`/${loc.slug}`}
+                style={{ color: 'hsl(28, 100%, 50%)', fontWeight: '600', textDecoration: 'none' }}
+                onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none'; }}
+              >
+                {loc.city}, TX
+              </Link>
+            ))}
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );
