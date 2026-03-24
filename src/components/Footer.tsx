@@ -60,6 +60,7 @@ const Footer = () => {
           © {new Date().getFullYear()} Dang Pest Control. All rights reserved.
           <span className="mx-2">·</span>
           <Link to="/accessibility" className="hover:text-primary transition-colors" style={{ color: 'hsl(20, 10%, 55%)' }}>Accessibility</Link>
+          <a href="/admin" style={{color: 'inherit', opacity: 0.5, fontSize: '11px', marginLeft: '8px'}}>©</a>
         </div>
       </div>
     </footer>

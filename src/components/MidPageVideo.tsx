@@ -33,7 +33,7 @@ const MidPageVideo = () => {
             >
               <div className="relative w-full aspect-video">
                 <img
-                  src="/dang-homepage-img.png"
+                  src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/dang-pest-homep-img.png"
                   alt="Get Free Pest Control For Life"
                   className="w-full h-full object-cover"
                 />
