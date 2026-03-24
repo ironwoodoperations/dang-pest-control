@@ -34,14 +34,17 @@ const TestimonialsSection = () => {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    supabase
-      .from("testimonials")
-      .select("id, name, title, text, rating")
-      .eq("is_featured", true)
-      .order("sort_order", { ascending: true })
-      .then(({ data }) => {
-        if (data && data.length > 0) setTestimonials(data);
-      });
+    const timer = setTimeout(() => {
+      supabase
+        .from("testimonials")
+        .select("id, name, title, text, rating")
+        .eq("is_featured", true)
+        .order("sort_order", { ascending: true })
+        .then(({ data }) => {
+          if (data && data.length > 0) setTestimonials(data);
+        });
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const prev = () => setCurrent((c) => (c === 0 ? testimonials.length - 1 : c - 1));
@@ -109,7 +112,7 @@ const TestimonialsSection = () => {
         </h2>
 
         <div className="relative flex items-center justify-center">
-          <button onClick={prev} className="absolute left-0 z-10 transition-all hover:scale-110">
+          <button onClick={prev} aria-label="Previous slide" className="absolute left-0 z-10 transition-all hover:scale-110">
             <ArrowLeft />
           </button>
 
@@ -133,7 +136,7 @@ const TestimonialsSection = () => {
             </div>
           </div>
 
-          <button onClick={next} className="absolute right-0 z-10 transition-all hover:scale-110">
+          <button onClick={next} aria-label="Next slide" className="absolute right-0 z-10 transition-all hover:scale-110">
             <ArrowRight />
           </button>
         </div>

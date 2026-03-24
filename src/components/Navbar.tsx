@@ -92,10 +92,10 @@ const Navbar = () => {
               </div>
             </div>
             <Link to="/" aria-label="Dang Pest Control home" className="hidden md:block absolute left-1/2 -translate-x-1/2">
-              <img src={dangLogo} alt="Dang Pest Control" width={96} height={96} className="w-24 h-auto drop-shadow-md" />
+              <img src={dangLogo} alt="Dang Pest Control" width={96} height={68} className="w-24 h-auto drop-shadow-md" />
             </Link>
             <Link to="/" aria-label="Dang Pest Control home" className="md:hidden">
-              <img src={dangLogo} alt="Dang Pest Control" width={48} height={48} className="w-12 h-auto" />
+              <img src={dangLogo} alt="Dang Pest Control" width={48} height={34} className="w-12 h-auto" />
             </Link>
             <div className="hidden md:flex items-center gap-5">
               <a href="tel:9038710550" className="flex items-center gap-2 font-bold" style={{ color: '#000000' }}>
@@ -169,7 +169,7 @@ const Navbar = () => {
 
             {/* Logo — centered, floating above pill */}
             <Link to="/" aria-label="Dang Pest Control home" className="hidden md:block absolute left-1/2 -translate-x-1/2 z-10" style={{ top: '-60px' }}>
-              <img src={dangLogo} alt="Dang Pest Control" width={267} height={120} style={{ width: '267px' }} className="h-auto drop-shadow-lg" />
+              <img src={dangLogo} alt="Dang Pest Control" width={267} height={189} style={{ width: '267px' }} className="h-auto drop-shadow-lg" />
             </Link>
 
             {/* Right: phone + CTA */}
