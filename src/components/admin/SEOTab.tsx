@@ -86,6 +86,7 @@ const SEOTab = () => {
   const [editingPage, setEditingPage] = useState<PageSEO | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [showAllPages, setShowAllPages] = useState(false);
   const [newKw, setNewKw] = useState<Keyword>({ keyword: "", volume: "", difficulty: "Medium", notes: "" });
   const { toast } = useToast();
   const { tenantId } = useTenant();
@@ -311,7 +312,7 @@ const SEOTab = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredPages.map((page) => (
+              {(showAllPages ? filteredPages : filteredPages.slice(0, 4)).map((page) => (
                 <TableRow key={page.slug} className="cursor-pointer" onClick={() => setEditingPage({ ...page })}>
                   <TableCell className="pl-6">
                     <div className="flex items-center gap-3">
@@ -355,6 +356,17 @@ const SEOTab = () => {
               ))}
             </TableBody>
           </Table>
+          {filteredPages.length > 4 && (
+            <div className="flex justify-center py-3 border-t" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+              <button
+                onClick={() => setShowAllPages((v) => !v)}
+                className="font-body text-xs font-medium flex items-center gap-1.5 hover:opacity-70 transition-opacity"
+                style={{ color: "hsl(var(--admin-teal))" }}
+              >
+                {showAllPages ? "Show less ↑" : `Show all ${filteredPages.length} pages ↓`}
+              </button>
+            </div>
+          )}
           {filteredPages.length === 0 && (
             <p className="text-center py-8 font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>
               No pages match your search.
