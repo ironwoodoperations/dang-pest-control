@@ -171,6 +171,19 @@ const SettingsTab = () => {
 
   const update = (patch: Partial<SettingsData>) => setSettings((prev) => ({ ...prev, ...patch }));
 
+  const saveHolidayInstant = async (patch: Partial<SettingsData>) => {
+    if (!tenantId) return;
+    const merged = { ...settings, ...patch };
+    const value = { enabled: merged.holiday_enabled, holiday: merged.holiday_key, greeting: merged.holiday_greeting };
+    const jsonValue = JSON.parse(JSON.stringify(value));
+    const { data: existing } = await supabase.from("site_config").select("id").eq("key", "holiday_mode").eq("tenant_id", tenantId);
+    if (existing && existing.length > 0) {
+      await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", "holiday_mode").eq("tenant_id", tenantId);
+    } else {
+      await supabase.from("site_config").insert({ key: "holiday_mode", value: jsonValue, tenant_id: tenantId });
+    }
+  };
+
   if (loading) {
     return <p className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>Loading settings...</p>;
   }
@@ -230,7 +243,7 @@ const SettingsTab = () => {
         {activeSection === "branding" && <SettingsBranding settings={settings} update={update} />}
         {activeSection === "hero-media" && <SettingsHeroMedia settings={settings} update={update} />}
         {activeSection === "media-library" && <SettingsMediaLibrary />}
-        {activeSection === "campaigns" && <SettingsCampaigns settings={settings} update={update} />}
+        {activeSection === "campaigns" && <SettingsCampaigns settings={settings} update={(patch) => { update(patch); saveHolidayInstant(patch); }} />}
         {activeSection === "contact" && <SettingsContact settings={settings} update={update} />}
 
         <button
