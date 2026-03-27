@@ -176,8 +176,9 @@ const SettingsTab = () => {
   }
 
   return (
+    <>
+    <PageHelpBanner tab="settings" />
     <div className="flex gap-6">
-      <PageHelpBanner tab="settings" />
       {/* Left nav */}
       <nav className="w-44 shrink-0 hidden md:block">
         <p className="text-[10px] font-display uppercase tracking-widest mb-3" style={{ color: "hsl(var(--admin-text-muted))" }}>
@@ -242,6 +243,7 @@ const SettingsTab = () => {
         </button>
       </div>
     </div>
+    </>
   );
 };
 

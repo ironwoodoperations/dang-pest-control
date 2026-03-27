@@ -93,6 +93,16 @@ const HELP: Record<string, HelpContent> = {
       { title: "Remove a user", detail: "Click the trash icon on any team member row to revoke their access." },
     ],
   },
+  social: {
+    summary: "Compose AI-written posts, pick a branded template, and schedule to Facebook & Instagram.",
+    steps: [
+      { title: "Create a post", detail: "Click '+ New Post', enter a topic or promotion, and click Generate — Claude writes a branded caption for you." },
+      { title: "Pick a template", detail: "Choose from 4 branded card designs: Bold Promo (orange), Yellow Feature, Dark Pro, or Clean Split." },
+      { title: "Schedule it", detail: "Set a date and time, choose your platforms (Facebook, Instagram, Google), and click Schedule." },
+      { title: "Post queue", detail: "All posts appear in the queue below with Scheduled, Draft, or Posted status badges." },
+      { title: "Demo mode", detail: "No real social API is connected yet — posts are saved locally for preview. Real publishing integration coming soon." },
+    ],
+  },
 };
 
 interface PageHelpBannerProps {

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye } from "lucide-react";
+import PageHelpBanner from "./PageHelpBanner";
 
 interface SocialPost {
   id: string;
@@ -554,6 +555,7 @@ export default function SocialTab() {
   // ── MAIN QUEUE ─────────────────────────────────────────────────
   return (
     <div className="space-y-6">
+      <PageHelpBanner tab="social" />
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>Social Media</h2>
