@@ -15,6 +15,7 @@ import { Search, Globe, Plus, Trash2, Save, ExternalLink, TrendingUp, AlertCircl
 import { useToast } from "@/hooks/use-toast";
 import KeywordPowerBox from "@/components/admin/KeywordPowerBox";
 import PageHelpBanner from "./PageHelpBanner";
+import KeywordResearch from "./seo/KeywordResearch";
 
 interface Keyword {
   keyword: string;
@@ -489,6 +490,10 @@ const SEOTab = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Keyword Research */}
+      <h3 className="font-body text-lg font-bold" style={{ color: "hsl(var(--admin-text))" }}>Keyword Research</h3>
+      <KeywordResearch onAddKeyword={(kw) => { const updated = [...keywords, { ...kw, keyword: kw.keyword }]; setKeywords(updated); saveToConfig("seo_keywords", updated); }} />
 
       {/* Keyword Power-Box */}
       <KeywordPowerBox tenantId={tenantId} pages={pages} toast={toast} />
