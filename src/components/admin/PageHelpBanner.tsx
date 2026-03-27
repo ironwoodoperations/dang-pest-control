@@ -75,14 +75,54 @@ const HELP: Record<string, HelpContent> = {
       { title: "Filter", detail: "Use the search and status filter to find pages quickly across all pest, location, and content pages." },
     ],
   },
-  settings: {
-    summary: "Control your site's branding, hero media, holiday campaigns, contact info, and more.",
+  "settings-branding": {
+    summary: "Update your logo and favicon — the icons that represent your brand across the site.",
     steps: [
-      { title: "Branding", detail: "Upload your logo and favicon URLs. These appear site-wide." },
-      { title: "Hero Media", detail: "Set the YouTube video that plays on the homepage hero, including start/end timestamps." },
-      { title: "Campaigns", detail: "Enable Holiday Mode and pick a holiday. A branded banner appears at the top of the site and a ribbon decorates the homepage video." },
-      { title: "Contact Info", detail: "Update your phone, email, address, hours, and service area. These populate the footer and contact page." },
-      { title: "Save", detail: "Always click 'Save All Settings' at the bottom — all sections save together." },
+      { title: "Logo URL", detail: "Paste the full URL to your logo image (must start with https://). This appears in the top-left of the site navbar. Recommended: a transparent PNG, roughly 200×60px. If you paste a bad URL the logo will disappear — just clear the field and save to restore the default." },
+      { title: "Favicon URL", detail: "Paste the full URL to your favicon (the tiny icon shown in browser tabs). Must be a .ico, .png, or .svg file hosted online. If left blank, the browser default is used — nothing will break." },
+      { title: "Saving", detail: "Always click 'Save All Settings' at the bottom of the page after making changes. Changes won't apply until you save." },
+      { title: "Reverting", detail: "If something looks wrong after saving, just clear the field and save again to remove the value. The site will fall back to its default." },
+    ],
+  },
+  "settings-hero-media": {
+    summary: "Control the video that plays in the homepage hero section.",
+    steps: [
+      { title: "YouTube Video ID", detail: "This is the part of a YouTube URL after 'v=' — for example, in youtube.com/watch?v=abc123, the ID is 'abc123'. Paste only the ID, not the full URL." },
+      { title: "Video Type", detail: "Set to 'youtube' for YouTube videos. If you use a direct MP4 link, set to 'mp4'. When in doubt, leave it as 'youtube'." },
+      { title: "Start / End time", detail: "Optional. Enter a number of seconds to start or stop the video at a specific point. Leave blank to play from the beginning to the end." },
+      { title: "Meet Kirk YouTube ID", detail: "This is a separate video used in the 'Meet Kirk' homepage section. Same format — paste only the YouTube video ID." },
+      { title: "If the video breaks", detail: "Clear the YouTube ID field and save — the hero will fall back to the static background image. No other part of the site is affected." },
+    ],
+  },
+  "settings-media-library": {
+    summary: "View and manage images that have been uploaded for use across the site.",
+    steps: [
+      { title: "Uploading images", detail: "Use the upload button to add images. Once uploaded, you'll get a URL you can paste into any image field elsewhere in the dashboard." },
+      { title: "Using an image", detail: "Copy the URL from the media library and paste it into any Logo URL, Blog featured image, or Location hero field." },
+      { title: "Deleting images", detail: "Only delete images you're sure aren't in use — if an image is referenced somewhere on the site, removing it will cause a broken image to appear there." },
+    ],
+  },
+  "settings-campaigns": {
+    summary: "Turn on a holiday banner that appears at the top of your site for seasonal promotions.",
+    steps: [
+      { title: "Enabling Holiday Mode", detail: "Toggle 'Holiday Mode' on. A banner will immediately appear at the top of every page on the live site. Pick the holiday from the dropdown." },
+      { title: "Greeting text", detail: "Optional. Type a custom message to show in the banner (e.g. 'Save 20% this Christmas!'). If left blank, a default greeting is used automatically." },
+      { title: "Turning it off", detail: "Toggle 'Holiday Mode' off and save. The banner disappears from the site instantly. Nothing is deleted — you can turn it back on anytime." },
+      { title: "Preview", detail: "A preview of the banner color and text appears below the greeting field so you can see exactly what it will look like before saving." },
+      { title: "Saving", detail: "Click 'Save All Settings' at the bottom of the page. The banner won't go live until you save." },
+    ],
+  },
+  "settings-contact": {
+    summary: "Update the business details that appear in your site footer, contact page, and quote form.",
+    steps: [
+      { title: "Notification Email", detail: "This is the email address that receives an alert every time someone submits the quote form. Make sure it's correct or you'll miss leads." },
+      { title: "Company Name", detail: "Appears in the site footer and page titles. Keep it consistent with your branding." },
+      { title: "Phone & Email", detail: "These appear in the footer and contact page. Double-check them — customers will use these to reach you." },
+      { title: "Address / City / State / ZIP", detail: "Used in the footer and local SEO. Fill these in accurately. Leaving them blank just hides that field — nothing will break." },
+      { title: "Business Hours", detail: "Free-text field — type your hours however you'd like them displayed, e.g. 'Mon–Fri 8am–6pm, Sat 9am–2pm'." },
+      { title: "Service Area", detail: "A short description of your coverage area, shown on the contact page. Example: 'Tyler, Longview, and surrounding East Texas'." },
+      { title: "Social Media links", detail: "Paste your full profile URLs for Facebook, Instagram, Google Business, and Yelp. These populate the footer icons. Leave blank to hide that icon." },
+      { title: "Saving", detail: "Click 'Save All Settings' at the bottom. All contact fields save together — you can't save just one section at a time." },
     ],
   },
   team: {

@@ -177,7 +177,7 @@ const SettingsTab = () => {
 
   return (
     <>
-    <PageHelpBanner tab="settings" />
+    <PageHelpBanner tab={`settings-${activeSection}`} />
     <div className="flex gap-6">
       {/* Left nav */}
       <nav className="w-44 shrink-0 hidden md:block">
