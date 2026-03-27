@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, Plus, ExternalLink, Loader2 } from "lucide-react";
+import { Sparkles, Plus, ExternalLink, Loader2, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ResearchKeyword {
@@ -35,6 +35,7 @@ const KeywordResearch = ({ onAddKeyword }: Props) => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ResearchKeyword[]>([]);
   const [added, setAdded] = useState<Set<string>>(new Set());
+  const [helpOpen, setHelpOpen] = useState(false);
   const { toast } = useToast();
 
   const generate = async () => {
@@ -107,6 +108,48 @@ Example of the exact format required:
 
   return (
     <div className="space-y-5">
+      <div
+        className="rounded-xl border mb-4 overflow-hidden"
+        style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-card-bg))" }}
+      >
+        <button
+          onClick={() => setHelpOpen((v) => !v)}
+          className="w-full flex items-center justify-between px-4 py-2.5 gap-3 hover:opacity-80 transition-opacity"
+          style={{ background: "transparent" }}
+        >
+          <div className="flex items-center gap-2">
+            <HelpCircle className="w-3.5 h-3.5 shrink-0" style={{ color: "hsl(var(--admin-teal))" }} />
+            <span className="font-body text-xs font-semibold" style={{ color: "hsl(var(--admin-teal))" }}>How to use Keyword Research</span>
+            <span className="font-body text-xs hidden sm:inline" style={{ color: "hsl(var(--admin-text-muted))" }}>— find the best keywords to rank higher than your competitors</span>
+          </div>
+          {helpOpen
+            ? <ChevronUp className="w-3.5 h-3.5 shrink-0" style={{ color: "hsl(var(--admin-text-muted))" }} />
+            : <ChevronDown className="w-3.5 h-3.5 shrink-0" style={{ color: "hsl(var(--admin-text-muted))" }} />
+          }
+        </button>
+        {helpOpen && (
+          <div className="px-4 pb-4 pt-1 grid sm:grid-cols-2 gap-2 border-t" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+            {[
+              { title: "What this does", detail: "Uses AI to generate a list of high-value search keywords your pest control company should target — based on what your competitors rank for and what customers in your area are searching." },
+              { title: "Enter competitors", detail: "Type the names of 1–3 local or national competitors (e.g. 'Orkin, Terminix, Bug-A-Way Tyler'). The AI uses these to find gaps and opportunities you can outrank them on." },
+              { title: "Service area", detail: "Keep this set to your city and state (e.g. 'Tyler, TX'). This ensures the keywords are locally relevant and match what people in your area are actually searching." },
+              { title: "Reading the results", detail: "Each keyword shows its search intent (local, informational, commercial, transactional), estimated monthly search volume, difficulty to rank for, and a note on why it matters." },
+              { title: "Adding to your tracker", detail: "Click the + button on any keyword to add it to your Keyword Targets list above. Use that list to track which keywords you're actively optimizing for." },
+              { title: "How to improve your site", detail: "Use these keywords in your page titles, meta descriptions (SEO tab), blog posts (Blog tab), and page intro text (Page Content tab). The more naturally you use them, the higher Google will rank you." },
+              { title: "Free tools below", detail: "The links below the generator open free external tools (Google Keyword Planner, Ubersuggest, etc.) for deeper research with real search volume data straight from Google." },
+              { title: "Run it often", detail: "Search trends change seasonally — run a new report before spring (mosquito/ant season) and fall (rodent season) to stay ahead of competitors year-round." },
+            ].map((item) => (
+              <div key={item.title} className="flex gap-2">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "hsl(var(--admin-teal))" }} />
+                <div>
+                  <span className="font-body text-xs font-semibold" style={{ color: "hsl(var(--admin-text))" }}>{item.title}</span>
+                  <span className="font-body text-xs" style={{ color: "hsl(var(--admin-text-muted))" }}>{" — "}{item.detail}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       {/* AI Generator */}
       <div
         className="rounded-xl border p-4 space-y-4"
