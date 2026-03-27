@@ -12,20 +12,29 @@ const HolidayVideoWrapper = ({ children }: HolidayWrapperProps) => {
   }
 
   return (
-    <div className="relative">
-      {/* Decorative corner accents */}
+    <div className="relative" style={{ border: `2px solid ${activeTheme.borderColor}`, borderRadius: "12px", overflow: "visible" }}>
       <div
-        className="absolute -inset-2 rounded-2xl pointer-events-none z-10"
         style={{
-          border: `3px solid ${activeTheme.borderColor}`,
-          boxShadow: `0 0 20px ${activeTheme.borderColor}40`,
+          position: "absolute",
+          top: "10px",
+          right: "-1px",
+          background: activeTheme.borderColor,
+          color: activeTheme.ribbonText,
+          fontFamily: '"Open Sans", sans-serif',
+          fontSize: "11px",
+          fontWeight: 600,
+          padding: "3px 10px 3px 8px",
+          borderRadius: "4px 0 0 4px",
+          display: "flex",
+          alignItems: "center",
+          gap: "5px",
+          zIndex: 10,
+          lineHeight: 1.4,
         }}
-      />
-      {/* Holiday emoji corners */}
-      <span className="absolute -top-4 -left-4 text-2xl z-20">{activeTheme.emoji}</span>
-      <span className="absolute -top-4 -right-4 text-2xl z-20">{activeTheme.emoji}</span>
-      <span className="absolute -bottom-4 -left-4 text-2xl z-20">{activeTheme.emoji}</span>
-      <span className="absolute -bottom-4 -right-4 text-2xl z-20">{activeTheme.emoji}</span>
+      >
+        <span style={{ fontSize: "13px" }}>{activeTheme.emoji}</span>
+        {activeTheme.name}
+      </div>
       {children}
     </div>
   );

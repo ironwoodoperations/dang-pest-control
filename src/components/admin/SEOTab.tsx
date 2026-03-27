@@ -53,7 +53,6 @@ const allSitePages: Omit<PageSEO, "meta_title" | "meta_description" | "status">[
   { slug: "/roach-control", label: "Roach Control" },
   { slug: "/bed-bug-control", label: "Bed Bug Control" },
   { slug: "/longview-tx", label: "Longview, TX" },
-  { slug: "/longview-tx", label: "Longview, TX" },
   { slug: "/jacksonville-tx", label: "Jacksonville, TX" },
   { slug: "/lindale-tx", label: "Lindale, TX" },
   { slug: "/bullard-tx", label: "Bullard, TX" },
