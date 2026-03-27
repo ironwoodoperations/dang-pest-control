@@ -85,7 +85,17 @@ difficulty must be one of: Low, Medium, High`;
       }
       const text = data.content?.[0]?.text || "[]";
       const clean = text.replace(/```json|```/g, "").trim();
-      const parsed: ResearchKeyword[] = JSON.parse(clean);
+      let parsed: ResearchKeyword[] = [];
+      try {
+        parsed = JSON.parse(clean);
+      } catch {
+        const match = clean.match(/\[[\s\S]*\]/);
+        if (match) {
+          parsed = JSON.parse(match[0]);
+        } else {
+          throw new Error("Could not parse keyword response");
+        }
+      }
       setResults(parsed);
     } catch (err) {
       console.error("Keyword research error:", err);
