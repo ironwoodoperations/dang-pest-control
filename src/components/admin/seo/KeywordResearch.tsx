@@ -45,24 +45,19 @@ const KeywordResearch = ({ onAddKeyword }: Props) => {
     setLoading(true);
     setResults([]);
     try {
-      const prompt = `You are an SEO expert for a pest control company in ${location}.
-The business competes with: ${competitors}.
+      const prompt = `You are an SEO expert for a pest control company in ${location} competing with: ${competitors}.
 
-Generate a list of 16 high-value SEO keywords this pest control company should target.
-Include a mix of: local service keywords, pest-specific keywords, question keywords, and seasonal/trending keywords for East Texas.
+Return ONLY a JSON array of exactly 12 keywords. No markdown, no backticks, no explanation, no text before or after the array. Start your response with [ and end with ].
 
-Respond ONLY with a valid JSON array, no markdown, no explanation. Format:
-[
-  {
-    "keyword": "pest control tyler tx",
-    "intent": "local",
-    "volume": "500–1k/mo",
-    "difficulty": "Medium",
-    "notes": "High commercial intent, core service keyword"
-  }
-]
-intent must be one of: informational, commercial, local, transactional
-difficulty must be one of: Low, Medium, High`;
+Each object must have exactly these fields with these exact types:
+- "keyword": string
+- "intent": one of exactly "informational", "commercial", "local", or "transactional"
+- "volume": string like "200-500/mo"
+- "difficulty": one of exactly "Low", "Medium", or "High"
+- "notes": string under 10 words
+
+Example of the exact format required:
+[{"keyword":"pest control tyler tx","intent":"local","volume":"500-1k/mo","difficulty":"Medium","notes":"High intent local service keyword"}]`;
 
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
