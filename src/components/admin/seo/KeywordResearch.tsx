@@ -73,18 +73,23 @@ difficulty must be one of: Low, Medium, High`;
           "anthropic-dangerous-direct-browser-access": "true",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-6",
           max_tokens: 1000,
           messages: [{ role: "user", content: prompt }],
         }),
       });
       const data = await response.json();
+      if (!response.ok) {
+        console.error("API error response:", JSON.stringify(data));
+        throw new Error(data?.error?.message || "API error");
+      }
       const text = data.content?.[0]?.text || "[]";
       const clean = text.replace(/```json|```/g, "").trim();
       const parsed: ResearchKeyword[] = JSON.parse(clean);
       setResults(parsed);
-    } catch {
-      toast({ title: "Generation failed", description: "Try again in a moment.", variant: "destructive" });
+    } catch (err) {
+      console.error("Keyword research error:", err);
+      toast({ title: "Generation failed", description: String(err), variant: "destructive" });
     }
     setLoading(false);
   };
