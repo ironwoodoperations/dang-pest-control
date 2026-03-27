@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Loader2 } from "lucide-react";
+import { Zap, Loader2, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
 
 interface PageSEO {
   slug: string;
@@ -24,6 +24,7 @@ const KeywordPowerBox = ({ tenantId, pages, toast }: Props) => {
   const [bulkKeywords, setBulkKeywords] = useState("");
   const [syncing, setSyncing] = useState(false);
   const [lastSynced, setLastSynced] = useState<string[]>([]);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const handleSync = async () => {
     if (!tenantId || !bulkKeywords.trim()) return;
@@ -92,6 +93,43 @@ const KeywordPowerBox = ({ tenantId, pages, toast }: Props) => {
   return (
     <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
       <CardHeader>
+        <button
+          onClick={() => setHelpOpen((v) => !v)}
+          className="w-full flex items-center justify-between mb-3 px-0 gap-3 hover:opacity-80 transition-opacity"
+          style={{ background: "transparent" }}
+        >
+          <div className="flex items-center gap-2">
+            <HelpCircle className="w-3.5 h-3.5 shrink-0" style={{ color: "hsl(var(--admin-teal))" }} />
+            <span className="font-body text-xs font-semibold" style={{ color: "hsl(var(--admin-teal))" }}>How to use Keyword Power-Box</span>
+            <span className="font-body text-xs hidden sm:inline" style={{ color: "hsl(var(--admin-text-muted))" }}>— bulk-sync keywords across all your pest pages at once</span>
+          </div>
+          {helpOpen
+            ? <ChevronUp className="w-3.5 h-3.5 shrink-0" style={{ color: "hsl(var(--admin-text-muted))" }} />
+            : <ChevronDown className="w-3.5 h-3.5 shrink-0" style={{ color: "hsl(var(--admin-text-muted))" }} />
+          }
+        </button>
+        {helpOpen && (
+          <div className="grid sm:grid-cols-2 gap-2 mb-4 pb-4 border-b" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+            {[
+              { title: "What it does", detail: "Lets you paste a list of keywords once and saves them as your master keyword targets — the single source of truth for what your site is trying to rank for." },
+              { title: "How to use it", detail: "Paste a comma-separated list of keywords into the text box (e.g. 'pest control tyler tx, termite inspection, mosquito treatment east texas') then click Sync Keywords." },
+              { title: "Where do keywords come from", detail: "Use the AI Keyword Research tool above to generate ideas, then copy the ones you want and paste them here to save them all at once." },
+              { title: "What happens when you sync", detail: "Your keywords are saved to the database as your master list. They appear in the Keyword Targets table above and are available site-wide for SEO reference." },
+              { title: "How it helps your ranking", detail: "Having a master keyword list keeps your SEO strategy focused. Use these exact phrases in your page titles, meta descriptions, blog posts, and intro text to signal relevance to Google." },
+              { title: "How often to update", detail: "Update your keyword list seasonally — before spring (ant/mosquito season) and fall (rodent season). Add new city names as you expand your service area." },
+              { title: "Don't over-stuff", detail: "Only add keywords you genuinely plan to use on the site. 10–20 focused, relevant keywords outperform 100 random ones. Quality beats quantity every time." },
+              { title: "After syncing", detail: "Go to the SEO tab and update your page meta descriptions to naturally include these keywords. Then use the Blog tab to write content targeting the informational keywords." },
+            ].map((item) => (
+              <div key={item.title} className="flex gap-2">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "hsl(var(--admin-teal))", marginTop: "6px" }} />
+                <div>
+                  <span className="font-body text-xs font-semibold" style={{ color: "hsl(var(--admin-text))" }}>{item.title}</span>
+                  <span className="font-body text-xs" style={{ color: "hsl(var(--admin-text-muted))" }}>{" — "}{item.detail}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         <CardTitle className="font-body text-lg flex items-center gap-2" style={{ color: "hsl(var(--admin-text))" }}>
           <Zap className="w-5 h-5" style={{ color: "hsl(28, 100%, 50%)" }} />
           Keyword Power-Box
