@@ -4,12 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import FloatingTextUs from "./components/FloatingTextUs";
-
-// Eagerly load the Index (landing) page for fast first paint
-import Index from "./pages/Index";
-
-// Lazy-load all other pages for code splitting
+const Index = lazy(() => import("./pages/Index"));
 const QuotePage = lazy(() => import("./pages/QuotePage"));
 const About = lazy(() => import("./pages/About"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
@@ -24,6 +19,7 @@ const FAQPage = lazy(() => import("./pages/FAQPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
 const AdminOnboarding = lazy(() => import("./pages/AdminOnboarding"));
+const FloatingTextUs = lazy(() => import("./components/FloatingTextUs"));
 const MosquitoControl = lazy(() => import("./pages/MosquitoControl"));
 const SpiderControl = lazy(() => import("./pages/SpiderControl"));
 const AntControl = lazy(() => import("./pages/AntControl"));
@@ -52,8 +48,8 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <FloatingTextUs />
-        <Suspense fallback={<div style={{ minHeight: '100vh' }} />}>
+        <Suspense fallback={null}>
+          <FloatingTextUs />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/quote" element={<QuotePage />} />

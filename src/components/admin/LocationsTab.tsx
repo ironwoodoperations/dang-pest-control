@@ -127,7 +127,7 @@ const LocationsTab = () => {
     }
   };
 
-  const updateField = (field: keyof LocationRow, value: string) => {
+  const updateField = (field: keyof LocationRow, value: string | boolean) => {
     if (!editing) return;
     setEditing({ ...editing, [field]: value });
   };

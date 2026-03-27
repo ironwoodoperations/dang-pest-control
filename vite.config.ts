@@ -4,20 +4,6 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import viteImagemin from "vite-plugin-imagemin";
 
-/** Make Vite-injected CSS non-render-blocking in production builds */
-function nonBlockingCss() {
-  return {
-    name: 'non-blocking-css',
-    enforce: 'post' as const,
-    transformIndexHtml(html: string) {
-      return html.replace(
-        /<link rel="stylesheet" crossorigin href="(\/assets\/[^"]+\.css)">/g,
-        '<link rel="preload" as="style" href="$1" onload="this.onload=null;this.rel=\'stylesheet\'">\n    <noscript><link rel="stylesheet" href="$1"></noscript>',
-      );
-    },
-  };
-}
-
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -28,6 +14,15 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [
+    {
+      name: 'non-blocking-css',
+      transformIndexHtml(html: string) {
+        return html.replace(
+          /<link rel="stylesheet" crossorigin href="([^"]+\.css)">/g,
+          `<link rel="preload" as="style" crossorigin href="$1" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="$1"></noscript>`
+        );
+      },
+    },
     react(),
     mode === "development" && componentTagger(),
     viteImagemin({
@@ -36,7 +31,6 @@ export default defineConfig(({ mode }) => ({
       pngquant: { quality: [0.65, 0.8] },
       webp: { quality: 75 },
     }),
-    nonBlockingCss(),
   ].filter(Boolean),
   resolve: {
     alias: {
