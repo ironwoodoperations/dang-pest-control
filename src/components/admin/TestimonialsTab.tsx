@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil, Trash2, Star, GripVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import PageHelpBanner from "./PageHelpBanner";
 
 interface Testimonial {
   id: string;
@@ -91,6 +92,7 @@ const TestimonialsTab = () => {
 
   return (
     <div className="space-y-6">
+      <PageHelpBanner tab="testimonials" />
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-body font-bold" style={{ color: "hsl(var(--admin-text))" }}>Testimonials</h2>

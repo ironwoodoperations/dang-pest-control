@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Search, Globe, Plus, Trash2, Save, ExternalLink, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import KeywordPowerBox from "@/components/admin/KeywordPowerBox";
+import PageHelpBanner from "./PageHelpBanner";
 
 interface Keyword {
   keyword: string;
@@ -231,6 +232,7 @@ const SEOTab = () => {
 
   return (
     <div className="space-y-6">
+      <PageHelpBanner tab="seo" />
       <h2 className="font-body text-2xl font-bold" style={{ color: "hsl(var(--admin-text))" }}>SEO Dashboard</h2>
 
       {/* Stats */}

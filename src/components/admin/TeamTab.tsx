@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { UserPlus, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import PageHelpBanner from "./PageHelpBanner";
 
 interface TeamMember {
   id: string;
@@ -86,6 +87,7 @@ const TeamTab = () => {
 
   return (
     <div className="space-y-6">
+      <PageHelpBanner tab="team" />
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-body font-bold" style={{ color: "hsl(var(--admin-text))" }}>Team Management</h2>

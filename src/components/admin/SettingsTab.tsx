@@ -9,6 +9,7 @@ import SettingsHeroMedia from "./settings/SettingsHeroMedia";
 import SettingsCampaigns from "./settings/SettingsCampaigns";
 import SettingsContact from "./settings/SettingsContact";
 import SettingsMediaLibrary from "./settings/SettingsMediaLibrary";
+import PageHelpBanner from "./PageHelpBanner";
 
 export interface SettingsData {
   // Branding
@@ -176,6 +177,7 @@ const SettingsTab = () => {
 
   return (
     <div className="flex gap-6">
+      <PageHelpBanner tab="settings" />
       {/* Left nav */}
       <nav className="w-44 shrink-0 hidden md:block">
         <p className="text-[10px] font-display uppercase tracking-widest mb-3" style={{ color: "hsl(var(--admin-text-muted))" }}>

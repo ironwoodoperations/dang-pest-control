@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Pencil, Plus, Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import PageHelpBanner from "./PageHelpBanner";
 
 const SERVICE_AREA_CITIES = [
   "Tyler", "Longview", "Lindale", "Bullard", "Whitehouse", "Jacksonville",
@@ -134,6 +135,7 @@ const LocationsTab = () => {
 
   return (
     <div className="space-y-6">
+      <PageHelpBanner tab="locations" />
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>

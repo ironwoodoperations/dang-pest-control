@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, TrendingUp, TreePine, Clock, CheckCircle2, AlertCircle } from "lucide-react";
 import { useHolidayMode } from "@/hooks/useHolidayMode";
 import { useTenant } from "@/hooks/useTenant";
+import PageHelpBanner from "./PageHelpBanner";
 
 interface Lead {
   id: string;
@@ -117,6 +118,7 @@ const DashboardTab = () => {
 
   return (
     <div className="space-y-6">
+      <PageHelpBanner tab="dashboard" />
       {/* Greeting */}
       <div>
         <h2 className="font-display text-2xl tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>

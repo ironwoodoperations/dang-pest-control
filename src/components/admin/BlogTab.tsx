@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import PageHelpBanner from "./PageHelpBanner";
 
 interface BlogPost {
   id: string;
@@ -111,6 +112,7 @@ const BlogTab = () => {
 
   return (
     <div className="space-y-6">
+      <PageHelpBanner tab="blog" />
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-body font-bold" style={{ color: "hsl(var(--admin-text))" }}>Blog Posts</h2>

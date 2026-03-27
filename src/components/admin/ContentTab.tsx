@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Save, ArrowLeft, Video, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { serviceKeys, servicesData } from "@/data/servicesData";
+import PageHelpBanner from "./PageHelpBanner";
 
 const nonServicePages = [
   { slug: "/", label: "Home" },
@@ -138,6 +139,7 @@ const ContentTab = () => {
 
   return (
     <div className="space-y-6">
+      <PageHelpBanner tab="content" />
       <h2 className="font-body text-2xl font-bold" style={{ color: "hsl(var(--admin-text))" }}>
         Page Content Manager
       </h2>

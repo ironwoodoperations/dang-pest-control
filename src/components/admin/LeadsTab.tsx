@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Trash2, Users, UserCheck, Archive, Eye, Search, Mail, Phone, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import PageHelpBanner from "./PageHelpBanner";
 
 interface Lead {
   id: string;
@@ -85,6 +86,7 @@ const LeadsTab = () => {
 
   return (
     <div className="space-y-6">
+      <PageHelpBanner tab="leads" />
       <h2 className="font-body text-2xl font-bold" style={{ color: "hsl(var(--admin-text))" }}>Leads CRM</h2>
 
       {/* Summary Cards */}
