@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit, MessageSquareQuote, BookOpen, MapPin } from "lucide-react";
+import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit, MessageSquareQuote, BookOpen, MapPin, Share2 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -24,6 +24,7 @@ const contentNav = [
   { title: "Blog", value: "blog", icon: BookOpen },
   { title: "Locations", value: "locations", icon: MapPin },
   { title: "Testimonials", value: "testimonials", icon: MessageSquareQuote },
+  { title: "Social Media", value: "social", icon: Share2 },
 ];
 
 const systemNav = [
