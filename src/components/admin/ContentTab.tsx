@@ -159,32 +159,37 @@ const ContentTab = () => {
     if (!editing) return;
     setSaving(true);
 
-    const payload = {
-      slug: editing.slug,
-      title: editing.title,
-      subtitle: editing.subtitle,
-      intro: editing.intro,
-      video_url: editing.video_url,
-      video_type: editing.video_type,
-      updated_at: new Date().toISOString(),
-      tenant_id: tenantId,
-    };
+    try {
+      const payload = {
+        slug: editing.slug,
+        title: editing.title,
+        subtitle: editing.subtitle,
+        intro: editing.intro,
+        video_url: editing.video_url,
+        video_type: editing.video_type,
+        updated_at: new Date().toISOString(),
+        tenant_id: tenantId,
+      };
 
-    let error;
-    if (editing.id) {
-      ({ error } = await supabase.from("page_content").update(payload).eq("id", editing.id));
-    } else {
-      ({ error } = await supabase.from("page_content").insert(payload));
-    }
+      let error;
+      if (editing.id) {
+        ({ error } = await supabase.from("page_content").update(payload).eq("id", editing.id));
+      } else {
+        ({ error } = await supabase.from("page_content").insert(payload));
+      }
 
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Saved!", description: `${editing.slug} content updated.` });
-      setEditing(null);
-      fetchPages();
+      if (error) {
+        toast({ title: "Error", description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: "Saved!", description: `${editing.slug} content updated.` });
+        setEditing(null);
+        fetchPages();
+      }
+    } catch (err) {
+      toast({ title: "Save failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
