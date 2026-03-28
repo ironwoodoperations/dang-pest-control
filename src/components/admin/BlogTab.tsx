@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/useTenant";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,48 @@ const BlogTab = () => {
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
   const { tenantId } = useTenant();
+
+  // Run user_edited column migration once
+  const migrationRan = useRef(false);
+  useEffect(() => {
+    if (!tenantId || migrationRan.current) return;
+    migrationRan.current = true;
+    supabase.rpc("exec_sql" as any, {
+      query: "ALTER TABLE seo_meta ADD COLUMN IF NOT EXISTS user_edited boolean DEFAULT false;"
+    }).then(() => {});
+  }, [tenantId]);
+
+  const upsertBlogSEO = async (post: { title: string; slug: string; excerpt?: string; content?: string }) => {
+    if (!tenantId) return;
+
+    // Don't overwrite manually edited SEO
+    const { data: existing } = await supabase
+      .from("seo_meta" as any)
+      .select("user_edited")
+      .eq("tenant_id", tenantId)
+      .eq("page_slug", `/blog/${post.slug}`)
+      .single();
+
+    if ((existing as any)?.user_edited) return;
+
+    const stripHtml = (html: string) => html.replace(/<[^>]+>/g, "");
+    const rawDesc = stripHtml(post.excerpt || post.content || "");
+    const meta_description = rawDesc.length > 155
+      ? rawDesc.substring(0, 152) + "..."
+      : rawDesc;
+
+    const { error } = await supabase.from("seo_meta" as any).upsert({
+      tenant_id: tenantId,
+      page_slug: `/blog/${post.slug}`,
+      meta_title: `${post.title} | Dang Pest Control`,
+      meta_description,
+      user_edited: false,
+    }, { onConflict: "tenant_id,page_slug" });
+
+    if (!error) {
+      toast({ title: "SEO auto-generated \u2713", description: `Meta tags created for /blog/${post.slug}` });
+    }
+  };
 
   const fetchPosts = async () => {
     if (!tenantId) return;
@@ -89,11 +131,17 @@ const BlogTab = () => {
     if (editing) {
       const { error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id);
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-      else toast({ title: "Post updated" });
+      else {
+        toast({ title: "Post updated" });
+        await upsertBlogSEO({ title: form.title, slug: form.slug, excerpt: form.excerpt, content: form.content });
+      }
     } else {
       const { error } = await supabase.from("blog_posts").insert(payload);
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-      else toast({ title: "Post created" });
+      else {
+        toast({ title: "Post created" });
+        await upsertBlogSEO({ title: form.title, slug: form.slug, excerpt: form.excerpt, content: form.content });
+      }
     }
     setSaving(false);
     setOpen(false);

@@ -29,7 +29,7 @@ After fix, navigation between Home → Spider Control → Admin should be instan
 ---
 
 ### Task 1.2 — Blog post auto-SEO on create/save
-- [ ] **Auto-generate SEO metadata when blog post is created or updated**
+- [x] **Auto-generate SEO metadata when blog post is created or updated**
 
 **Changes to `src/components/admin/BlogTab.tsx`:**
 

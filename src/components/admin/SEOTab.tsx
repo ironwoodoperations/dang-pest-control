@@ -216,6 +216,17 @@ const SEOTab = () => {
     const statuses = Object.fromEntries(updated.map((p) => [p.slug, p.status]));
     await saveToConfig("seo_statuses", statuses);
 
+    // Mark blog/location pages as user-edited in seo_meta to prevent auto-SEO overwrite
+    if ((editingPage.slug.startsWith("/blog/") || editingPage.slug.match(/^\/[a-z]+-tx$/)) && tenantId) {
+      await supabase.from("seo_meta" as any).upsert({
+        tenant_id: tenantId,
+        page_slug: editingPage.slug,
+        meta_title: editingPage.meta_title,
+        meta_description: editingPage.meta_description,
+        user_edited: true,
+      }, { onConflict: "tenant_id,page_slug" });
+    }
+
     toast({ title: "SEO metadata saved!", description: `Updated meta tags for ${editingPage.label}.` });
     setSaving(false);
     setEditingPage(null);
