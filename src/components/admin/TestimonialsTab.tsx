@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Star, GripVertical } from "lucide-react";
+import { Plus, Pencil, Trash2, Star, GripVertical, Download, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PageHelpBanner from "./PageHelpBanner";
 
@@ -34,6 +34,7 @@ const TestimonialsTab = () => {
   const [editing, setEditing] = useState<Testimonial | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [importing, setImporting] = useState(false);
   const { toast } = useToast();
   const { tenantId } = useTenant();
 
@@ -90,6 +91,68 @@ const TestimonialsTab = () => {
     fetch();
   };
 
+  const handleImportFromGoogle = async () => {
+    if (!tenantId) return;
+    setImporting(true);
+
+    // Get Google API credentials from settings
+    const { data: configRow } = await supabase.from("site_config").select("value").eq("key", "integrations").eq("tenant_id", tenantId).maybeSingle();
+    const config = configRow?.value as any;
+    if (!config?.google_place_id || !config?.google_api_key) {
+      toast({ title: "Google not configured", description: "Add your Google Place ID and API Key in Settings > Integrations.", variant: "destructive" });
+      setImporting(false);
+      return;
+    }
+
+    try {
+      const res = await window.fetch(
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${config.google_place_id}&fields=reviews,rating&key=${config.google_api_key}`
+      );
+      const data = await res.json();
+      const reviews = data.result?.reviews;
+      if (!reviews || reviews.length === 0) {
+        toast({ title: "No reviews found", description: "Your Google listing has no reviews to import." });
+        setImporting(false);
+        return;
+      }
+
+      let importedCount = 0;
+      for (const review of reviews) {
+        const googleReviewId = String(review.time);
+        // Check if already imported
+        const { data: existing } = await supabase
+          .from("testimonials")
+          .select("id")
+          .eq("tenant_id", tenantId)
+          .eq("title", `google:${googleReviewId}`)
+          .maybeSingle();
+
+        if (!existing) {
+          await supabase.from("testimonials").insert({
+            tenant_id: tenantId,
+            name: review.author_name,
+            title: `google:${googleReviewId}`,
+            text: review.text,
+            rating: review.rating,
+            is_featured: false,
+            sort_order: testimonials.length + importedCount + 1,
+          });
+          importedCount++;
+        }
+      }
+
+      if (importedCount > 0) {
+        toast({ title: `Imported ${importedCount} new reviews`, description: "Google reviews added to testimonials." });
+        fetch();
+      } else {
+        toast({ title: "Already up to date", description: "All Google reviews have already been imported." });
+      }
+    } catch (err) {
+      toast({ title: "Import failed", description: "Could not reach Google Places API. Check your API key and ensure the Places API is enabled.", variant: "destructive" });
+    }
+    setImporting(false);
+  };
+
   return (
     <div className="space-y-6">
       <PageHelpBanner tab="testimonials" />
@@ -98,7 +161,17 @@ const TestimonialsTab = () => {
           <h2 className="text-2xl font-body font-bold" style={{ color: "hsl(var(--admin-text))" }}>Testimonials</h2>
           <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Manage customer reviews displayed on the site</p>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            className="gap-2 font-body"
+            onClick={handleImportFromGoogle}
+            disabled={importing}
+          >
+            {importing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            Import from Google
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="gap-2 font-body" style={{ background: "hsl(var(--admin-indigo))" }} onClick={openNew}>
               <Plus className="h-4 w-4" /> Add Testimonial
@@ -143,6 +216,7 @@ const TestimonialsTab = () => {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       <Card className="overflow-hidden" style={{ background: "hsl(var(--admin-card-bg))" }}>

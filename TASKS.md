@@ -312,7 +312,7 @@ CREATE TABLE IF NOT EXISTS social_posts (
 ## 🟡 PHASE 4 — Google Reviews + Reporting
 
 ### Task 4.1 — Google Reviews auto-import
-- [ ] **Import Google reviews into testimonials via Places API**
+- [x] **Import Google reviews into testimonials via Places API**
 
 1. Add columns to testimonials table:
 ```sql
