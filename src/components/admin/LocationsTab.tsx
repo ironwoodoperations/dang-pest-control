@@ -36,6 +36,7 @@ interface LocationRow {
   local_testimonial_quote: string;
   meta_title: string;
   meta_description: string;
+  intro_video_url: string;
   is_live: boolean;
 }
 
@@ -50,6 +51,7 @@ const emptyLocation: LocationRow = {
   local_testimonial_quote: "",
   meta_title: "",
   meta_description: "",
+  intro_video_url: "",
   is_live: true,
 };
 
@@ -121,6 +123,7 @@ const LocationsTab = () => {
       local_testimonial_quote: editing.local_testimonial_quote,
       meta_title: editing.meta_title,
       meta_description: editing.meta_description,
+      intro_video_url: editing.intro_video_url || null,
       is_live: editing.is_live,
       tenant_id: tenantId,
     };
@@ -316,6 +319,12 @@ const LocationsTab = () => {
               <div className="space-y-2">
                 <Label>Meta Description (SEO)</Label>
                 <Textarea value={editing.meta_description} onChange={(e) => updateField("meta_description", e.target.value)} rows={2} placeholder="Professional pest control services in Longview, TX..." />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Intro Image Video URL (optional)</Label>
+                <Input value={editing.intro_video_url} onChange={(e) => updateField("intro_video_url", e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
+                <p className="text-xs text-muted-foreground">YouTube or direct video URL. Adds a play button on the intro photo.</p>
               </div>
 
               <div className="flex items-center gap-3 pt-2">

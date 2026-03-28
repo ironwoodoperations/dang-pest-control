@@ -291,7 +291,7 @@ const ContentTab = () => {
               {/* Video Section */}
               <div className="space-y-3 p-4 rounded-lg border">
                 <Label className="font-body font-semibold flex items-center gap-2">
-                  <Video className="w-4 h-4" /> Page Video (optional)
+                  <Video className="w-4 h-4" /> Intro Image Video — shows play button on the pest photo
                 </Label>
 
                 <div className="space-y-2">
