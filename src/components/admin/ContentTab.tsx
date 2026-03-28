@@ -171,11 +171,21 @@ const ContentTab = () => {
         tenant_id: tenantId,
       };
 
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Save timed out — please try again")), 10000)
+      );
+
       let error;
       if (editing.id) {
-        ({ error } = await supabase.from("page_content").update(payload).eq("id", editing.id));
+        ({ error } = await Promise.race([
+          supabase.from("page_content").update(payload).eq("id", editing.id),
+          timeout,
+        ]));
       } else {
-        ({ error } = await supabase.from("page_content").insert(payload));
+        ({ error } = await Promise.race([
+          supabase.from("page_content").insert(payload),
+          timeout,
+        ]));
       }
 
       if (error) {
@@ -197,17 +207,22 @@ const ContentTab = () => {
     const file = e.target.files[0];
     setUploading(true);
 
-    const path = `${editing.slug}/${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from("videos").upload(path, file);
+    try {
+      const path = `${editing.slug}/${Date.now()}-${file.name}`;
+      const { error } = await supabase.storage.from("videos").upload(path, file);
 
-    if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
-    } else {
-      const { data: urlData } = supabase.storage.from("videos").getPublicUrl(path);
-      setEditing({ ...editing, video_url: urlData.publicUrl, video_type: "upload" });
-      toast({ title: "Video uploaded!" });
+      if (error) {
+        toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      } else {
+        const { data: urlData } = supabase.storage.from("videos").getPublicUrl(path);
+        setEditing({ ...editing, video_url: urlData.publicUrl, video_type: "upload" });
+        toast({ title: "Video uploaded!" });
+      }
+    } catch (err) {
+      toast({ title: "Upload failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   return (

@@ -67,18 +67,23 @@ const TestimonialsTab = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    if (editing) {
-      const { error } = await supabase.from("testimonials").update(form).eq("id", editing.id);
-      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-      else toast({ title: "Testimonial updated" });
-    } else {
-      const { error } = await supabase.from("testimonials").insert({ ...form, tenant_id: tenantId });
-      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-      else toast({ title: "Testimonial added" });
+    try {
+      if (editing) {
+        const { error } = await supabase.from("testimonials").update(form).eq("id", editing.id);
+        if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+        else toast({ title: "Testimonial updated" });
+      } else {
+        const { error } = await supabase.from("testimonials").insert({ ...form, tenant_id: tenantId });
+        if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+        else toast({ title: "Testimonial added" });
+      }
+      setOpen(false);
+      fetch();
+    } catch (err) {
+      toast({ title: "Save failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    setOpen(false);
-    fetch();
   };
 
   const handleDelete = async (id: string) => {
@@ -95,16 +100,15 @@ const TestimonialsTab = () => {
     if (!tenantId) return;
     setImporting(true);
 
-    // Get Google API credentials from settings
-    const { data: configRow } = await supabase.from("site_config").select("value").eq("key", "integrations").eq("tenant_id", tenantId).maybeSingle();
-    const config = configRow?.value as any;
-    if (!config?.google_place_id || !config?.google_api_key) {
-      toast({ title: "Google not configured", description: "Add your Google Place ID and API Key in Settings > Integrations.", variant: "destructive" });
-      setImporting(false);
-      return;
-    }
-
     try {
+      // Get Google API credentials from settings
+      const { data: configRow } = await supabase.from("site_config").select("value").eq("key", "integrations").eq("tenant_id", tenantId).maybeSingle();
+      const config = configRow?.value as any;
+      if (!config?.google_place_id || !config?.google_api_key) {
+        toast({ title: "Google not configured", description: "Add your Google Place ID and API Key in Settings > Integrations.", variant: "destructive" });
+        return;
+      }
+
       const res = await window.fetch(
         `https://maps.googleapis.com/maps/api/place/details/json?place_id=${config.google_place_id}&fields=reviews,rating&key=${config.google_api_key}`
       );
@@ -112,14 +116,12 @@ const TestimonialsTab = () => {
       const reviews = data.result?.reviews;
       if (!reviews || reviews.length === 0) {
         toast({ title: "No reviews found", description: "Your Google listing has no reviews to import." });
-        setImporting(false);
         return;
       }
 
       let importedCount = 0;
       for (const review of reviews) {
         const googleReviewId = String(review.time);
-        // Check if already imported
         const { data: existing } = await supabase
           .from("testimonials")
           .select("id")
@@ -148,9 +150,10 @@ const TestimonialsTab = () => {
         toast({ title: "Already up to date", description: "All Google reviews have already been imported." });
       }
     } catch (err) {
-      toast({ title: "Import failed", description: "Could not reach Google Places API. Check your API key and ensure the Places API is enabled.", variant: "destructive" });
+      toast({ title: "Import failed", description: err instanceof Error ? err.message : "Could not reach Google Places API.", variant: "destructive" });
+    } finally {
+      setImporting(false);
     }
-    setImporting(false);
   };
 
   return (
