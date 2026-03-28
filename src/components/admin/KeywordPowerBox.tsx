@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Loader2, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Zap, Loader2, HelpCircle, ChevronDown, ChevronUp, Bot } from "lucide-react";
 
 interface PageSEO {
   slug: string;
@@ -20,11 +22,22 @@ interface Props {
   toast: (opts: { title: string; description?: string; variant?: "default" | "destructive" }) => void;
 }
 
+interface Placement {
+  keyword: string;
+  page_slug: string;
+  placement_type: string;
+  suggested_text: string;
+  selected: boolean;
+}
+
 const KeywordPowerBox = ({ tenantId, pages, toast }: Props) => {
   const [bulkKeywords, setBulkKeywords] = useState("");
   const [syncing, setSyncing] = useState(false);
   const [lastSynced, setLastSynced] = useState<string[]>([]);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [placements, setPlacements] = useState<Placement[]>([]);
+  const [autoPlacing, setAutoPlacing] = useState(false);
+  const [applying, setApplying] = useState(false);
 
   const handleSync = async () => {
     if (!tenantId || !bulkKeywords.trim()) return;
@@ -88,6 +101,139 @@ const KeywordPowerBox = ({ tenantId, pages, toast }: Props) => {
       title: "Keywords Synced!",
       description: `${keywords.length} keywords saved to your master keyword list. ${updatedCount} pest pages analyzed.`,
     });
+  };
+
+  const handleAutoPlace = async () => {
+    if (!tenantId || !lastSynced.length) {
+      toast({ title: "Sync keywords first", description: "Paste and sync your keywords before auto-placing.", variant: "destructive" });
+      return;
+    }
+    setAutoPlacing(true);
+
+    const pageList = pages.map((p) => `${p.slug} — ${p.label}`).join("\n");
+    const prompt = `Given these SEO keywords: ${lastSynced.join(", ")}
+And these website pages:
+${pageList}
+
+Map each keyword to the best page and placement. Return ONLY valid JSON:
+{
+  "placements": [
+    {
+      "keyword": "pest control tyler tx",
+      "page_slug": "/tyler-tx",
+      "placement_type": "meta_title",
+      "suggested_text": "Pest Control Tyler TX | Dang Pest Control"
+    }
+  ]
+}
+
+Rules:
+- Primary/money keywords → meta_title (include in page title)
+- Secondary keywords → meta_description
+- Long-tail local keywords → location pages
+- Service keywords → corresponding pest service pages
+- Match keyword to the most topically relevant page
+- One keyword can appear on multiple pages if highly relevant
+- placement_type must be one of: meta_title, meta_description, h1`;
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 2000,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+      const data = await response.json();
+      const text = data.content?.[0]?.text || "";
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        const results: Placement[] = (parsed.placements || []).map((p: any) => ({
+          keyword: p.keyword,
+          page_slug: p.page_slug,
+          placement_type: p.placement_type,
+          suggested_text: p.suggested_text,
+          selected: true,
+        }));
+        setPlacements(results);
+
+        // Save to keyword_placements table
+        const toInsert = results.map((p) => ({
+          tenant_id: tenantId,
+          keyword: p.keyword,
+          page_slug: p.page_slug,
+          placement_type: p.placement_type,
+          suggested_text: p.suggested_text,
+          applied: false,
+        }));
+        await supabase.from("keyword_placements" as any).upsert(toInsert, {
+          onConflict: "tenant_id,keyword,page_slug,placement_type",
+        });
+
+        toast({ title: "Auto-placement complete", description: `${results.length} keyword placements suggested.` });
+      }
+    } catch (err) {
+      toast({ title: "Auto-placement failed", description: String(err), variant: "destructive" });
+    }
+    setAutoPlacing(false);
+  };
+
+  const handleApplySelected = async () => {
+    if (!tenantId) return;
+    setApplying(true);
+    const selected = placements.filter((p) => p.selected);
+
+    for (const placement of selected) {
+      const seoKey = `seo:${placement.page_slug}`;
+      const field = placement.placement_type === "meta_title" ? "seo_title" : "seo_description";
+
+      const { data: existing } = await supabase
+        .from("site_config")
+        .select("id")
+        .eq("key", seoKey)
+        .eq("tenant_id", tenantId)
+        .maybeSingle();
+
+      if (existing) {
+        await supabase
+          .from("site_config")
+          .update({ [field]: placement.suggested_text, updated_at: new Date().toISOString() })
+          .eq("key", seoKey)
+          .eq("tenant_id", tenantId);
+      } else {
+        await supabase.from("site_config").insert({
+          key: seoKey,
+          [field]: placement.suggested_text,
+          value: {},
+          tenant_id: tenantId,
+        });
+      }
+
+      // Mark as applied in keyword_placements
+      await supabase
+        .from("keyword_placements" as any)
+        .update({ applied: true })
+        .eq("tenant_id", tenantId)
+        .eq("keyword", placement.keyword)
+        .eq("page_slug", placement.page_slug)
+        .eq("placement_type", placement.placement_type);
+    }
+
+    toast({ title: "Placements applied", description: `${selected.length} keyword placements applied to SEO fields.` });
+    setPlacements((prev) => prev.map((p) => (p.selected ? { ...p, selected: false } : p)));
+    setApplying(false);
+  };
+
+  const togglePlacement = (idx: number) => {
+    setPlacements((prev) => prev.map((p, i) => (i === idx ? { ...p, selected: !p.selected } : p)));
   };
 
   return (
@@ -161,10 +307,22 @@ const KeywordPowerBox = ({ tenantId, pages, toast }: Props) => {
           </Button>
         </div>
         {lastSynced.length > 0 && (
-          <div className="pt-2 space-y-2">
-            <p className="font-body text-xs font-medium" style={{ color: "hsl(var(--admin-text))" }}>
-              Last synced keywords:
-            </p>
+          <div className="pt-2 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="font-body text-xs font-medium" style={{ color: "hsl(var(--admin-text))" }}>
+                Last synced keywords:
+              </p>
+              <Button
+                size="sm"
+                onClick={handleAutoPlace}
+                disabled={autoPlacing}
+                className="gap-1.5 font-body text-xs"
+                style={{ background: "hsl(var(--admin-indigo))" }}
+              >
+                {autoPlacing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Bot className="w-3.5 h-3.5" />}
+                Auto-Place Keywords
+              </Button>
+            </div>
             <div className="flex flex-wrap gap-1.5">
               {lastSynced.map((kw, i) => (
                 <Badge key={i} variant="outline" className="font-body text-xs">
@@ -172,6 +330,53 @@ const KeywordPowerBox = ({ tenantId, pages, toast }: Props) => {
                 </Badge>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Auto-Placement Results */}
+        {placements.length > 0 && (
+          <div className="pt-4 space-y-3 border-t" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+            <div className="flex items-center justify-between">
+              <p className="font-body text-sm font-medium" style={{ color: "hsl(var(--admin-text))" }}>
+                Suggested Placements ({placements.filter((p) => p.selected).length} selected)
+              </p>
+              <Button
+                size="sm"
+                onClick={handleApplySelected}
+                disabled={applying || !placements.some((p) => p.selected)}
+                className="gap-1.5 font-body text-xs"
+                style={{ background: "hsl(160, 70%, 35%)" }}
+              >
+                {applying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
+                Apply Selected
+              </Button>
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-8"></TableHead>
+                  <TableHead className="font-body text-xs">Keyword</TableHead>
+                  <TableHead className="font-body text-xs">Page</TableHead>
+                  <TableHead className="font-body text-xs">Placement</TableHead>
+                  <TableHead className="font-body text-xs">Suggested Text</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {placements.map((p, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell>
+                      <Checkbox checked={p.selected} onCheckedChange={() => togglePlacement(idx)} />
+                    </TableCell>
+                    <TableCell className="font-body text-xs font-medium" style={{ color: "hsl(var(--admin-text))" }}>{p.keyword}</TableCell>
+                    <TableCell className="font-mono text-xs" style={{ color: "hsl(var(--admin-text-muted))" }}>{p.page_slug}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="font-body text-xs">{p.placement_type}</Badge>
+                    </TableCell>
+                    <TableCell className="font-body text-xs max-w-[200px] truncate" style={{ color: "hsl(var(--admin-text-muted))" }}>{p.suggested_text}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
       </CardContent>
