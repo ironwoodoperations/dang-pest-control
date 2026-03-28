@@ -22,24 +22,29 @@ const SettingsMediaLibrary = () => {
 
   const fetchFiles = async () => {
     setLoading(true);
-    const { data, error } = await supabase.storage.from("videos").list("media", {
-      sortBy: { column: "created_at", order: "desc" },
-    });
-    if (!error && data) {
-      const mediaFiles: MediaFile[] = data
-        .filter((f) => f.name !== ".emptyFolderPlaceholder")
-        .map((f) => {
-          const { data: urlData } = supabase.storage.from("videos").getPublicUrl(`media/${f.name}`);
-          return {
-            name: f.name,
-            url: urlData.publicUrl,
-            type: f.metadata?.mimetype || (f.name.match(/\.(mp4|webm|mov)$/i) ? "video" : "image"),
-            created_at: f.created_at || "",
-          };
-        });
-      setFiles(mediaFiles);
+    try {
+      const { data, error } = await supabase.storage.from("videos").list("media", {
+        sortBy: { column: "created_at", order: "desc" },
+      });
+      if (!error && data) {
+        const mediaFiles: MediaFile[] = data
+          .filter((f) => f.name !== ".emptyFolderPlaceholder")
+          .map((f) => {
+            const { data: urlData } = supabase.storage.from("videos").getPublicUrl(`media/${f.name}`);
+            return {
+              name: f.name,
+              url: urlData.publicUrl,
+              type: f.metadata?.mimetype || (f.name.match(/\.(mp4|webm|mov)$/i) ? "video" : "image"),
+              created_at: f.created_at || "",
+            };
+          });
+        setFiles(mediaFiles);
+      }
+    } catch (err) {
+      console.error("Failed to fetch media files:", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
