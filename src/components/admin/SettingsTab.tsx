@@ -10,6 +10,7 @@ import SettingsCampaigns from "./settings/SettingsCampaigns";
 import SettingsContact from "./settings/SettingsContact";
 import SettingsMediaLibrary from "./settings/SettingsMediaLibrary";
 import SettingsIntegrations from "./settings/SettingsIntegrations";
+import SettingsNotifications from "./settings/SettingsNotifications";
 import PageHelpBanner from "./PageHelpBanner";
 
 export interface SettingsData {
@@ -41,8 +42,26 @@ export interface SettingsData {
   instagram: string;
   google: string;
   yelp: string;
+  // Business extended
+  license_number: string;
+  insurance_status: string;
+  npma_member: boolean;
+  tpca_member: boolean;
+  founded_year: string;
+  num_technicians: string;
+  service_radius: string;
+  emergency_phone: string;
+  tagline: string;
+  // Branding extended
+  primary_color: string;
+  accent_color: string;
+  email_footer: string;
   // Notifications
   notify_email: string;
+  cc_email: string;
+  monthly_report_email: string;
+  notify_new_review: boolean;
+  weekly_seo_digest: boolean;
   // Integrations
   fb_access_token: string;
   fb_page_id: string;
@@ -74,7 +93,23 @@ const defaultSettings: SettingsData = {
   instagram: "",
   google: "",
   yelp: "",
+  license_number: "",
+  insurance_status: "",
+  npma_member: false,
+  tpca_member: false,
+  founded_year: "",
+  num_technicians: "",
+  service_radius: "50",
+  emergency_phone: "",
+  tagline: "",
+  primary_color: "#ff8c00",
+  accent_color: "#e6c619",
+  email_footer: "",
   notify_email: "",
+  cc_email: "",
+  monthly_report_email: "",
+  notify_new_review: false,
+  weekly_seo_digest: false,
   fb_access_token: "",
   fb_page_id: "",
   google_place_id: "",
@@ -87,6 +122,7 @@ const sections = [
   { id: "media-library", label: "Media Library" },
   { id: "campaigns", label: "Campaigns" },
   { id: "contact", label: "Contact Info" },
+  { id: "notifications", label: "Notifications" },
   { id: "integrations", label: "Integrations" },
 ] as const;
 
@@ -129,6 +165,25 @@ const SettingsTab = () => {
             s.instagram = (val.instagram as string) || "";
             s.google = (val.google as string) || "";
             s.yelp = (val.yelp as string) || "";
+          } else if (row.key === "business_extended") {
+            s.license_number = (val.license_number as string) || "";
+            s.insurance_status = (val.insurance_status as string) || "";
+            s.npma_member = !!val.npma_member;
+            s.tpca_member = !!val.tpca_member;
+            s.founded_year = (val.founded_year as string) || "";
+            s.num_technicians = (val.num_technicians as string) || "";
+            s.service_radius = (val.service_radius as string) || "50";
+            s.emergency_phone = (val.emergency_phone as string) || "";
+            s.tagline = (val.tagline as string) || "";
+          } else if (row.key === "branding_extended") {
+            s.primary_color = (val.primary_color as string) || "#ff8c00";
+            s.accent_color = (val.accent_color as string) || "#e6c619";
+            s.email_footer = (val.email_footer as string) || "";
+          } else if (row.key === "notifications") {
+            s.cc_email = (val.cc_email as string) || "";
+            s.monthly_report_email = (val.monthly_report_email as string) || "";
+            s.notify_new_review = !!val.notify_new_review;
+            s.weekly_seo_digest = !!val.weekly_seo_digest;
           } else if (row.key === "integrations") {
             s.fb_access_token = (val.fb_access_token as string) || "";
             s.fb_page_id = (val.fb_page_id as string) || "";
@@ -177,6 +232,9 @@ const SettingsTab = () => {
       saveConfig("social_links", { facebook: settings.facebook, instagram: settings.instagram, google: settings.google, yelp: settings.yelp }),
       saveConfig("notification_email", { email: settings.notify_email }),
       saveConfig("integrations", { fb_access_token: settings.fb_access_token, fb_page_id: settings.fb_page_id, google_place_id: settings.google_place_id, google_api_key: settings.google_api_key }),
+      saveConfig("business_extended", { license_number: settings.license_number, insurance_status: settings.insurance_status, npma_member: settings.npma_member, tpca_member: settings.tpca_member, founded_year: settings.founded_year, num_technicians: settings.num_technicians, service_radius: settings.service_radius, emergency_phone: settings.emergency_phone, tagline: settings.tagline }),
+      saveConfig("branding_extended", { primary_color: settings.primary_color, accent_color: settings.accent_color, email_footer: settings.email_footer }),
+      saveConfig("notifications", { cc_email: settings.cc_email, monthly_report_email: settings.monthly_report_email, notify_new_review: settings.notify_new_review, weekly_seo_digest: settings.weekly_seo_digest }),
     ]);
     setSaving(false);
     if (results.every(Boolean)) {
@@ -262,6 +320,7 @@ const SettingsTab = () => {
         {activeSection === "media-library" && <SettingsMediaLibrary />}
         {activeSection === "campaigns" && <SettingsCampaigns settings={settings} update={(patch) => { update(patch); saveHolidayInstant(patch); }} />}
         {activeSection === "contact" && <SettingsContact settings={settings} update={update} />}
+        {activeSection === "notifications" && <SettingsNotifications settings={settings} update={update} />}
         {activeSection === "integrations" && <SettingsIntegrations settings={settings} update={update} />}
 
         <button

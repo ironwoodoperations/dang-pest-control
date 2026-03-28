@@ -399,7 +399,7 @@ serve(async (req) => {
 ## 🟢 PHASE 5 — Settings Enhancement
 
 ### Task 5.1 — Enhanced Settings
-- [ ] **Expand settings with professional client controls**
+- [x] **Expand settings with professional client controls**
 
 **`src/components/admin/settings/SettingsBusinessInfo.tsx` — add fields:**
 - Business license number
