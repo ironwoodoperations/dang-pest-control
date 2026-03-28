@@ -348,7 +348,7 @@ ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS rating integer DEFAULT 5;
 ---
 
 ### Task 4.2 — Monthly reports + email
-- [ ] **Generate PDF monthly reports and email automation**
+- [x] **Generate PDF monthly reports and email automation**
 
 1. Install: `npm install jspdf`
 

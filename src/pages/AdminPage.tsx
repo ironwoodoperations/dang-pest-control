@@ -11,6 +11,7 @@ import TestimonialsTab from "@/components/admin/TestimonialsTab";
 import BlogTab from "@/components/admin/BlogTab";
 import LocationsTab from "@/components/admin/LocationsTab";
 import SocialTab from "@/components/admin/SocialTab";
+import ReportsTab from "@/components/admin/ReportsTab";
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -26,6 +27,7 @@ const AdminPage = () => {
         {activeTab === "social" && <SocialTab />}
         {activeTab === "testimonials" && <TestimonialsTab />}
         {activeTab === "seo" && <SEOTab />}
+        {activeTab === "reports" && <ReportsTab />}
         {activeTab === "settings" && <SettingsTab />}
         {activeTab === "team" && <TeamTab />}
       </AdminLayout>

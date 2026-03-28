@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit, MessageSquareQuote, BookOpen, MapPin, Share2 } from "lucide-react";
+import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit, MessageSquareQuote, BookOpen, MapPin, Share2, BarChart3 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -29,6 +29,7 @@ const contentNav = [
 
 const systemNav = [
   { title: "SEO", value: "seo", icon: Search },
+  { title: "Reports", value: "reports", icon: BarChart3 },
   { title: "Settings", value: "settings", icon: Settings },
   { title: "Team", value: "team", icon: UserCog },
 ];
