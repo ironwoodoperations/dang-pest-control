@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { useSiteConfig } from "@/hooks/useSiteConfig";
 import { supabase } from "@/integrations/supabase/client";
+import { VideoImage } from "@/components/VideoImage";
 
 interface LocationData {
   slug: string;
@@ -18,6 +19,7 @@ interface LocationData {
   meta_title: string;
   meta_description: string;
   is_live: boolean;
+  intro_video_url?: string;
 }
 
 const servicesList = [
@@ -146,13 +148,12 @@ const LocationPage = () => {
         <div style={{ padding: '80px 40px', maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
             <div style={{ border: '5px solid hsl(45, 95%, 60%)', borderRadius: '8px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
-              <img
-                loading="lazy"
-                width={600}
-                height={400}
+              <VideoImage
                 src={(location as any).intro_image_url || "/exterior-treatment.jpg"}
                 alt={`Pest Control Technician Providing Services in ${location.city} TX`}
-                style={{ width: '100%', display: 'block' }}
+                className=""
+                videoUrl={location.intro_video_url}
+                videoType="youtube"
               />
             </div>
             <div>

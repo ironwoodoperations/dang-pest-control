@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 import { StructuredData } from '@/components/StructuredData';
+import { supabase } from '@/integrations/supabase/client';
+import { VideoImage } from '@/components/VideoImage';
 
 const STEP_COLORS = [
   'hsl(28, 100%, 50%)',
@@ -76,6 +79,18 @@ const faqs = [
 ];
 
 const TermiteControl = () => {
+  const [pageVideo, setPageVideo] = useState<{ video_url: string | null; video_type: string | null } | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from('page_content')
+      .select('video_url, video_type')
+      .eq('tenant_id', '1282b822-825b-4713-9dc9-6d14a2094d06')
+      .eq('slug', 'termite-control')
+      .maybeSingle()
+      .then(({ data }) => { if (data) setPageVideo(data); });
+  }, []);
+
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
       <SEO
@@ -118,7 +133,13 @@ const TermiteControl = () => {
       <section style={{ padding: '80px 40px 60px', maxWidth: '1200px', margin: '0 auto', background: '#ffffff', backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
           <div style={{ border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
-            <img loading="lazy" width={600} height={400} src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Interior-Bathroom-scaled-e1747162320401.jpg" alt="Termite Control Treatment Specialists in Tyler TX" style={{ width: '100%', display: 'block' }} />
+            <VideoImage
+              src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Interior-Bathroom-scaled-e1747162320401.jpg"
+              alt="Termite Control Treatment Specialists in Tyler TX"
+              className=""
+              videoUrl={pageVideo?.video_url}
+              videoType={pageVideo?.video_type}
+            />
           </div>
           <div>
             <p style={{ fontFamily: '"Bangers", cursive', color: 'hsl(28, 100%, 50%)', fontSize: '18px', letterSpacing: '0.12em', fontStyle: 'italic', marginBottom: '6px', marginTop: 0 }}>TERMITE CONTROL</p>

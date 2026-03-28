@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 import { StructuredData } from '@/components/StructuredData';
+import { supabase } from '@/integrations/supabase/client';
+import { VideoImage } from '@/components/VideoImage';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -88,6 +91,18 @@ const faqs = [
 // ─── COMPONENT ───────────────────────────────────────────────────────────────
 
 const WaspHornetControl = () => {
+  const [pageVideo, setPageVideo] = useState<{ video_url: string | null; video_type: string | null } | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from('page_content')
+      .select('video_url, video_type')
+      .eq('tenant_id', '1282b822-825b-4713-9dc9-6d14a2094d06')
+      .eq('slug', 'wasp-hornet-control')
+      .maybeSingle()
+      .then(({ data }) => { if (data) setPageVideo(data); });
+  }, []);
+
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
       <SEO
@@ -159,13 +174,12 @@ const WaspHornetControl = () => {
       }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
           <div style={{ border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
-            <img
-              loading="lazy"
-              width={600}
-              height={400}
+            <VideoImage
               src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/red-wasp.jpg"
               alt="Red Wasp Control Services in Tyler TX"
-              style={{ width: '100%', display: 'block' }}
+              className=""
+              videoUrl={pageVideo?.video_url}
+              videoType={pageVideo?.video_type}
             />
           </div>
           <div>
