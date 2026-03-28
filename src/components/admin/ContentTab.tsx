@@ -172,28 +172,31 @@ const ContentTab = () => {
       };
 
       const timeout = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("Save timed out — please try again")), 10000)
+        setTimeout(() => reject(new Error("Save timed out — please try again")), 30000)
       );
 
-      let error;
-      if (editing.id) {
-        ({ error } = await Promise.race([
-          supabase.from("page_content").update(payload).eq("id", editing.id),
-          timeout,
-        ]));
-      } else {
-        ({ error } = await Promise.race([
-          supabase.from("page_content").insert(payload),
-          timeout,
-        ]));
-      }
+      const upsertOp = supabase.from("page_content").upsert(payload, { onConflict: "tenant_id,slug" }).select().single();
+
+      const { data: saved, error } = await Promise.race([upsertOp, timeout]);
 
       if (error) {
         toast({ title: "Error", description: error.message, variant: "destructive" });
       } else {
+        // Update local state immediately so UI reflects changes without refetch
+        const updatedPage: PageContent = {
+          ...editing,
+          id: saved?.id || editing.id,
+          title: editing.title,
+          subtitle: editing.subtitle,
+          intro: editing.intro,
+          video_url: editing.video_url,
+          video_type: editing.video_type,
+        };
+        setPages((prev) =>
+          prev.map((p) => p.slug === editing.slug ? { ...p, ...updatedPage } : p)
+        );
         toast({ title: "Saved!", description: `${editing.slug} content updated.` });
         setEditing(null);
-        fetchPages();
       }
     } catch (err) {
       toast({ title: "Save failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });

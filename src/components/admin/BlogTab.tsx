@@ -131,36 +131,38 @@ const BlogTab = () => {
 
       if (editing) {
         const { error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id);
-        if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-        else {
-          toast({ title: "Post updated" });
-          await upsertBlogSEO({ title: form.title, slug: form.slug, excerpt: form.excerpt, content: form.content });
-        }
+        if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+        setPosts((prev) => prev.map((p) => p.id === editing.id ? { ...p, ...payload } as BlogPost : p));
+        toast({ title: "Post updated" });
+        await upsertBlogSEO({ title: form.title, slug: form.slug, excerpt: form.excerpt, content: form.content });
       } else {
-        const { error } = await supabase.from("blog_posts").insert(payload);
-        if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-        else {
-          toast({ title: "Post created" });
-          await upsertBlogSEO({ title: form.title, slug: form.slug, excerpt: form.excerpt, content: form.content });
-        }
+        const { data: created, error } = await supabase.from("blog_posts").insert(payload).select().single();
+        if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+        if (created) setPosts((prev) => [created as BlogPost, ...prev]);
+        toast({ title: "Post created" });
+        await upsertBlogSEO({ title: form.title, slug: form.slug, excerpt: form.excerpt, content: form.content });
       }
+      setOpen(false);
     } catch (err) {
       toast({ title: "Save failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
     } finally {
       setSaving(false);
     }
-    setOpen(false);
-    fetchPosts();
   };
 
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("blog_posts").delete().eq("id", id);
-    if (!error) { toast({ title: "Post deleted" }); fetchPosts(); }
+    if (!error) {
+      setPosts((prev) => prev.filter((p) => p.id !== id));
+      toast({ title: "Post deleted" });
+    }
   };
 
   const togglePublished = async (p: BlogPost) => {
-    await supabase.from("blog_posts").update({ published: !p.published }).eq("id", p.id);
-    fetchPosts();
+    const { error } = await supabase.from("blog_posts").update({ published: !p.published }).eq("id", p.id);
+    if (!error) {
+      setPosts((prev) => prev.map((post) => post.id === p.id ? { ...post, published: !post.published } : post));
+    }
   };
 
   return (

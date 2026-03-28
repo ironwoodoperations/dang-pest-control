@@ -70,15 +70,16 @@ const TestimonialsTab = () => {
     try {
       if (editing) {
         const { error } = await supabase.from("testimonials").update(form).eq("id", editing.id);
-        if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-        else toast({ title: "Testimonial updated" });
+        if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+        setTestimonials((prev) => prev.map((t) => t.id === editing.id ? { ...t, ...form } as Testimonial : t));
+        toast({ title: "Testimonial updated" });
       } else {
-        const { error } = await supabase.from("testimonials").insert({ ...form, tenant_id: tenantId });
-        if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-        else toast({ title: "Testimonial added" });
+        const { data: created, error } = await supabase.from("testimonials").insert({ ...form, tenant_id: tenantId }).select().single();
+        if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+        if (created) setTestimonials((prev) => [...prev, created as Testimonial]);
+        toast({ title: "Testimonial added" });
       }
       setOpen(false);
-      fetch();
     } catch (err) {
       toast({ title: "Save failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
     } finally {
@@ -88,12 +89,17 @@ const TestimonialsTab = () => {
 
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("testimonials").delete().eq("id", id);
-    if (!error) { toast({ title: "Testimonial deleted" }); fetch(); }
+    if (!error) {
+      setTestimonials((prev) => prev.filter((t) => t.id !== id));
+      toast({ title: "Testimonial deleted" });
+    }
   };
 
   const toggleFeatured = async (t: Testimonial) => {
-    await supabase.from("testimonials").update({ is_featured: !t.is_featured }).eq("id", t.id);
-    fetch();
+    const { error } = await supabase.from("testimonials").update({ is_featured: !t.is_featured }).eq("id", t.id);
+    if (!error) {
+      setTestimonials((prev) => prev.map((item) => item.id === t.id ? { ...item, is_featured: !item.is_featured } : item));
+    }
   };
 
   const handleImportFromGoogle = async () => {

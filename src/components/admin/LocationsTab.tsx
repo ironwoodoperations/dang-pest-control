@@ -129,21 +129,19 @@ const LocationsTab = () => {
         tenant_id: tenantId,
       };
 
-      let error;
       if (isNew) {
-        ({ error } = await supabase.from("location_data").insert(payload));
+        const { data: created, error } = await supabase.from("location_data").insert(payload).select().single();
+        if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+        if (created) setLocations((prev) => [...prev, created as LocationRow].sort((a, b) => a.city.localeCompare(b.city)));
       } else {
-        ({ error } = await supabase.from("location_data").update(payload).eq("id", editing.id!));
+        const { error } = await supabase.from("location_data").update(payload).eq("id", editing.id!);
+        if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+        setLocations((prev) => prev.map((l) => l.id === editing.id ? { ...l, ...payload } as LocationRow : l));
       }
 
-      if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "Saved", description: `${editing.city} location saved.` });
-        await upsertLocationSEO({ city: editing.city, slug: editing.slug });
-        setEditing(null);
-        fetchLocations();
-      }
+      toast({ title: "Saved", description: `${editing.city} location saved.` });
+      await upsertLocationSEO({ city: editing.city, slug: editing.slug });
+      setEditing(null);
     } catch (err) {
       toast({ title: "Save failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
     } finally {
@@ -157,8 +155,8 @@ const LocationsTab = () => {
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
+      setLocations((prev) => prev.filter((l) => l.id !== loc.id));
       toast({ title: "Deleted", description: `${loc.city} removed.` });
-      fetchLocations();
     }
   };
 

@@ -305,9 +305,14 @@ export default function SocialTab() {
     try {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY || "",
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true",
+        },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-6",
           max_tokens: 1000,
           messages: [{
             role: "user",
@@ -328,17 +333,36 @@ export default function SocialTab() {
   const handleSchedule = async () => {
     if (!scheduledAt) { toast({ title: "Please pick a date and time", variant: "destructive" }); return; }
 
+    // Don't allow publish while image is still uploading
+    if (imageUploading) { toast({ title: "Please wait", description: "Image is still uploading.", variant: "destructive" }); return; }
+
     // Try real Facebook posting if configured and platform selected
     let fbPostId: string | undefined;
-    if (selectedPlatforms.includes("facebook") && fbSettings.token && fbSettings.pageId) {
-      const result = await postToFacebook(generatedCaption, imageUrl);
-      if (result.success) {
-        fbPostId = result.postId;
-        toast({ title: "Posted to Facebook!", description: `Post ID: ${fbPostId}` });
+    let postStatus: "published" | "scheduled" | "draft" = "scheduled";
+
+    if (selectedPlatforms.includes("facebook")) {
+      if (fbSettings.token && fbSettings.pageId) {
+        const result = await postToFacebook(generatedCaption, imageUrl);
+        if (result.success) {
+          fbPostId = result.postId;
+          postStatus = "published";
+          toast({ title: "Posted to Facebook!", description: `Post ID: ${fbPostId}` });
+        } else {
+          toast({ title: "Facebook post failed", description: result.error, variant: "destructive" });
+        }
       } else {
-        toast({ title: "Facebook post failed", description: result.error, variant: "destructive" });
+        toast({ title: "Facebook not connected", description: "Connect Facebook in Settings → Integrations to publish. Post saved as draft." });
+        postStatus = "draft";
       }
     }
+
+    // Always save to social_posts table regardless of Facebook status
+    await saveSocialPost({
+      caption: generatedCaption,
+      image_url: imageUrl,
+      status: postStatus,
+      facebook_post_id: fbPostId,
+    });
 
     const newPost: SocialPost = {
       id: Date.now().toString(),
@@ -347,18 +371,15 @@ export default function SocialTab() {
       template_id: selectedTemplate,
       platforms: selectedPlatforms,
       scheduled_at: scheduledAt,
-      status: fbPostId ? "posted" : "scheduled",
+      status: postStatus === "published" ? "posted" : postStatus === "draft" ? "draft" : "scheduled",
       created_at: new Date().toISOString(),
     };
     setPosts((prev) => [newPost, ...prev]);
     setPreviewPost(newPost);
 
-    // Save to social_posts table
-    await saveSocialPost({
-      caption: generatedCaption,
-      image_url: imageUrl,
-      status: fbPostId ? "published" : "scheduled",
-      facebook_post_id: fbPostId,
+    // Refresh post history from DB
+    supabase.from("social_posts" as any).select("*").eq("tenant_id", tenantId).order("created_at", { ascending: false }).then(({ data }) => {
+      if (data) setPostHistory(data);
     });
 
     setStep("wizard-confirm");
