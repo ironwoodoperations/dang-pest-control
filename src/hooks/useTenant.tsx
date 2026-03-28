@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
@@ -69,6 +69,8 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
     setProfileLoading(false);
   }, []);
 
+  const hasChecked = useRef(false);
+
   useEffect(() => {
     let initialSessionLoaded = false;
 
@@ -78,7 +80,13 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
-        await loadProfile(u);
+        // Don't reset loading on subsequent auth events after first check
+        if (!hasChecked.current) {
+          await loadProfile(u);
+          hasChecked.current = true;
+        } else {
+          await loadProfile(u);
+        }
       } else {
         setTenantId(null);
         setCompanyName(null);
@@ -95,6 +103,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
       } else {
         setProfileLoading(false);
       }
+      hasChecked.current = true;
     });
 
     return () => subscription.unsubscribe();

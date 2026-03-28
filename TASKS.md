@@ -10,7 +10,7 @@ Mark each task [x] and commit after completion. Auto-proceed unless user says st
 ## 🔴 PHASE 1 — Foundation & Stability (DO FIRST)
 
 ### Task 1.1 — Fix page transition flicker
-- [ ] **Fix page transition flicker/refresh bug**
+- [x] **Fix page transition flicker/refresh bug**
 
 **Problem:** Pages flicker or fully re-mount when navigating between routes.
 

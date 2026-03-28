@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Linkedin, X } from "lucide-react";
 import dangLogo from "@/assets/dang-logo.png";
@@ -67,4 +68,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default React.memo(Footer);

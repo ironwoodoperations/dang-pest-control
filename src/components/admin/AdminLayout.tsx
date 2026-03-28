@@ -29,7 +29,6 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
     if (!user) {
       setAuthorized(false);
       setAuthLoading(false);
-      navigate("/admin/login");
       return;
     }
 
@@ -41,7 +40,7 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
       setAuthLoading(false);
     };
     checkRole();
-  }, [user, profileLoading, navigate]);
+  }, [user, profileLoading]);
 
   // Redirect to onboarding if no tenant
   useEffect(() => {
