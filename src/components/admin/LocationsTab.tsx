@@ -61,6 +61,31 @@ const LocationsTab = () => {
   const { toast } = useToast();
   const { tenantId } = useTenant();
 
+  const upsertLocationSEO = async (location: { city: string; slug: string }) => {
+    if (!tenantId) return;
+
+    const { data: existing } = await supabase
+      .from("seo_meta" as any)
+      .select("user_edited")
+      .eq("tenant_id", tenantId)
+      .eq("page_slug", `/${location.slug}`)
+      .single();
+
+    if ((existing as any)?.user_edited) return;
+
+    const { error } = await supabase.from("seo_meta" as any).upsert({
+      tenant_id: tenantId,
+      page_slug: `/${location.slug}`,
+      meta_title: `Pest Control in ${location.city}, TX | Dang Pest Control`,
+      meta_description: `Professional pest control in ${location.city}, TX. Ants, spiders, mosquitoes, rodents & more. Licensed local technicians. Call for a free quote: (903) 871-0550.`,
+      user_edited: false,
+    }, { onConflict: "tenant_id,page_slug" });
+
+    if (!error) {
+      toast({ title: "Location SEO generated \u2713", description: `Meta tags created for /${location.slug}` });
+    }
+  };
+
   useEffect(() => {
     fetchLocations();
   }, [tenantId]);
@@ -112,6 +137,7 @@ const LocationsTab = () => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Saved", description: `${editing.city} location saved.` });
+      await upsertLocationSEO({ city: editing.city, slug: editing.slug });
       setEditing(null);
       fetchLocations();
     }

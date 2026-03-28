@@ -76,7 +76,7 @@ async function upsertBlogSEO(post: { title: string; slug: string; excerpt?: stri
 ---
 
 ### Task 1.3 — Location page auto-SEO on create/save
-- [ ] **Auto-generate SEO metadata when location page is created or updated**
+- [x] **Auto-generate SEO metadata when location page is created or updated**
 
 **Changes to `src/components/admin/LocationsTab.tsx`:**
 
