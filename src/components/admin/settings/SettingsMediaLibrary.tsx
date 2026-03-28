@@ -50,18 +50,22 @@ const SettingsMediaLibrary = () => {
     if (!e.target.files?.length) return;
     setUploading(true);
 
-    for (const file of Array.from(e.target.files)) {
-      const path = `media/${Date.now()}-${file.name}`;
-      const { error } = await supabase.storage.from("videos").upload(path, file);
-      if (error) {
-        toast({ title: "Upload failed", description: `${file.name}: ${error.message}`, variant: "destructive" });
+    try {
+      for (const file of Array.from(e.target.files)) {
+        const path = `media/${Date.now()}-${file.name}`;
+        const { error } = await supabase.storage.from("videos").upload(path, file);
+        if (error) {
+          toast({ title: "Upload failed", description: `${file.name}: ${error.message}`, variant: "destructive" });
+        }
       }
+      toast({ title: "Upload complete!" });
+      e.target.value = "";
+      fetchFiles();
+    } catch (err) {
+      toast({ title: "Upload failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
+    } finally {
+      setUploading(false);
     }
-
-    toast({ title: "Upload complete!" });
-    setUploading(false);
-    e.target.value = "";
-    fetchFiles();
   };
 
   const copyUrl = (url: string) => {

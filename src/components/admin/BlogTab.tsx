@@ -121,29 +121,34 @@ const BlogTab = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    const payload = {
-      ...form,
-      featured_image: form.featured_image || null,
-      updated_at: new Date().toISOString(),
-      tenant_id: tenantId,
-    };
+    try {
+      const payload = {
+        ...form,
+        featured_image: form.featured_image || null,
+        updated_at: new Date().toISOString(),
+        tenant_id: tenantId,
+      };
 
-    if (editing) {
-      const { error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id);
-      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-      else {
-        toast({ title: "Post updated" });
-        await upsertBlogSEO({ title: form.title, slug: form.slug, excerpt: form.excerpt, content: form.content });
+      if (editing) {
+        const { error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id);
+        if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+        else {
+          toast({ title: "Post updated" });
+          await upsertBlogSEO({ title: form.title, slug: form.slug, excerpt: form.excerpt, content: form.content });
+        }
+      } else {
+        const { error } = await supabase.from("blog_posts").insert(payload);
+        if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+        else {
+          toast({ title: "Post created" });
+          await upsertBlogSEO({ title: form.title, slug: form.slug, excerpt: form.excerpt, content: form.content });
+        }
       }
-    } else {
-      const { error } = await supabase.from("blog_posts").insert(payload);
-      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-      else {
-        toast({ title: "Post created" });
-        await upsertBlogSEO({ title: form.title, slug: form.slug, excerpt: form.excerpt, content: form.content });
-      }
+    } catch (err) {
+      toast({ title: "Save failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
     setOpen(false);
     fetchPosts();
   };

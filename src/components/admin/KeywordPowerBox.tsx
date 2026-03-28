@@ -43,64 +43,65 @@ const KeywordPowerBox = ({ tenantId, pages, toast }: Props) => {
     if (!tenantId || !bulkKeywords.trim()) return;
     setSyncing(true);
 
-    const keywords = bulkKeywords
-      .split(",")
-      .map((k) => k.trim().toLowerCase())
-      .filter(Boolean);
+    try {
+      const keywords = bulkKeywords
+        .split(",")
+        .map((k) => k.trim().toLowerCase())
+        .filter(Boolean);
 
-    // Save the master keyword list
-    const { data: existing } = await supabase
-      .from("site_config")
-      .select("id")
-      .eq("key", "seo_master_keywords")
-      .eq("tenant_id", tenantId);
-
-    const keywordValue = JSON.parse(JSON.stringify({ keywords, updated: new Date().toISOString() }));
-
-    if (existing && existing.length > 0) {
-      await supabase
+      const { data: existing } = await supabase
         .from("site_config")
-        .update({ value: keywordValue, updated_at: new Date().toISOString() })
+        .select("id")
         .eq("key", "seo_master_keywords")
         .eq("tenant_id", tenantId);
-    } else {
-      await supabase.from("site_config").insert({
-        key: "seo_master_keywords",
-        value: keywordValue,
-        tenant_id: tenantId,
-      });
-    }
 
-    // Inject keywords into each pest service page's meta description where relevant
-    let updatedCount = 0;
-    for (const page of pages) {
-      if (!page.slug.includes("control") && !page.slug.includes("termite") && !page.slug.includes("bed-bug")) continue;
+      const keywordValue = JSON.parse(JSON.stringify({ keywords, updated: new Date().toISOString() }));
 
-      const seoKey = `seo:${page.slug}`;
-      const { data: row } = await supabase
-        .from("site_config")
-        .select("id, seo_description")
-        .eq("key", seoKey)
-        .eq("tenant_id", tenantId)
-        .maybeSingle();
+      if (existing && existing.length > 0) {
+        await supabase
+          .from("site_config")
+          .update({ value: keywordValue, updated_at: new Date().toISOString() })
+          .eq("key", "seo_master_keywords")
+          .eq("tenant_id", tenantId);
+      } else {
+        await supabase.from("site_config").insert({
+          key: "seo_master_keywords",
+          value: keywordValue,
+          tenant_id: tenantId,
+        });
+      }
 
-      if (row) {
-        // Check which keywords are already in the description
-        const desc = (row.seo_description || "").toLowerCase();
-        const missing = keywords.filter((kw) => !desc.includes(kw));
-        if (missing.length > 0 && row.seo_description) {
-          // Don't modify descriptions, just track that keywords were synced
-          updatedCount++;
+      let updatedCount = 0;
+      for (const page of pages) {
+        if (!page.slug.includes("control") && !page.slug.includes("termite") && !page.slug.includes("bed-bug")) continue;
+
+        const seoKey = `seo:${page.slug}`;
+        const { data: row } = await supabase
+          .from("site_config")
+          .select("id, seo_description")
+          .eq("key", seoKey)
+          .eq("tenant_id", tenantId)
+          .maybeSingle();
+
+        if (row) {
+          const desc = (row.seo_description || "").toLowerCase();
+          const missing = keywords.filter((kw) => !desc.includes(kw));
+          if (missing.length > 0 && row.seo_description) {
+            updatedCount++;
+          }
         }
       }
-    }
 
-    setLastSynced(keywords);
-    setSyncing(false);
-    toast({
-      title: "Keywords Synced!",
-      description: `${keywords.length} keywords saved to your master keyword list. ${updatedCount} pest pages analyzed.`,
-    });
+      setLastSynced(keywords);
+      toast({
+        title: "Keywords Synced!",
+        description: `${keywords.length} keywords saved to your master keyword list. ${updatedCount} pest pages analyzed.`,
+      });
+    } catch (err) {
+      toast({ title: "Sync failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
+    } finally {
+      setSyncing(false);
+    }
   };
 
   const handleAutoPlace = async () => {
@@ -181,55 +182,61 @@ Rules:
         toast({ title: "Auto-placement complete", description: `${results.length} keyword placements suggested.` });
       }
     } catch (err) {
-      toast({ title: "Auto-placement failed", description: String(err), variant: "destructive" });
+      toast({ title: "Auto-placement failed", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
+    } finally {
+      setAutoPlacing(false);
     }
-    setAutoPlacing(false);
   };
 
   const handleApplySelected = async () => {
     if (!tenantId) return;
     setApplying(true);
-    const selected = placements.filter((p) => p.selected);
 
-    for (const placement of selected) {
-      const seoKey = `seo:${placement.page_slug}`;
-      const field = placement.placement_type === "meta_title" ? "seo_title" : "seo_description";
+    try {
+      const selected = placements.filter((p) => p.selected);
 
-      const { data: existing } = await supabase
-        .from("site_config")
-        .select("id")
-        .eq("key", seoKey)
-        .eq("tenant_id", tenantId)
-        .maybeSingle();
+      for (const placement of selected) {
+        const seoKey = `seo:${placement.page_slug}`;
+        const field = placement.placement_type === "meta_title" ? "seo_title" : "seo_description";
 
-      if (existing) {
-        await supabase
+        const { data: existing } = await supabase
           .from("site_config")
-          .update({ [field]: placement.suggested_text, updated_at: new Date().toISOString() })
+          .select("id")
           .eq("key", seoKey)
-          .eq("tenant_id", tenantId);
-      } else {
-        await supabase.from("site_config").insert({
-          key: seoKey,
-          [field]: placement.suggested_text,
-          value: {},
-          tenant_id: tenantId,
-        });
+          .eq("tenant_id", tenantId)
+          .maybeSingle();
+
+        if (existing) {
+          await supabase
+            .from("site_config")
+            .update({ [field]: placement.suggested_text, updated_at: new Date().toISOString() })
+            .eq("key", seoKey)
+            .eq("tenant_id", tenantId);
+        } else {
+          await supabase.from("site_config").insert({
+            key: seoKey,
+            [field]: placement.suggested_text,
+            value: {},
+            tenant_id: tenantId,
+          });
+        }
+
+        await supabase
+          .from("keyword_placements" as any)
+          .update({ applied: true })
+          .eq("tenant_id", tenantId)
+          .eq("keyword", placement.keyword)
+          .eq("page_slug", placement.page_slug)
+          .eq("placement_type", placement.placement_type);
       }
 
-      // Mark as applied in keyword_placements
-      await supabase
-        .from("keyword_placements" as any)
-        .update({ applied: true })
-        .eq("tenant_id", tenantId)
-        .eq("keyword", placement.keyword)
-        .eq("page_slug", placement.page_slug)
-        .eq("placement_type", placement.placement_type);
+      toast({ title: "Placements applied", description: `${selected.length} keyword placements applied to SEO fields.` });
+      setPlacements((prev) => prev.map((p) => (p.selected ? { ...p, selected: false } : p)));
+    } catch (err) {
+      toast({ title: "Apply failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
+    } finally {
+      setApplying(false);
     }
-
-    toast({ title: "Placements applied", description: `${selected.length} keyword placements applied to SEO fields.` });
-    setPlacements((prev) => prev.map((p) => (p.selected ? { ...p, selected: false } : p)));
-    setApplying(false);
   };
 
   const togglePlacement = (idx: number) => {

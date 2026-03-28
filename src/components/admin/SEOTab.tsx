@@ -226,14 +226,19 @@ const SEOTab = () => {
   const saveToConfig = async (key: string, value: unknown) => {
     if (!tenantId) return;
     setSaving(true);
-    const jsonValue = JSON.parse(JSON.stringify(value));
-    const { data: existing } = await supabase.from("site_config").select("id").eq("key", key).eq("tenant_id", tenantId);
-    if (existing && existing.length > 0) {
-      await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", key).eq("tenant_id", tenantId);
-    } else {
-      await supabase.from("site_config").insert({ key, value: jsonValue, tenant_id: tenantId });
+    try {
+      const jsonValue = JSON.parse(JSON.stringify(value));
+      const { data: existing } = await supabase.from("site_config").select("id").eq("key", key).eq("tenant_id", tenantId);
+      if (existing && existing.length > 0) {
+        await supabase.from("site_config").update({ value: jsonValue, updated_at: new Date().toISOString() }).eq("key", key).eq("tenant_id", tenantId);
+      } else {
+        await supabase.from("site_config").insert({ key, value: jsonValue, tenant_id: tenantId });
+      }
+    } catch {
+      // silently handled — callers show their own toasts
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   const addKeyword = () => {
@@ -255,55 +260,57 @@ const SEOTab = () => {
     if (!editingPage || !tenantId) return;
     setSaving(true);
 
-    const seoKey = `seo:${editingPage.slug}`;
+    try {
+      const seoKey = `seo:${editingPage.slug}`;
 
-    // Upsert the per-page row with seo_title and seo_description columns
-    const { data: existing } = await supabase
-      .from("site_config")
-      .select("id")
-      .eq("key", seoKey)
-      .eq("tenant_id", tenantId);
-
-    if (existing && existing.length > 0) {
-      await supabase
+      const { data: existing } = await supabase
         .from("site_config")
-        .update({
-          seo_title: editingPage.meta_title,
-          seo_description: editingPage.meta_description,
-          updated_at: new Date().toISOString(),
-        })
+        .select("id")
         .eq("key", seoKey)
         .eq("tenant_id", tenantId);
-    } else {
-      await supabase.from("site_config").insert({
-        key: seoKey,
-        value: {},
-        seo_title: editingPage.meta_title,
-        seo_description: editingPage.meta_description,
-        tenant_id: tenantId,
-      });
+
+      if (existing && existing.length > 0) {
+        await supabase
+          .from("site_config")
+          .update({
+            seo_title: editingPage.meta_title,
+            seo_description: editingPage.meta_description,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("key", seoKey)
+          .eq("tenant_id", tenantId);
+      } else {
+        await supabase.from("site_config").insert({
+          key: seoKey,
+          value: {},
+          seo_title: editingPage.meta_title,
+          seo_description: editingPage.meta_description,
+          tenant_id: tenantId,
+        });
+      }
+
+      const updated = pages.map((p) => (p.slug === editingPage.slug ? editingPage : p));
+      setPages(updated);
+      const statuses = Object.fromEntries(updated.map((p) => [p.slug, p.status]));
+      await saveToConfig("seo_statuses", statuses);
+
+      if ((editingPage.slug.startsWith("/blog/") || editingPage.slug.match(/^\/[a-z]+-tx$/)) && tenantId) {
+        await supabase.from("seo_meta" as any).upsert({
+          tenant_id: tenantId,
+          page_slug: editingPage.slug,
+          meta_title: editingPage.meta_title,
+          meta_description: editingPage.meta_description,
+          user_edited: true,
+        }, { onConflict: "tenant_id,page_slug" });
+      }
+
+      toast({ title: "SEO metadata saved!", description: `Updated meta tags for ${editingPage.label}.` });
+      setEditingPage(null);
+    } catch (err) {
+      toast({ title: "Save failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
+    } finally {
+      setSaving(false);
     }
-
-    // Save statuses as a separate lightweight blob
-    const updated = pages.map((p) => (p.slug === editingPage.slug ? editingPage : p));
-    setPages(updated);
-    const statuses = Object.fromEntries(updated.map((p) => [p.slug, p.status]));
-    await saveToConfig("seo_statuses", statuses);
-
-    // Mark blog/location pages as user-edited in seo_meta to prevent auto-SEO overwrite
-    if ((editingPage.slug.startsWith("/blog/") || editingPage.slug.match(/^\/[a-z]+-tx$/)) && tenantId) {
-      await supabase.from("seo_meta" as any).upsert({
-        tenant_id: tenantId,
-        page_slug: editingPage.slug,
-        meta_title: editingPage.meta_title,
-        meta_description: editingPage.meta_description,
-        user_edited: true,
-      }, { onConflict: "tenant_id,page_slug" });
-    }
-
-    toast({ title: "SEO metadata saved!", description: `Updated meta tags for ${editingPage.label}.` });
-    setSaving(false);
-    setEditingPage(null);
   };
 
   const filteredPages = pages.filter((p) => {

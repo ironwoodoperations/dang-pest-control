@@ -112,37 +112,42 @@ const LocationsTab = () => {
     if (!editing) return;
     setSaving(true);
 
-    const payload = {
-      slug: editing.slug,
-      city: editing.city,
-      hero_title: editing.hero_title,
-      hero_description: editing.hero_description,
-      intro: editing.intro,
-      local_pest_description: editing.local_pest_description,
-      map_embed_url: editing.map_embed_url,
-      local_testimonial_quote: editing.local_testimonial_quote,
-      meta_title: editing.meta_title,
-      meta_description: editing.meta_description,
-      intro_video_url: editing.intro_video_url || null,
-      is_live: editing.is_live,
-      tenant_id: tenantId,
-    };
+    try {
+      const payload = {
+        slug: editing.slug,
+        city: editing.city,
+        hero_title: editing.hero_title,
+        hero_description: editing.hero_description,
+        intro: editing.intro,
+        local_pest_description: editing.local_pest_description,
+        map_embed_url: editing.map_embed_url,
+        local_testimonial_quote: editing.local_testimonial_quote,
+        meta_title: editing.meta_title,
+        meta_description: editing.meta_description,
+        intro_video_url: editing.intro_video_url || null,
+        is_live: editing.is_live,
+        tenant_id: tenantId,
+      };
 
-    let error;
-    if (isNew) {
-      ({ error } = await supabase.from("location_data").insert(payload));
-    } else {
-      ({ error } = await supabase.from("location_data").update(payload).eq("id", editing.id!));
-    }
+      let error;
+      if (isNew) {
+        ({ error } = await supabase.from("location_data").insert(payload));
+      } else {
+        ({ error } = await supabase.from("location_data").update(payload).eq("id", editing.id!));
+      }
 
-    setSaving(false);
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Saved", description: `${editing.city} location saved.` });
-      await upsertLocationSEO({ city: editing.city, slug: editing.slug });
-      setEditing(null);
-      fetchLocations();
+      if (error) {
+        toast({ title: "Error", description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: "Saved", description: `${editing.city} location saved.` });
+        await upsertLocationSEO({ city: editing.city, slug: editing.slug });
+        setEditing(null);
+        fetchLocations();
+      }
+    } catch (err) {
+      toast({ title: "Save failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
+    } finally {
+      setSaving(false);
     }
   };
 

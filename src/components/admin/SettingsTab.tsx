@@ -224,23 +224,28 @@ const SettingsTab = () => {
 
   const handleSave = async () => {
     setSaving(true);
-    const results = await Promise.all([
-      saveConfig("branding", { logo_url: settings.logo_url, favicon_url: settings.favicon_url }),
-      saveConfig("hero_media", { hero_video_url: settings.hero_video_url, hero_video_type: settings.hero_video_type, hero_video_start: settings.hero_video_start, hero_video_end: settings.hero_video_end, meet_kirk_youtube_id: settings.meet_kirk_youtube_id }),
-      saveConfig("holiday_mode", { enabled: settings.holiday_enabled, holiday: settings.holiday_key, greeting: settings.holiday_greeting }),
-      saveConfig("business_info", { company_name: settings.company_name, phone: settings.phone, email: settings.email, address: settings.address, city: settings.city, state: settings.state, zip: settings.zip, hours: settings.hours, service_area: settings.service_area }),
-      saveConfig("social_links", { facebook: settings.facebook, instagram: settings.instagram, google: settings.google, yelp: settings.yelp }),
-      saveConfig("notification_email", { email: settings.notify_email }),
-      saveConfig("integrations", { fb_access_token: settings.fb_access_token, fb_page_id: settings.fb_page_id, google_place_id: settings.google_place_id, google_api_key: settings.google_api_key }),
-      saveConfig("business_extended", { license_number: settings.license_number, insurance_status: settings.insurance_status, npma_member: settings.npma_member, tpca_member: settings.tpca_member, founded_year: settings.founded_year, num_technicians: settings.num_technicians, service_radius: settings.service_radius, emergency_phone: settings.emergency_phone, tagline: settings.tagline }),
-      saveConfig("branding_extended", { primary_color: settings.primary_color, accent_color: settings.accent_color, email_footer: settings.email_footer }),
-      saveConfig("notifications", { cc_email: settings.cc_email, monthly_report_email: settings.monthly_report_email, notify_new_review: settings.notify_new_review, weekly_seo_digest: settings.weekly_seo_digest }),
-    ]);
-    setSaving(false);
-    if (results.every(Boolean)) {
-      toast({ title: "Saved!", description: "All settings updated." });
-    } else {
-      toast({ title: "Error", description: "Some settings failed to save.", variant: "destructive" });
+    try {
+      const results = await Promise.all([
+        saveConfig("branding", { logo_url: settings.logo_url, favicon_url: settings.favicon_url }),
+        saveConfig("hero_media", { hero_video_url: settings.hero_video_url, hero_video_type: settings.hero_video_type, hero_video_start: settings.hero_video_start, hero_video_end: settings.hero_video_end, meet_kirk_youtube_id: settings.meet_kirk_youtube_id }),
+        saveConfig("holiday_mode", { enabled: settings.holiday_enabled, holiday: settings.holiday_key, greeting: settings.holiday_greeting }),
+        saveConfig("business_info", { company_name: settings.company_name, phone: settings.phone, email: settings.email, address: settings.address, city: settings.city, state: settings.state, zip: settings.zip, hours: settings.hours, service_area: settings.service_area }),
+        saveConfig("social_links", { facebook: settings.facebook, instagram: settings.instagram, google: settings.google, yelp: settings.yelp }),
+        saveConfig("notification_email", { email: settings.notify_email }),
+        saveConfig("integrations", { fb_access_token: settings.fb_access_token, fb_page_id: settings.fb_page_id, google_place_id: settings.google_place_id, google_api_key: settings.google_api_key }),
+        saveConfig("business_extended", { license_number: settings.license_number, insurance_status: settings.insurance_status, npma_member: settings.npma_member, tpca_member: settings.tpca_member, founded_year: settings.founded_year, num_technicians: settings.num_technicians, service_radius: settings.service_radius, emergency_phone: settings.emergency_phone, tagline: settings.tagline }),
+        saveConfig("branding_extended", { primary_color: settings.primary_color, accent_color: settings.accent_color, email_footer: settings.email_footer }),
+        saveConfig("notifications", { cc_email: settings.cc_email, monthly_report_email: settings.monthly_report_email, notify_new_review: settings.notify_new_review, weekly_seo_digest: settings.weekly_seo_digest }),
+      ]);
+      if (results.every(Boolean)) {
+        toast({ title: "Saved!", description: "All settings updated." });
+      } else {
+        toast({ title: "Error", description: "Some settings failed to save.", variant: "destructive" });
+      }
+    } catch (err) {
+      toast({ title: "Save failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
+    } finally {
+      setSaving(false);
     }
   };
 

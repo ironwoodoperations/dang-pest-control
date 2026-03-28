@@ -238,16 +238,21 @@ export default function SocialTab() {
     if (!e.target.files?.[0]) return;
     const file = e.target.files[0];
     setImageUploading(true);
-    const path = `social/${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from("social-uploads").upload(path, file);
-    if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
-    } else {
-      const { data: urlData } = supabase.storage.from("social-uploads").getPublicUrl(path);
-      setImageUrl(urlData.publicUrl);
-      toast({ title: "Image uploaded!" });
+    try {
+      const path = `social/${Date.now()}-${file.name}`;
+      const { error } = await supabase.storage.from("social-uploads").upload(path, file);
+      if (error) {
+        toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      } else {
+        const { data: urlData } = supabase.storage.from("social-uploads").getPublicUrl(path);
+        setImageUrl(urlData.publicUrl);
+        toast({ title: "Image uploaded!" });
+      }
+    } catch (err) {
+      toast({ title: "Upload failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
+    } finally {
+      setImageUploading(false);
     }
-    setImageUploading(false);
   };
 
   const saveSocialPost = async (post: { caption: string; image_url: string; status: string; facebook_post_id?: string }) => {
