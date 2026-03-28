@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/useTenant";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Save, ArrowLeft, Video, FileText } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Save, ArrowLeft, Video, FileText, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { serviceKeys, servicesData } from "@/data/servicesData";
 import PageHelpBanner from "./PageHelpBanner";
@@ -40,8 +41,74 @@ const ContentTab = () => {
   const [editing, setEditing] = useState<PageContent | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [hasSnapshot, setHasSnapshot] = useState(false);
   const { toast } = useToast();
   const { tenantId } = useTenant();
+
+  // Ensure page_snapshots table exists
+  const migrationRan = useRef(false);
+  useEffect(() => {
+    if (!tenantId || migrationRan.current) return;
+    migrationRan.current = true;
+    supabase.rpc("exec_sql" as any, {
+      query: `CREATE TABLE IF NOT EXISTS page_snapshots (
+        id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+        tenant_id uuid NOT NULL,
+        page_slug text NOT NULL,
+        snapshot_type text NOT NULL DEFAULT 'content',
+        snapshot_data jsonb NOT NULL,
+        created_at timestamptz DEFAULT now(),
+        UNIQUE(tenant_id, page_slug, snapshot_type)
+      );`
+    }).then(() => {});
+  }, [tenantId]);
+
+  // Save original snapshot if none exists when editing starts
+  const saveSnapshotIfNeeded = async (page: PageContent) => {
+    if (!tenantId || !page.id) { setHasSnapshot(false); return; }
+    const { data: existing } = await supabase
+      .from("page_snapshots" as any)
+      .select("id")
+      .eq("tenant_id", tenantId)
+      .eq("page_slug", page.slug)
+      .eq("snapshot_type", "content")
+      .maybeSingle();
+
+    if (existing) {
+      setHasSnapshot(true);
+      return;
+    }
+
+    // Save initial content as snapshot
+    await supabase.from("page_snapshots" as any).insert({
+      tenant_id: tenantId,
+      page_slug: page.slug,
+      snapshot_type: "content",
+      snapshot_data: { title: page.title, subtitle: page.subtitle, intro: page.intro, video_url: page.video_url, video_type: page.video_type },
+    });
+    setHasSnapshot(true);
+  };
+
+  const handleRevertContent = async () => {
+    if (!editing || !tenantId) return;
+    const { data: snapshot } = await supabase
+      .from("page_snapshots" as any)
+      .select("snapshot_data")
+      .eq("tenant_id", tenantId)
+      .eq("page_slug", editing.slug)
+      .eq("snapshot_type", "content")
+      .single();
+
+    if (!snapshot) {
+      toast({ title: "No original found", description: "No snapshot exists for this page.", variant: "destructive" });
+      return;
+    }
+
+    const d = (snapshot as any).snapshot_data;
+    const reverted = { ...editing, title: d.title, subtitle: d.subtitle, intro: d.intro, video_url: d.video_url, video_type: d.video_type || "youtube" };
+    setEditing(reverted);
+    toast({ title: "Restored original content", description: "Click Save to apply." });
+  };
 
   useEffect(() => {
     fetchPages();
@@ -85,6 +152,7 @@ const ContentTab = () => {
 
   const handleEdit = (page: PageContent) => {
     setEditing({ ...page });
+    saveSnapshotIfNeeded(page);
   };
 
   const handleSave = async () => {
@@ -276,10 +344,31 @@ const ContentTab = () => {
                 )}
               </div>
 
-              <Button onClick={handleSave} disabled={saving} className="gap-2 font-body w-full" style={{ background: "hsl(var(--admin-indigo))" }}>
-                <Save className="w-4 h-4" />
-                {saving ? "Saving..." : "Save Changes"}
-              </Button>
+              <div className="flex gap-2">
+                {hasSnapshot && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" className="gap-2 font-body" style={{ borderColor: "hsl(40, 100%, 50%)", color: "hsl(40, 80%, 35%)" }}>
+                        <RotateCcw className="w-4 h-4" /> Revert to Original
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Restore original content?</AlertDialogTitle>
+                        <AlertDialogDescription>Your changes will be lost. The form will be populated with the original content — click Save to apply.</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleRevertContent}>Restore</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+                <Button onClick={handleSave} disabled={saving} className="gap-2 font-body flex-1" style={{ background: "hsl(var(--admin-indigo))" }}>
+                  <Save className="w-4 h-4" />
+                  {saving ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>

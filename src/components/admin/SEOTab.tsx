@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/useTenant";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, Globe, Plus, Trash2, Save, ExternalLink, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Search, Globe, Plus, Trash2, Save, ExternalLink, TrendingUp, AlertCircle, CheckCircle2, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import KeywordPowerBox from "@/components/admin/KeywordPowerBox";
 import PageHelpBanner from "./PageHelpBanner";
@@ -88,8 +88,10 @@ const SEOTab = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showAllPages, setShowAllPages] = useState(false);
   const [newKw, setNewKw] = useState<Keyword>({ keyword: "", volume: "", difficulty: "Medium", notes: "" });
+  const [seoSnapshots, setSeoSnapshots] = useState<Record<string, { meta_title: string; meta_description: string }>>({});
   const { toast } = useToast();
   const { tenantId } = useTenant();
+  const snapshotsLoaded = useRef(false);
 
   useEffect(() => {
     if (!tenantId) return;
@@ -148,6 +150,77 @@ const SEOTab = () => {
     };
     fetchSEO();
   }, [tenantId]);
+
+  // Save SEO snapshots on first load (one-time per session)
+  useEffect(() => {
+    if (!tenantId || !pages.length || loading || snapshotsLoaded.current) return;
+    snapshotsLoaded.current = true;
+    const saveSnapshots = async () => {
+      const { data: existing } = await supabase
+        .from("page_snapshots" as any)
+        .select("page_slug, snapshot_data")
+        .eq("tenant_id", tenantId)
+        .eq("snapshot_type", "seo");
+      const existingMap: Record<string, any> = {};
+      if (existing) {
+        for (const row of existing as any[]) {
+          existingMap[row.page_slug] = row.snapshot_data;
+        }
+      }
+      setSeoSnapshots(existingMap);
+
+      // Save snapshots for pages that have SEO configured but no snapshot yet
+      const toInsert = pages
+        .filter((p) => (p.meta_title || p.meta_description) && !existingMap[p.slug])
+        .map((p) => ({
+          tenant_id: tenantId,
+          page_slug: p.slug,
+          snapshot_type: "seo",
+          snapshot_data: { meta_title: p.meta_title, meta_description: p.meta_description },
+        }));
+      if (toInsert.length > 0) {
+        const { data: inserted } = await supabase.from("page_snapshots" as any).insert(toInsert).select("page_slug, snapshot_data");
+        if (inserted) {
+          const updated = { ...existingMap };
+          for (const row of inserted as any[]) {
+            updated[row.page_slug] = row.snapshot_data;
+          }
+          setSeoSnapshots(updated);
+        }
+      }
+    };
+    saveSnapshots();
+  }, [tenantId, pages, loading]);
+
+  const handleRevertSEO = async (page: PageSEO) => {
+    const snapshot = seoSnapshots[page.slug];
+    if (!snapshot) {
+      toast({ title: "No original found", description: "No snapshot exists for this page.", variant: "destructive" });
+      return;
+    }
+
+    // Restore into site_config
+    const seoKey = `seo:${page.slug}`;
+    await supabase
+      .from("site_config")
+      .update({
+        seo_title: snapshot.meta_title,
+        seo_description: snapshot.meta_description,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("key", seoKey)
+      .eq("tenant_id", tenantId);
+
+    // Update local state
+    setPages((prev) =>
+      prev.map((p) =>
+        p.slug === page.slug
+          ? { ...p, meta_title: snapshot.meta_title || "", meta_description: snapshot.meta_description || "" }
+          : p
+      )
+    );
+    toast({ title: "Restored original SEO \u2713", description: `Reverted meta tags for ${page.label}.` });
+  };
 
   const saveToConfig = async (key: string, value: unknown) => {
     if (!tenantId) return;
@@ -354,14 +427,27 @@ const SEOTab = () => {
                     )}
                   </TableCell>
                   <TableCell className="text-right pr-6">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="gap-1.5 font-body text-xs"
-                      onClick={(e) => { e.stopPropagation(); setEditingPage({ ...page }); }}
-                    >
-                      <ExternalLink className="w-3 h-3" /> Edit Meta Tags
-                    </Button>
+                    <div className="flex items-center justify-end gap-1">
+                      {seoSnapshots[page.slug] && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8"
+                          title="Revert to original SEO"
+                          onClick={(e) => { e.stopPropagation(); handleRevertSEO(page); }}
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" style={{ color: "hsl(40, 80%, 45%)" }} />
+                        </Button>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="gap-1.5 font-body text-xs"
+                        onClick={(e) => { e.stopPropagation(); setEditingPage({ ...page }); }}
+                      >
+                        <ExternalLink className="w-3 h-3" /> Edit Meta Tags
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

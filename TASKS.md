@@ -113,7 +113,7 @@ async function upsertLocationSEO(location: { city: string; slug: string }) {
 ## 🔴 PHASE 2 — SEO Automation Engine
 
 ### Task 2.1 — Revert to Original button
-- [ ] **Add "Revert to Original" capability in Content + SEO tabs**
+- [x] **Add "Revert to Original" capability in Content + SEO tabs**
 
 1. Create Supabase table:
 ```sql
