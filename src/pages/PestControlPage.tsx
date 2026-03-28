@@ -1,5 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
+import { StructuredData } from '@/components/StructuredData';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -71,6 +73,19 @@ const whyCards = [
 const PestControlPage = () => {
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
+      <SEO
+        title="Pest Control Services in Tyler, TX"
+        description="Professional pest control services in Tyler, TX. Comprehensive pest management for homes and businesses. Licensed technicians with a Super Powered Guarantee. Call (903) 871-0550."
+        canonical="/pest-control"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Pest Control Services",
+          provider: { "@type": "LocalBusiness", name: "Dang Pest Control", telephone: "+19038710550" },
+          areaServed: { "@type": "City", name: "Tyler", addressRegion: "TX" },
+          description: "Professional pest control services for residential and commercial properties.",
+        }}
+      />
       <Navbar />
       <main>
 

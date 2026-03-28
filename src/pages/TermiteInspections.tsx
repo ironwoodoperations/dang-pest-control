@@ -1,5 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
+import { StructuredData } from '@/components/StructuredData';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -36,6 +38,19 @@ const whyCards = [
 const TermiteInspections = () => {
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
+      <SEO
+        title="Termite Inspections in Tyler, TX"
+        description="Professional termite inspections in Tyler, TX. Thorough property assessments for termite activity. Licensed inspectors. Call (903) 871-0550."
+        canonical="/termite-inspections"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Termite Inspections",
+          provider: { "@type": "LocalBusiness", name: "Dang Pest Control", telephone: "+19038710550" },
+          areaServed: { "@type": "City", name: "Tyler", addressRegion: "TX" },
+          description: "Professional termite inspection services for residential and commercial properties.",
+        }}
+      />
       <Navbar />
       <main>
 

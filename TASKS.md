@@ -145,7 +145,7 @@ CREATE POLICY "admin_only" ON page_snapshots USING (true);
 ---
 
 ### Task 2.2 — AIO Structured Data (AI Search Optimization)
-- [ ] **Add JSON-LD structured data to all public pages for AI search visibility**
+- [x] **Add JSON-LD structured data to all public pages for AI search visibility**
 
 1. Create `src/components/StructuredData.tsx`:
 ```typescript

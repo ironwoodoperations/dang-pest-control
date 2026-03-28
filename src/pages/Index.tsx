@@ -15,21 +15,29 @@ import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 const localBusinessJsonLd = {
   "@context": "https://schema.org",
-  "@type": "PestControlService",
+  "@type": "LocalBusiness",
   name: "Dang Pest Control",
-  telephone: "+19038710550",
+  "@id": "https://dangpestcontrol.com",
   url: "https://dangpestcontrol.com",
-  areaServed: {
-    "@type": "City",
-    name: "Tyler",
-    addressRegion: "TX",
-  },
-  priceRange: "$$",
+  telephone: "+19038710550",
+  image: "https://www.dangpestcontrol.com/wp-content/uploads/2025/03/Dang-Logo.png",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Tyler",
     addressRegion: "TX",
+    addressCountry: "US",
   },
+  geo: { "@type": "GeoCoordinates", latitude: 32.3513, longitude: -95.3011 },
+  priceRange: "$$",
+  areaServed: [
+    { "@type": "City", name: "Tyler, TX" },
+    { "@type": "City", name: "Longview, TX" },
+    { "@type": "City", name: "Jacksonville, TX" },
+    { "@type": "City", name: "Lindale, TX" },
+    { "@type": "City", name: "Bullard, TX" },
+    { "@type": "City", name: "Whitehouse, TX" },
+  ],
+  sameAs: [],
 };
 
 const DEFAULT_TITLE = "Dang Pest Control - Professional Pest Services";

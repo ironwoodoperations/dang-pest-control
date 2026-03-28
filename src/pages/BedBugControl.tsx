@@ -1,5 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
+import { StructuredData } from '@/components/StructuredData';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -89,6 +91,28 @@ const faqs = [
 const BedBugControl = () => {
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
+      <SEO
+        title="Bed Bug Control in Tyler, TX"
+        description="Professional bed bug control in Tyler, TX. Thorough bed bug elimination and prevention. Licensed technicians with a Super Powered Guarantee. Call (903) 871-0550."
+        canonical="/bed-bug-control"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Bed Bug Control",
+          provider: { "@type": "LocalBusiness", name: "Dang Pest Control", telephone: "+19038710550" },
+          areaServed: { "@type": "City", name: "Tyler", addressRegion: "TX" },
+          description: "Professional bed bug control services including thorough elimination and prevention.",
+        }}
+      />
+      <StructuredData data={{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({
+          "@type": "Question",
+          name: f.q.replace(/^\d+\.\s*/, ""),
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      }} />
       <Navbar />
       <main>
 

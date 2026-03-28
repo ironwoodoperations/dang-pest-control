@@ -1,5 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
+import { StructuredData } from '@/components/StructuredData';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -84,6 +86,28 @@ const faqs = [
 const ScorpionControl = () => {
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
+      <SEO
+        title="Scorpion Control in Tyler, TX"
+        description="Professional scorpion control in Tyler, TX. Effective scorpion removal and prevention. Licensed technicians with a Super Powered Guarantee. Call (903) 871-0550."
+        canonical="/scorpion-control"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Scorpion Control",
+          provider: { "@type": "LocalBusiness", name: "Dang Pest Control", telephone: "+19038710550" },
+          areaServed: { "@type": "City", name: "Tyler", addressRegion: "TX" },
+          description: "Professional scorpion control services including removal and prevention.",
+        }}
+      />
+      <StructuredData data={{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({
+          "@type": "Question",
+          name: f.q.replace(/^\d+\.\s*/, ""),
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      }} />
       <Navbar />
       <main>
 

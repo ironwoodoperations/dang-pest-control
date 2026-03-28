@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
+import { StructuredData } from '@/components/StructuredData';
 
 const allPosts = [
   {
@@ -63,6 +65,29 @@ const BlogPage = () => {
 
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
+      <SEO
+        title="Blog"
+        description="Pest control tips, guides, and news from Dang Pest Control in Tyler, TX. Learn about mosquitoes, rodents, bed bugs, and more."
+        canonical="/blog"
+      />
+      <StructuredData data={{
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        name: "Dang Pest Control Blog",
+        url: "https://dangpestcontrol.com/blog",
+        publisher: {
+          "@type": "Organization",
+          name: "Dang Pest Control",
+          url: "https://dangpestcontrol.com",
+        },
+        blogPost: allPosts.map((post) => ({
+          "@type": "BlogPosting",
+          headline: post.title,
+          image: post.img,
+          url: `https://www.dangpestcontrol.com/blog/${post.slug}/`,
+          author: { "@type": "Organization", name: "Dang Pest Control" },
+        })),
+      }} />
       <Navbar />
       <main>
 

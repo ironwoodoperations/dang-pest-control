@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import KeywordPowerBox from "@/components/admin/KeywordPowerBox";
 import PageHelpBanner from "./PageHelpBanner";
 import KeywordResearch from "./seo/KeywordResearch";
+import AIOTab from "./seo/AIOTab";
 
 interface Keyword {
   keyword: string;
@@ -606,6 +607,9 @@ const SEOTab = () => {
 
       {/* Keyword Power-Box */}
       <KeywordPowerBox tenantId={tenantId} pages={pages} toast={toast} />
+
+      {/* AIO Structured Data */}
+      <AIOTab />
 
       {/* Add Keyword Dialog */}
       <Dialog open={showAddKeyword} onOpenChange={setShowAddKeyword}>

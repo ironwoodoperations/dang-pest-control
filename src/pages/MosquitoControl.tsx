@@ -1,5 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
+import { StructuredData } from '@/components/StructuredData';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -84,6 +86,28 @@ const faqs = [
 const MosquitoControl = () => {
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
+      <SEO
+        title="Mosquito Control in Tyler, TX"
+        description="Professional mosquito control in Tyler, TX. Effective mosquito reduction and prevention. Licensed technicians with a Super Powered Guarantee. Call (903) 871-0550."
+        canonical="/mosquito-control"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Mosquito Control",
+          provider: { "@type": "LocalBusiness", name: "Dang Pest Control", telephone: "+19038710550" },
+          areaServed: { "@type": "City", name: "Tyler", addressRegion: "TX" },
+          description: "Professional mosquito control services including prevention and recurring treatments.",
+        }}
+      />
+      <StructuredData data={{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({
+          "@type": "Question",
+          name: f.q.replace(/^\d+\.\s*/, ""),
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      }} />
       <Navbar />
       <main>
 
