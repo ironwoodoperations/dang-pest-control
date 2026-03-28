@@ -431,7 +431,7 @@ All fields save to `settings` table as JSON under their respective keys.
 ## 🟢 PHASE 6 — Migration Prep
 
 ### Task 6.1 — Generate PestFlow Pro migration MD
-- [ ] **Generate updated full project MD file for PestFlow Pro migration**
+- [x] **Generate updated full project MD file for PestFlow Pro migration**
 
 Read every key file in the project and generate a comprehensive `PESTFLOW-PRO-CONTEXT.md` that includes:
 - Full updated schema (all tables + new ones from Sessions 5+)
