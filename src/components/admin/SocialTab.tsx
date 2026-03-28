@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/useTenant";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye, Upload, Image, X, History } from "lucide-react";
 import PageHelpBanner from "./PageHelpBanner";
 
 interface SocialPost {
@@ -197,6 +200,7 @@ const SAMPLE_POSTS: SocialPost[] = [
 
 export default function SocialTab() {
   const { toast } = useToast();
+  const { tenantId } = useTenant();
   const [posts, setPosts] = useState<SocialPost[]>(SAMPLE_POSTS);
   const [step, setStep] = useState<Step>("queue");
   const [topic, setTopic] = useState("");
@@ -205,6 +209,84 @@ export default function SocialTab() {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["facebook", "instagram"]);
   const [scheduledAt, setScheduledAt] = useState("");
   const [previewPost, setPreviewPost] = useState<SocialPost | null>(null);
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageUploading, setImageUploading] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [postHistory, setPostHistory] = useState<any[]>([]);
+  const [fbSettings, setFbSettings] = useState<{ token: string; pageId: string }>({ token: "", pageId: "" });
+
+  // Load Facebook integration settings
+  useEffect(() => {
+    if (!tenantId) return;
+    supabase.from("site_config").select("value").eq("key", "integrations").eq("tenant_id", tenantId).maybeSingle().then(({ data }) => {
+      if (data?.value) {
+        const v = data.value as any;
+        setFbSettings({ token: v.fb_access_token || "", pageId: v.fb_page_id || "" });
+      }
+    });
+  }, [tenantId]);
+
+  // Load post history
+  useEffect(() => {
+    if (!tenantId) return;
+    supabase.from("social_posts" as any).select("*").eq("tenant_id", tenantId).order("created_at", { ascending: false }).then(({ data }) => {
+      if (data) setPostHistory(data);
+    });
+  }, [tenantId]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0]) return;
+    const file = e.target.files[0];
+    setImageUploading(true);
+    const path = `social/${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage.from("social-uploads").upload(path, file);
+    if (error) {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+    } else {
+      const { data: urlData } = supabase.storage.from("social-uploads").getPublicUrl(path);
+      setImageUrl(urlData.publicUrl);
+      toast({ title: "Image uploaded!" });
+    }
+    setImageUploading(false);
+  };
+
+  const saveSocialPost = async (post: { caption: string; image_url: string; status: string; facebook_post_id?: string }) => {
+    if (!tenantId) return;
+    await supabase.from("social_posts" as any).insert({
+      tenant_id: tenantId,
+      platform: selectedPlatforms.join(","),
+      caption: post.caption,
+      image_url: post.image_url || null,
+      scheduled_for: scheduledAt ? new Date(scheduledAt).toISOString() : null,
+      published_at: post.status === "published" ? new Date().toISOString() : null,
+      facebook_post_id: post.facebook_post_id || null,
+      status: post.status,
+    });
+  };
+
+  const postToFacebook = async (caption: string, imgUrl: string): Promise<{ success: boolean; postId?: string; error?: string }> => {
+    if (!fbSettings.token || !fbSettings.pageId) return { success: false, error: "Facebook not configured. Go to Settings > Integrations." };
+    try {
+      const body: any = { message: caption, access_token: fbSettings.token };
+      let endpoint = `https://graph.facebook.com/v18.0/${fbSettings.pageId}/feed`;
+      if (imgUrl) {
+        endpoint = `https://graph.facebook.com/v18.0/${fbSettings.pageId}/photos`;
+        body.url = imgUrl;
+      }
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (data.id || data.post_id) {
+        return { success: true, postId: data.id || data.post_id };
+      }
+      return { success: false, error: data.error?.message || "Unknown error" };
+    } catch (err) {
+      return { success: false, error: String(err) };
+    }
+  };
 
   const togglePlatform = (key: string) => {
     setSelectedPlatforms((prev) =>
@@ -238,20 +320,42 @@ export default function SocialTab() {
     }
   };
 
-  const handleSchedule = () => {
+  const handleSchedule = async () => {
     if (!scheduledAt) { toast({ title: "Please pick a date and time", variant: "destructive" }); return; }
+
+    // Try real Facebook posting if configured and platform selected
+    let fbPostId: string | undefined;
+    if (selectedPlatforms.includes("facebook") && fbSettings.token && fbSettings.pageId) {
+      const result = await postToFacebook(generatedCaption, imageUrl);
+      if (result.success) {
+        fbPostId = result.postId;
+        toast({ title: "Posted to Facebook!", description: `Post ID: ${fbPostId}` });
+      } else {
+        toast({ title: "Facebook post failed", description: result.error, variant: "destructive" });
+      }
+    }
+
     const newPost: SocialPost = {
       id: Date.now().toString(),
       caption: generatedCaption,
-      image_url: "",
+      image_url: imageUrl,
       template_id: selectedTemplate,
       platforms: selectedPlatforms,
       scheduled_at: scheduledAt,
-      status: "scheduled",
+      status: fbPostId ? "posted" : "scheduled",
       created_at: new Date().toISOString(),
     };
     setPosts((prev) => [newPost, ...prev]);
     setPreviewPost(newPost);
+
+    // Save to social_posts table
+    await saveSocialPost({
+      caption: generatedCaption,
+      image_url: imageUrl,
+      status: fbPostId ? "published" : "scheduled",
+      facebook_post_id: fbPostId,
+    });
+
     setStep("wizard-confirm");
   };
 
@@ -490,6 +594,38 @@ export default function SocialTab() {
             <p className="text-xs mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>{generatedCaption.length} characters</p>
           </CardContent>
         </Card>
+        {/* Image Upload */}
+        <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+          <CardContent className="pt-5 space-y-3">
+            <p className="text-xs font-body font-semibold uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Image (optional)</p>
+            <div className="flex gap-2">
+              <Label className="flex-1">
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer hover:bg-muted/30 transition-colors" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+                  <Upload className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} />
+                  <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                    {imageUploading ? "Uploading..." : "Upload Image"}
+                  </span>
+                </div>
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={imageUploading} />
+              </Label>
+              <Input
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="Or paste image URL..."
+                className="font-body text-sm flex-1"
+              />
+            </div>
+            {imageUrl && (
+              <div className="relative inline-block">
+                <img src={imageUrl} alt="Preview" className="w-24 h-24 object-cover rounded-lg" />
+                <button onClick={() => setImageUrl("")} className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-white flex items-center justify-center">
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         <div className="flex gap-2">
           <Button onClick={() => setStep("wizard-template")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
             Choose Template →
@@ -561,9 +697,14 @@ export default function SocialTab() {
           <h2 className="text-2xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>Social Media</h2>
           <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Compose, schedule, and manage posts across all platforms.</p>
         </div>
-        <Button onClick={() => setStep("wizard-topic")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
-          <Plus className="w-4 h-4" /> New Post
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setShowHistory(!showHistory)} variant="outline" className="font-body gap-2" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}>
+            <History className="w-4 h-4" /> {showHistory ? "Queue" : "History"}
+          </Button>
+          <Button onClick={() => setStep("wizard-topic")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
+            <Plus className="w-4 h-4" /> New Post
+          </Button>
+        </div>
       </div>
       <div className="grid grid-cols-3 gap-4">
         {[
@@ -584,6 +725,41 @@ export default function SocialTab() {
           </Card>
         ))}
       </div>
+      {/* Posts History */}
+      {showHistory && (
+        <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+          <CardHeader className="pb-2">
+            <CardTitle className="font-body text-base" style={{ color: "hsl(var(--admin-text))" }}>Post History</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {postHistory.length === 0 ? (
+              <p className="text-sm font-body py-4 text-center" style={{ color: "hsl(var(--admin-text-muted))" }}>No posts yet. Create your first post above.</p>
+            ) : postHistory.map((hp: any) => {
+              const statusStyle = STATUS_STYLES[hp.status === "published" ? "posted" : hp.status] || STATUS_STYLES.draft;
+              return (
+                <div key={hp.id} className="flex gap-3 p-3 rounded-xl border" style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-bg))" }}>
+                  {hp.image_url && <img src={hp.image_url} alt="" className="w-14 h-14 rounded-lg object-cover" />}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-body line-clamp-2 mb-1" style={{ color: "hsl(var(--admin-text))" }}>{hp.caption}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{hp.platform}</span>
+                      {hp.published_at && (
+                        <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                          {new Date(hp.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <Badge className="font-body text-xs border-0 rounded-full px-2 shrink-0" style={{ background: `${statusStyle.color}22`, color: statusStyle.color }}>
+                    {statusStyle.label}
+                  </Badge>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
+
       <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
         <CardHeader className="pb-2">
           <CardTitle className="font-body text-base" style={{ color: "hsl(var(--admin-text))" }}>Post Queue</CardTitle>

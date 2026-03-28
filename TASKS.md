@@ -259,7 +259,7 @@ Rules:
 ## 🟡 PHASE 3 — Social Media Real Integration
 
 ### Task 3.1 — Social Media with real API + photo uploads
-- [ ] **Wire up real Meta Graph API and add image upload capability**
+- [x] **Wire up real Meta Graph API and add image upload capability**
 
 1. Create Supabase storage bucket via SQL:
 ```sql

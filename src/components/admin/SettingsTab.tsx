@@ -9,6 +9,7 @@ import SettingsHeroMedia from "./settings/SettingsHeroMedia";
 import SettingsCampaigns from "./settings/SettingsCampaigns";
 import SettingsContact from "./settings/SettingsContact";
 import SettingsMediaLibrary from "./settings/SettingsMediaLibrary";
+import SettingsIntegrations from "./settings/SettingsIntegrations";
 import PageHelpBanner from "./PageHelpBanner";
 
 export interface SettingsData {
@@ -42,6 +43,11 @@ export interface SettingsData {
   yelp: string;
   // Notifications
   notify_email: string;
+  // Integrations
+  fb_access_token: string;
+  fb_page_id: string;
+  google_place_id: string;
+  google_api_key: string;
 }
 
 const defaultSettings: SettingsData = {
@@ -69,6 +75,10 @@ const defaultSettings: SettingsData = {
   google: "",
   yelp: "",
   notify_email: "",
+  fb_access_token: "",
+  fb_page_id: "",
+  google_place_id: "",
+  google_api_key: "",
 };
 
 const sections = [
@@ -77,6 +87,7 @@ const sections = [
   { id: "media-library", label: "Media Library" },
   { id: "campaigns", label: "Campaigns" },
   { id: "contact", label: "Contact Info" },
+  { id: "integrations", label: "Integrations" },
 ] as const;
 
 type SectionId = (typeof sections)[number]["id"];
@@ -118,6 +129,11 @@ const SettingsTab = () => {
             s.instagram = (val.instagram as string) || "";
             s.google = (val.google as string) || "";
             s.yelp = (val.yelp as string) || "";
+          } else if (row.key === "integrations") {
+            s.fb_access_token = (val.fb_access_token as string) || "";
+            s.fb_page_id = (val.fb_page_id as string) || "";
+            s.google_place_id = (val.google_place_id as string) || "";
+            s.google_api_key = (val.google_api_key as string) || "";
           } else if (row.key === "branding") {
             s.logo_url = (val.logo_url as string) || "";
             s.favicon_url = (val.favicon_url as string) || "";
@@ -160,6 +176,7 @@ const SettingsTab = () => {
       saveConfig("business_info", { company_name: settings.company_name, phone: settings.phone, email: settings.email, address: settings.address, city: settings.city, state: settings.state, zip: settings.zip, hours: settings.hours, service_area: settings.service_area }),
       saveConfig("social_links", { facebook: settings.facebook, instagram: settings.instagram, google: settings.google, yelp: settings.yelp }),
       saveConfig("notification_email", { email: settings.notify_email }),
+      saveConfig("integrations", { fb_access_token: settings.fb_access_token, fb_page_id: settings.fb_page_id, google_place_id: settings.google_place_id, google_api_key: settings.google_api_key }),
     ]);
     setSaving(false);
     if (results.every(Boolean)) {
@@ -245,6 +262,7 @@ const SettingsTab = () => {
         {activeSection === "media-library" && <SettingsMediaLibrary />}
         {activeSection === "campaigns" && <SettingsCampaigns settings={settings} update={(patch) => { update(patch); saveHolidayInstant(patch); }} />}
         {activeSection === "contact" && <SettingsContact settings={settings} update={update} />}
+        {activeSection === "integrations" && <SettingsIntegrations settings={settings} update={update} />}
 
         <button
           onClick={handleSave}
