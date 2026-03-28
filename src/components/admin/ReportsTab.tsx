@@ -32,103 +32,110 @@ const ReportsTab = () => {
   const generateReport = async () => {
     if (!tenantId) return;
     setLoading(true);
+    try {
+      const m = parseInt(month);
+      const y = parseInt(year);
+      const startDate = new Date(y, m, 1).toISOString();
+      const endDate = new Date(y, m + 1, 0, 23, 59, 59).toISOString();
 
-    const m = parseInt(month);
-    const y = parseInt(year);
-    const startDate = new Date(y, m, 1).toISOString();
-    const endDate = new Date(y, m + 1, 0, 23, 59, 59).toISOString();
+      const [leadsRes, blogRes, kwRes, locRes, testRes] = await Promise.all([
+        supabase.from("leads").select("name, email, phone, created_at").eq("tenant_id", tenantId).gte("created_at", startDate).lte("created_at", endDate),
+        supabase.from("blog_posts").select("title, created_at").eq("tenant_id", tenantId).gte("created_at", startDate).lte("created_at", endDate),
+        supabase.from("site_config").select("value").eq("key", "seo_keywords").eq("tenant_id", tenantId).maybeSingle(),
+        supabase.from("location_data").select("id").eq("tenant_id", tenantId),
+        supabase.from("testimonials").select("id").eq("tenant_id", tenantId).gte("created_at", startDate).lte("created_at", endDate),
+      ]);
 
-    const [leadsRes, blogRes, kwRes, locRes, testRes] = await Promise.all([
-      supabase.from("leads").select("name, email, phone, created_at").eq("tenant_id", tenantId).gte("created_at", startDate).lte("created_at", endDate),
-      supabase.from("blog_posts").select("title, created_at").eq("tenant_id", tenantId).gte("created_at", startDate).lte("created_at", endDate),
-      supabase.from("site_config").select("value").eq("key", "seo_keywords").eq("tenant_id", tenantId).maybeSingle(),
-      supabase.from("location_data").select("id").eq("tenant_id", tenantId),
-      supabase.from("testimonials").select("id").eq("tenant_id", tenantId).gte("created_at", startDate).lte("created_at", endDate),
-    ]);
-
-    setReport({
-      leads: { count: leadsRes.data?.length || 0, items: (leadsRes.data || []) as any },
-      blogPosts: { count: blogRes.data?.length || 0, items: (blogRes.data || []) as any },
-      keywords: { count: ((kwRes.data?.value as any)?.length || 0) },
-      locations: { count: locRes.data?.length || 0 },
-      testimonials: { count: testRes.data?.length || 0 },
-    });
-    setLoading(false);
+      setReport({
+        leads: { count: leadsRes.data?.length || 0, items: (leadsRes.data || []) as any },
+        blogPosts: { count: blogRes.data?.length || 0, items: (blogRes.data || []) as any },
+        keywords: { count: ((kwRes.data?.value as any)?.length || 0) },
+        locations: { count: locRes.data?.length || 0 },
+        testimonials: { count: testRes.data?.length || 0 },
+      });
+    } catch (err) {
+      console.error("Failed to generate report:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDownloadPDF = async () => {
     if (!report) return;
     setDownloading(true);
+    try {
+      const { jsPDF } = await import("jspdf");
+      const doc = new jsPDF();
+      const monthName = MONTHS[parseInt(month)];
 
-    const { jsPDF } = await import("jspdf");
-    const doc = new jsPDF();
-    const monthName = MONTHS[parseInt(month)];
-    const title = `Dang Pest Control — ${monthName} ${year} Report`;
+      // Header
+      doc.setFontSize(20);
+      doc.setTextColor(232, 120, 0);
+      doc.text("Dang Pest Control", 20, 25);
+      doc.setFontSize(14);
+      doc.setTextColor(60, 60, 60);
+      doc.text(`Monthly Report: ${monthName} ${year}`, 20, 35);
+      doc.setDrawColor(232, 120, 0);
+      doc.line(20, 40, 190, 40);
 
-    // Header
-    doc.setFontSize(20);
-    doc.setTextColor(232, 120, 0);
-    doc.text("Dang Pest Control", 20, 25);
-    doc.setFontSize(14);
-    doc.setTextColor(60, 60, 60);
-    doc.text(`Monthly Report: ${monthName} ${year}`, 20, 35);
-    doc.setDrawColor(232, 120, 0);
-    doc.line(20, 40, 190, 40);
+      let y = 55;
 
-    let y = 55;
+      // Leads Summary
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.text("Leads Summary", 20, y);
+      y += 8;
+      doc.setFontSize(11);
+      doc.setTextColor(80, 80, 80);
+      doc.text(`Total leads this month: ${report.leads.count}`, 20, y);
+      y += 8;
 
-    // Leads Summary
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text("Leads Summary", 20, y);
-    y += 8;
-    doc.setFontSize(11);
-    doc.setTextColor(80, 80, 80);
-    doc.text(`Total leads this month: ${report.leads.count}`, 20, y);
-    y += 8;
+      if (report.leads.items.length > 0) {
+        for (const lead of report.leads.items.slice(0, 10)) {
+          doc.text(`  - ${lead.name || "Unknown"} | ${lead.email || "—"} | ${lead.phone || "—"}`, 20, y);
+          y += 6;
+          if (y > 270) { doc.addPage(); y = 20; }
+        }
+      }
+      y += 8;
 
-    if (report.leads.items.length > 0) {
-      for (const lead of report.leads.items.slice(0, 10)) {
-        doc.text(`  - ${lead.name || "Unknown"} | ${lead.email || "—"} | ${lead.phone || "—"}`, 20, y);
+      // SEO Activity
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.text("SEO Activity", 20, y);
+      y += 8;
+      doc.setFontSize(11);
+      doc.setTextColor(80, 80, 80);
+      doc.text(`Keywords tracked: ${report.keywords.count}`, 20, y);
+      y += 6;
+      doc.text(`Location pages: ${report.locations.count}`, 20, y);
+      y += 12;
+
+      // Content Activity
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.text("Content Activity", 20, y);
+      y += 8;
+      doc.setFontSize(11);
+      doc.setTextColor(80, 80, 80);
+      doc.text(`Blog posts published: ${report.blogPosts.count}`, 20, y);
+      y += 6;
+      doc.text(`New testimonials: ${report.testimonials.count}`, 20, y);
+      y += 6;
+
+      for (const post of report.blogPosts.items) {
+        doc.text(`  - ${post.title}`, 20, y);
         y += 6;
         if (y > 270) { doc.addPage(); y = 20; }
       }
+
+      doc.save(`dang-pest-control-report-${monthName.toLowerCase()}-${year}.pdf`);
+      toast({ title: "PDF downloaded!" });
+    } catch (err) {
+      toast({ title: "Download failed", description: String(err), variant: "destructive" });
+    } finally {
+      setDownloading(false);
     }
-    y += 8;
-
-    // SEO Activity
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text("SEO Activity", 20, y);
-    y += 8;
-    doc.setFontSize(11);
-    doc.setTextColor(80, 80, 80);
-    doc.text(`Keywords tracked: ${report.keywords.count}`, 20, y);
-    y += 6;
-    doc.text(`Location pages: ${report.locations.count}`, 20, y);
-    y += 12;
-
-    // Content Activity
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text("Content Activity", 20, y);
-    y += 8;
-    doc.setFontSize(11);
-    doc.setTextColor(80, 80, 80);
-    doc.text(`Blog posts published: ${report.blogPosts.count}`, 20, y);
-    y += 6;
-    doc.text(`New testimonials: ${report.testimonials.count}`, 20, y);
-    y += 6;
-
-    for (const post of report.blogPosts.items) {
-      doc.text(`  - ${post.title}`, 20, y);
-      y += 6;
-      if (y > 270) { doc.addPage(); y = 20; }
-    }
-
-    doc.save(`dang-pest-control-report-${monthName.toLowerCase()}-${year}.pdf`);
-    setDownloading(false);
-    toast({ title: "PDF downloaded!" });
   };
 
   const handleEmailReport = async () => {

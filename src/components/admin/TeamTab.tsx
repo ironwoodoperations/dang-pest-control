@@ -32,12 +32,17 @@ const TeamTab = () => {
 
   const fetchMembers = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("user_roles")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (!error && data) setMembers(data as TeamMember[]);
-    setLoading(false);
+    try {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!error && data) setMembers(data as TeamMember[]);
+    } catch (err) {
+      console.error("Failed to fetch members:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchMembers(); }, []);

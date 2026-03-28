@@ -96,8 +96,9 @@ Example of the exact format required:
     } catch (err) {
       console.error("Keyword research error:", err);
       toast({ title: "Generation failed", description: String(err), variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleAdd = (kw: ResearchKeyword) => {
