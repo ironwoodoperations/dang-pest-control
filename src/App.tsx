@@ -19,6 +19,7 @@ const FAQPage = lazy(() => import("./pages/FAQPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
 const AdminOnboarding = lazy(() => import("./pages/AdminOnboarding"));
+const Onboarding = lazy(() => import("./pages/admin/Onboarding"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 const FloatingTextUs = lazy(() => import("./components/FloatingTextUs"));
 const MosquitoControl = lazy(() => import("./pages/MosquitoControl"));
@@ -63,7 +64,8 @@ const App = () => (
             <Route path="/accessibility" element={<AccessibilityPage />} />
             <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
             <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/onboarding" element={<AdminOnboarding />} />
+            <Route path="/admin/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+            <Route path="/admin/setup" element={<AdminOnboarding />} />
             {/* Legacy redirects: /services/:slug → /:slug, /locations/:slug → /:slug */}
             <Route path="/services/:slug" element={<RedirectLegacy />} />
             <Route path="/locations/:slug" element={<RedirectLegacy />} />

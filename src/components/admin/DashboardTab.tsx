@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, TrendingUp, TreePine, Clock, CheckCircle2, AlertCircle } from "lucide-react";
 import { useHolidayMode } from "@/hooks/useHolidayMode";
 import { useTenant } from "@/hooks/useTenant";
+import { useNavigate } from "react-router-dom";
 import PageHelpBanner from "./PageHelpBanner";
 
 interface Lead {
@@ -80,8 +81,10 @@ const DashboardTab = () => {
   const [seoConfigured, setSeoConfigured] = useState(0);
   const [seoTotal, setSeoTotal] = useState(0);
   const [holidayMode, setHolidayMode] = useState(false);
+  const [onboardingComplete, setOnboardingComplete] = useState(true);
   const { enabled: holidayOn } = useHolidayMode();
   const { tenantId } = useTenant();
+  const navigate = useNavigate();
 
   const accent = holidayOn ? "hsl(0, 80%, 55%)" : "hsl(150, 45%, 30%)";
 
@@ -110,6 +113,15 @@ const DashboardTab = () => {
         setSeoTotal(seoRows.length);
         setSeoConfigured(seoRows.filter(r => r.seo_title && r.seo_description).length);
       }
+
+      // Check onboarding status
+      const { data: obRow } = await supabase
+        .from("site_config")
+        .select("value")
+        .eq("key", "onboarding_complete")
+        .eq("tenant_id", tenantId)
+        .single();
+      setOnboardingComplete(!!(obRow?.value as Record<string, unknown>)?.completed);
     };
     fetchData();
   }, [tenantId]);
@@ -119,6 +131,21 @@ const DashboardTab = () => {
   return (
     <div className="space-y-6">
       <PageHelpBanner tab="dashboard" />
+
+      {/* Onboarding Banner */}
+      {!onboardingComplete && (
+        <button
+          onClick={() => navigate("/admin/onboarding")}
+          className="w-full text-left rounded-xl p-4 border-2 border-yellow-300 transition-colors hover:border-yellow-400"
+          style={{ background: "hsl(45, 95%, 92%)" }}
+        >
+          <p className="font-body text-sm font-semibold text-gray-800">
+            New here? Start with the Setup Wizard to get your site ready in 10 minutes.
+          </p>
+          <p className="font-body text-xs text-gray-500 mt-0.5">Click here to launch the guided setup &rarr;</p>
+        </button>
+      )}
+
       {/* Greeting */}
       <div>
         <h2 className="font-display text-2xl tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>
