@@ -279,13 +279,13 @@ const Onboarding = () => {
     [tenantId]
   );
 
-  // Save step data
+  // Save step data — fire-and-forget, never blocks navigation
   const saveStep = async (stepIndex: number) => {
+    if (!tenantId) return;
     setSaving(true);
     try {
-      let results: boolean[] = [];
       if (stepIndex === 0) {
-        results = await Promise.all([
+        await Promise.all([
           saveConfig("business_info", {
             company_name: form.businessName,
             phone: form.phone,
@@ -300,17 +300,17 @@ const Onboarding = () => {
           }),
         ]);
       } else if (stepIndex === 1) {
-        results = await Promise.all([
+        await Promise.all([
           saveConfig("branding", { logo_url: form.logoUrl }),
           saveConfig("branding_extended", { primary_color: form.primaryColor, accent_color: form.accentColor }),
         ]);
       } else if (stepIndex === 2) {
-        results = await Promise.all([
+        await Promise.all([
           saveConfig("notification_email", { email: form.leadEmail }),
           saveConfig("notifications", { cc_email: form.ccEmail }),
         ]);
       } else if (stepIndex === 3) {
-        results = await Promise.all([
+        await Promise.all([
           saveConfig("integrations", {
             fb_access_token: form.fbAccessToken,
             fb_page_id: form.fbPageId,
@@ -320,22 +320,22 @@ const Onboarding = () => {
           saveConfig("hero_media", { hero_video_url: form.heroVideoId }),
         ]);
       }
-      if (!results.every(Boolean)) {
-        toast({ title: "Error", description: "Some settings failed to save.", variant: "destructive" });
-        return false;
-      }
-      return true;
-    } catch {
-      toast({ title: "Save failed", description: "An unexpected error occurred.", variant: "destructive" });
-      return false;
+    } catch (err) {
+      console.error("Onboarding saveStep error:", err);
     } finally {
       setSaving(false);
     }
   };
 
-  const handleNext = async () => {
-    const ok = await saveStep(step);
-    if (ok) setStep((s) => s + 1);
+  const handleNext = () => {
+    try {
+      // Advance immediately — save in background, never block navigation
+      const currentStep = step;
+      setStep((s) => s + 1);
+      saveStep(currentStep).catch((err) => console.error("Onboarding save error:", err));
+    } catch (err) {
+      console.error("Onboarding handleNext error:", err);
+    }
   };
 
   const handleBack = () => setStep((s) => s - 1);
