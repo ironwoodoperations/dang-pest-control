@@ -164,8 +164,8 @@ const LeadsTab = () => {
                   <TableCell className="font-body font-medium" style={{ color: "hsl(var(--admin-text))" }}>{lead.name}</TableCell>
                   <TableCell>
                     <div className="space-y-0.5">
-                      {lead.email && <div className="text-xs font-body flex items-center gap-1" style={{ color: "hsl(var(--admin-text-muted))" }}><Mail className="w-3 h-3" />{lead.email}</div>}
-                      {lead.phone && <div className="text-xs font-body flex items-center gap-1" style={{ color: "hsl(var(--admin-text-muted))" }}><Phone className="w-3 h-3" />{lead.phone}</div>}
+                      {lead.email && <a href={`mailto:${lead.email}`} onClick={(e) => e.stopPropagation()} className="text-xs font-body flex items-center gap-1 hover:underline" style={{ color: "hsl(var(--admin-text-muted))" }}><Mail className="w-3 h-3" />{lead.email}</a>}
+                      {lead.phone && <a href={`tel:${lead.phone}`} onClick={(e) => e.stopPropagation()} className="text-xs font-body flex items-center gap-1 hover:underline" style={{ color: "hsl(var(--admin-text-muted))" }}><Phone className="w-3 h-3" />{lead.phone}</a>}
                     </div>
                   </TableCell>
                   <TableCell className="font-body text-sm">{lead.service || "—"}</TableCell>
@@ -225,11 +225,11 @@ const LeadsTab = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="font-body text-xs" style={{ color: "hsl(var(--admin-text-muted))" }}>Email</Label>
-                  <p className="font-body text-sm">{selectedLead.email || "—"}</p>
+                  {selectedLead.email ? <a href={`mailto:${selectedLead.email}`} className="font-body text-sm hover:underline" style={{ color: "hsl(var(--admin-indigo))" }}>{selectedLead.email}</a> : <p className="font-body text-sm">—</p>}
                 </div>
                 <div>
                   <Label className="font-body text-xs" style={{ color: "hsl(var(--admin-text-muted))" }}>Phone</Label>
-                  <p className="font-body text-sm">{selectedLead.phone || "—"}</p>
+                  {selectedLead.phone ? <a href={`tel:${selectedLead.phone}`} className="font-body text-sm hover:underline" style={{ color: "hsl(var(--admin-indigo))" }}>{selectedLead.phone}</a> : <p className="font-body text-sm">—</p>}
                 </div>
               </div>
               <div>
