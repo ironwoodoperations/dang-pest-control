@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye, Upload, Image, X, History } from "lucide-react";
+import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye, Upload, Image, X, History, Settings, Check } from "lucide-react";
 import PageHelpBanner from "./PageHelpBanner";
 
 interface SocialPost {
@@ -214,14 +214,26 @@ export default function SocialTab() {
   const [showHistory, setShowHistory] = useState(false);
   const [postHistory, setPostHistory] = useState<any[]>([]);
   const [fbSettings, setFbSettings] = useState<{ token: string; pageId: string }>({ token: "", pageId: "" });
+  const [showConnections, setShowConnections] = useState(false);
+  const [socialProvider, setSocialProvider] = useState<"export" | "diy" | "buffer" | "ayrshare">("export");
+  const [bufferToken, setBufferToken] = useState("");
+  const [ayrshareKey, setAyrshareKey] = useState("");
+  const [ayrshareProfileKey, setAyrshareProfileKey] = useState("");
+  const [connTab, setConnTab] = useState<"export" | "diy" | "buffer" | "ayrshare">("export");
+  const [connSaving, setConnSaving] = useState(false);
 
-  // Load Facebook integration settings
+  // Load integration settings
   useEffect(() => {
     if (!tenantId) return;
     supabase.from("site_config").select("value").eq("key", "integrations").eq("tenant_id", tenantId).maybeSingle().then(({ data }) => {
       if (data?.value) {
         const v = data.value as any;
         setFbSettings({ token: v.fb_access_token || "", pageId: v.fb_page_id || "" });
+        setBufferToken(v.buffer_token || "");
+        setAyrshareKey(v.ayrshare_key || "");
+        setAyrshareProfileKey(v.ayrshare_profile_key || "");
+        setSocialProvider(v.social_provider || "export");
+        setConnTab(v.social_provider || "export");
       }
     });
   }, [tenantId]);
@@ -233,6 +245,35 @@ export default function SocialTab() {
       if (data) setPostHistory(data);
     });
   }, [tenantId]);
+
+  const saveConnections = async () => {
+    if (!tenantId) return;
+    setConnSaving(true);
+    try {
+      const { data: existing } = await supabase.from("site_config").select("id, value").eq("key", "integrations").eq("tenant_id", tenantId).maybeSingle();
+      const current = (existing?.value as any) || {};
+      const updated = {
+        ...current,
+        social_provider: connTab,
+        fb_access_token: fbSettings.token,
+        fb_page_id: fbSettings.pageId,
+        buffer_token: bufferToken,
+        ayrshare_key: ayrshareKey,
+        ayrshare_profile_key: ayrshareProfileKey,
+      };
+      if (existing?.id) {
+        await supabase.from("site_config").update({ value: updated, updated_at: new Date().toISOString() }).eq("key", "integrations").eq("tenant_id", tenantId);
+      } else {
+        await supabase.from("site_config").insert({ key: "integrations", value: updated, tenant_id: tenantId });
+      }
+      setSocialProvider(connTab);
+      toast({ title: "Connection saved!" });
+    } catch (err) {
+      toast({ title: "Save failed", description: String(err), variant: "destructive" });
+    } finally {
+      setConnSaving(false);
+    }
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
@@ -724,6 +765,14 @@ export default function SocialTab() {
           <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Compose, schedule, and manage posts across all platforms.</p>
         </div>
         <div className="flex gap-2">
+          <Button
+            onClick={() => setShowConnections(true)}
+            variant="outline"
+            className="font-body gap-2"
+            style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
+          >
+            <Settings className="w-4 h-4" /> Connections
+          </Button>
           <Button onClick={() => setShowHistory(!showHistory)} variant="outline" className="font-body gap-2" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}>
             <History className="w-4 h-4" /> {showHistory ? "Queue" : "History"}
           </Button>
@@ -823,6 +872,149 @@ export default function SocialTab() {
           })}
         </CardContent>
       </Card>
+
+      {showConnections && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowConnections(false)}>
+          <div className="w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl" style={{ background: "hsl(var(--admin-bg))" }} onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+              <h2 className="font-body font-bold text-lg" style={{ color: "hsl(var(--admin-text))" }}>Social Connections</h2>
+              <button onClick={() => setShowConnections(false)} className="p-1 rounded-lg hover:bg-muted transition-colors">
+                <X className="w-5 h-5" style={{ color: "hsl(var(--admin-text-muted))" }} />
+              </button>
+            </div>
+
+            {/* Provider tabs */}
+            <div className="flex gap-2 px-6 pt-4">
+              {([
+                { key: "export", label: "Export Mode", emoji: "📤" },
+                { key: "diy", label: "DIY", emoji: "🔧" },
+                { key: "buffer", label: "A Little Help", emoji: "🤝" },
+                { key: "ayrshare", label: "I Need a Pro", emoji: "⭐" },
+              ] as const).map(({ key, label, emoji }) => (
+                <button
+                  key={key}
+                  onClick={() => setConnTab(key)}
+                  className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border text-xs font-body font-medium flex-1 transition-all relative"
+                  style={{
+                    borderColor: connTab === key ? "hsl(var(--admin-indigo))" : "hsl(var(--admin-sidebar-border))",
+                    background: connTab === key ? "hsl(var(--admin-indigo))" : "transparent",
+                    color: connTab === key ? "white" : "hsl(var(--admin-text-muted))",
+                  }}
+                >
+                  {socialProvider === key && (
+                    <div className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "hsl(160,70%,40%)" }}>
+                      <Check className="w-2.5 h-2.5 text-white" />
+                    </div>
+                  )}
+                  <span className="text-base">{emoji}</span>
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* Provider content */}
+            <div className="px-6 py-4 space-y-4 min-h-[200px]">
+              {connTab === "export" && (
+                <div className="space-y-3">
+                  <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                    📤 You're in export mode. Posts are saved to your queue but not sent to any platform. Use this to review and approve content before connecting a social account.
+                  </p>
+                  {socialProvider === "export" && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
+                      <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {connTab === "diy" && (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>🔧 DIY — Free, direct connection to Facebook & Instagram</p>
+                    <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Requires a Facebook Business Page. Posts directly via Facebook Graph API — no third-party tools.</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="font-body text-xs">Facebook Page Access Token</Label>
+                    <Input value={fbSettings.token} onChange={(e) => setFbSettings(f => ({ ...f, token: e.target.value }))} placeholder="Enter Facebook Page Access Token" className="font-body text-sm" />
+                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Get from developers.facebook.com/tools/explorer</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="font-body text-xs">Facebook Page ID</Label>
+                    <Input value={fbSettings.pageId} onChange={(e) => setFbSettings(f => ({ ...f, pageId: e.target.value }))} placeholder="Enter Facebook Page ID" className="font-body text-sm" />
+                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Found in Facebook Business Suite → Page → About</p>
+                  </div>
+                </div>
+              )}
+
+              {connTab === "buffer" && (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>🤝 A Little Help — Buffer scheduling (~$6/mo)</p>
+                    <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Connect Buffer to schedule posts across 3 channels. Good middle ground with a simple dashboard.</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="font-body text-xs">Buffer Access Token</Label>
+                    <Input value={bufferToken} onChange={(e) => setBufferToken(e.target.value)} placeholder="Enter Buffer Access Token" className="font-body text-sm" />
+                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Get from buffer.com → Settings → Apps & API</p>
+                  </div>
+                  <Button size="sm" variant="outline" className="gap-1.5 font-body text-xs" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
+                    onClick={() => window.open("https://buffer.com", "_blank")}>
+                    Sign up for Buffer →
+                  </Button>
+                </div>
+              )}
+
+              {connTab === "ayrshare" && (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>⭐ I Need a Pro — Ayrshare ($29/mo, all platforms)</p>
+                    <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>One API key posts to Facebook, Instagram, TikTok, LinkedIn, Twitter/X, Google Business, and more. Best option for serious growth.</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="font-body text-xs">Ayrshare API Key</Label>
+                    <Input value={ayrshareKey} onChange={(e) => setAyrshareKey(e.target.value)} placeholder="Enter Ayrshare API Key" className="font-body text-sm" />
+                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Get from app.ayrshare.com → Settings → API Key</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="font-body text-xs">Profile Key (optional — for multi-profile accounts)</Label>
+                    <Input value={ayrshareProfileKey} onChange={(e) => setAyrshareProfileKey(e.target.value)} placeholder="Enter Profile Key (optional)" className="font-body text-sm" />
+                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Only needed if you manage multiple brands in Ayrshare</p>
+                  </div>
+                  <Button size="sm" variant="outline" className="gap-1.5 font-body text-xs" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
+                    onClick={() => window.open("https://app.ayrshare.com", "_blank")}>
+                    Sign up for Ayrshare →
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between px-6 py-4 border-t" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ background: socialProvider === connTab ? "hsl(160,70%,40%)" : "hsl(var(--admin-sidebar-border))" }} />
+                <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                  Active provider: <strong style={{ color: "hsl(var(--admin-text))" }}>
+                    {socialProvider === "export" ? "Export Mode" : socialProvider === "diy" ? "Facebook DIY" : socialProvider === "buffer" ? "Buffer" : "Ayrshare"}
+                  </strong>
+                </span>
+              </div>
+              {connTab !== "export" && (
+                <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-indigo))" }} onClick={saveConnections} disabled={connSaving}>
+                  {connSaving ? "Saving…" : "Save"}
+                </Button>
+              )}
+              {connTab === "export" && socialProvider !== "export" && (
+                <Button size="sm" variant="outline" className="font-body text-xs" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}
+                  onClick={() => { setConnTab("export"); saveConnections(); }}>
+                  Switch to Export Mode
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
