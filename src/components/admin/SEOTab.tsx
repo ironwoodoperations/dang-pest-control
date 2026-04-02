@@ -107,7 +107,7 @@ const ScoreRing = ({ score, label }: { score: number | null; label: string }) =>
             transform="rotate(-90 48 48)" style={{ transition: "stroke-dashoffset 0.6s ease" }} />
         )}
         <text x="48" y="54" textAnchor="middle" fontSize="20" fontWeight="700" fill={col}>
-          {score ?? "–"}
+          {score ?? "—"}
         </text>
       </svg>
       <p className="text-xs font-body text-center font-medium" style={{ color: "hsl(var(--admin-text))" }}>{label}</p>
@@ -122,7 +122,7 @@ const VitalRow = ({ label, value, note }: { label: string; value: string | null;
       <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{note}</p>
     </div>
     <span className="text-sm font-body font-semibold" style={{ color: value ? "hsl(var(--admin-text))" : "hsl(var(--admin-text-muted))" }}>
-      {value ?? "–"}
+      {value ?? "—"}
     </span>
   </div>
 );
@@ -189,7 +189,7 @@ const SEOTab = () => {
   const { tenantId } = useTenant();
   const snapshotsLoaded = useRef(false);
 
-  // —— Fetch SEO data ———————————————————————————————————————
+  // —— Fetch SEO data ———————————————————————————————————
   useEffect(() => {
     if (!tenantId) return;
     const fetchSEO = async () => {
@@ -239,7 +239,7 @@ const SEOTab = () => {
     fetchSEO();
   }, [tenantId]);
 
-  // —— Save snapshots ———————————————————————————————————————
+  // —— Save snapshots ———————————————————————————————————
   useEffect(() => {
     if (!tenantId || !pages.length || loading || snapshotsLoaded.current) return;
     snapshotsLoaded.current = true;
@@ -263,7 +263,7 @@ const SEOTab = () => {
     saveSnapshots();
   }, [tenantId, pages, loading]);
 
-  // —— Lighthouse ———————————————————————————————————————————
+  // —— Lighthouse ———————————————————————————————————————
   const runLighthouse = async () => {
     setLighthouseLoading(true);
     try {
@@ -293,14 +293,14 @@ const SEOTab = () => {
     }
   };
 
-  // —— Existing functions ———————————————————————————————————
+  // —— Existing functions ———————————————————————————————
 
   const handleRevertSEO = async (page: PageSEO) => {
     const snapshot = seoSnapshots[page.slug];
     if (!snapshot) { toast({ title: "No original found", description: "No snapshot exists for this page.", variant: "destructive" }); return; }
     await supabase.from("site_config").update({ seo_title: snapshot.meta_title, seo_description: snapshot.meta_description, updated_at: new Date().toISOString() }).eq("key", `seo:${page.slug}`).eq("tenant_id", tenantId);
     setPages((prev) => prev.map((p) => p.slug === page.slug ? { ...p, meta_title: snapshot.meta_title || "", meta_description: snapshot.meta_description || "" } : p));
-    toast({ title: "Restored original SEO ✓", description: `Reverted meta tags for ${page.label}.` });
+    toast({ title: "Restored original SEO \u2713", description: `Reverted meta tags for ${page.label}.` });
   };
 
   const saveToConfig = async (key: string, value: unknown) => {
@@ -375,7 +375,7 @@ const SEOTab = () => {
     } finally { setSaving(false); }
   };
 
-  // —— Computed ———————————————————————————————————————————————
+  // —— Computed ———————————————————————————————————————————
   const filteredPages = pages.filter((p) => {
     const q = searchQuery.toLowerCase();
     return (p.label.toLowerCase().includes(q) || p.slug.toLowerCase().includes(q)) && (statusFilter === "all" || p.status === statusFilter);
@@ -424,7 +424,7 @@ const SEOTab = () => {
         <button {...tabBtn("connect")}><Link2 className="w-3.5 h-3.5" /> Connect</button>
       </div>
 
-      {/* —— OVERVIEW ——————————————————————————————————————————— */}
+      {/* —— OVERVIEW ——————————————————————————————————————— */}
       {activeTab === "overview" && (
         <div className="space-y-6">
           {/* Lighthouse Scores */}
@@ -581,7 +581,7 @@ const SEOTab = () => {
         </div>
       )}
 
-      {/* —— PAGES —————————————————————————————————————————————— */}
+      {/* —— PAGES ————————————————————————————————————————— */}
       {activeTab === "pages" && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -672,7 +672,7 @@ const SEOTab = () => {
               {filteredPages.length > 10 && (
                 <div className="flex justify-center py-3 border-t" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
                   <button onClick={() => setShowAllPages(v => !v)} className="font-body text-xs font-medium flex items-center gap-1.5 hover:opacity-70 transition-opacity" style={{ color: "hsl(var(--admin-teal))" }}>
-                    {showAllPages ? "Show less ↑" : `Show all ${filteredPages.length} pages ↓`}
+                    {showAllPages ? "Show less \u2191" : `Show all ${filteredPages.length} pages \u2193`}
                   </button>
                 </div>
               )}
@@ -708,9 +708,9 @@ const SEOTab = () => {
                     {keywords.map((kw, idx) => (
                       <TableRow key={idx}>
                         <TableCell className="font-body font-medium" style={{ color: "hsl(var(--admin-text))" }}>{kw.keyword}</TableCell>
-                        <TableCell className="font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{kw.volume || "—"}</TableCell>
+                        <TableCell className="font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{kw.volume || "\u2014"}</TableCell>
                         <TableCell><Badge className={`border-0 text-xs font-body ${difficultyColors[kw.difficulty] || ""}`}>{kw.difficulty}</Badge></TableCell>
-                        <TableCell className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>{kw.notes || "—"}</TableCell>
+                        <TableCell className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>{kw.notes || "\u2014"}</TableCell>
                         <TableCell>
                           <Button size="icon" variant="ghost" onClick={() => removeKeyword(idx)}>
                             <Trash2 className="w-4 h-4 text-destructive" />
@@ -731,7 +731,7 @@ const SEOTab = () => {
         </div>
       )}
 
-      {/* —— CONNECT —————————————————————————————————————————————— */}
+      {/* —— CONNECT ————————————————————————————————————————— */}
       {activeTab === "connect" && (
         <div className="space-y-4">
           <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Each source unlocks more insight into how your site is performing.</p>
@@ -744,7 +744,7 @@ const SEOTab = () => {
                 <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-indigo))" }}
                   onClick={() => saveIntegration("gsc_url", gscUrl, "Google Search Console")}
                   disabled={integrationsSaving === "gsc_url"}>
-                  {integrationsSaving === "gsc_url" ? "Saving…" : "Save"}
+                  {integrationsSaving === "gsc_url" ? "Saving\u2026" : "Save"}
                 </Button>
                 <Button size="sm" variant="outline" className="gap-1.5 font-body text-xs" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
                   onClick={() => window.open("https://search.google.com/search-console", "_blank")}>
@@ -761,7 +761,7 @@ const SEOTab = () => {
                 <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-indigo))" }}
                   onClick={() => saveIntegration("ga4_id", ga4Id, "Google Analytics 4")}
                   disabled={integrationsSaving === "ga4_id"}>
-                  {integrationsSaving === "ga4_id" ? "Saving…" : "Save"}
+                  {integrationsSaving === "ga4_id" ? "Saving\u2026" : "Save"}
                 </Button>
                 <Button size="sm" variant="outline" className="gap-1.5 font-body text-xs" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
                   onClick={() => window.open("https://analytics.google.com", "_blank")}>
@@ -811,7 +811,7 @@ const SEOTab = () => {
         </div>
       )}
 
-      {/* —— EDIT DRAWER (outside tabs — always available) —————————— */}
+      {/* —— EDIT DRAWER (outside tabs — always available) —————————————— */}
       <Sheet open={!!editingPage} onOpenChange={(open) => { if (!open) setEditingPage(null); }}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto" style={{ background: "hsl(var(--admin-bg))" }}>
           {editingPage && (
@@ -858,7 +858,7 @@ const SEOTab = () => {
         </SheetContent>
       </Sheet>
 
-      {/* —— ADD KEYWORD DIALOG ——————————————————————————————————— */}
+      {/* —— ADD KEYWORD DIALOG ———————————————————————————————————————— */}
       <Dialog open={showAddKeyword} onOpenChange={setShowAddKeyword}>
         <DialogContent>
           <DialogHeader><DialogTitle className="font-body">Add Keyword Target</DialogTitle></DialogHeader>
