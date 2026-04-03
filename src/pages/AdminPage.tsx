@@ -14,6 +14,7 @@ import LocationsTab from "@/components/admin/LocationsTab";
 import SocialTab from "@/components/admin/SocialTab";
 import ReportsTab from "@/components/admin/ReportsTab";
 import ReviewsTab from "@/components/admin/ReviewsTab";
+import ClientOnboardingWizard from "@/components/admin/ClientOnboardingWizard";
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -34,6 +35,7 @@ const AdminPage = () => {
           {activeTab === "reports" && <ReportsTab />}
           {activeTab === "settings" && <SettingsTab />}
           {activeTab === "team" && <TeamTab />}
+          {activeTab === "client-setup" && <ClientOnboardingWizard />}
         </AdminLayout>
       </PlanProvider>
     </TenantProvider>
