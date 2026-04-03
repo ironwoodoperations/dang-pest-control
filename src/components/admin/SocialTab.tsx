@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye, Upload, Image, X, History, Settings, Check, Calendar, Layers, ChevronDown, ChevronRight, Zap, Pencil, Linkedin, Twitter } from "lucide-react";
 import PageHelpBanner from "./PageHelpBanner";
+import { FeatureGate } from './FeatureGate';
+import { usePlan } from './usePlan';
 
 interface SocialPost {
   id: string;
@@ -201,6 +203,7 @@ const SAMPLE_POSTS: SocialPost[] = [
 export default function SocialTab() {
   const { toast } = useToast();
   const { tenantId } = useTenant();
+  const { canAccess, loading: planLoading } = usePlan();
   const [posts, setPosts] = useState<SocialPost[]>(SAMPLE_POSTS);
   const [step, setStep] = useState<Step>("queue");
   const [topic, setTopic] = useState("");
@@ -575,6 +578,19 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
   const drafts = posts.filter((p) => p.status === "draft");
   const posted = posts.filter((p) => p.status === "posted");
 
+  // ── TIER-2 GATE ───────────────────────────────────────────────
+  if (planLoading) return null
+  if (!canAccess(2)) {
+    return (
+      <div className="space-y-6">
+        <PageHelpBanner tab="social" />
+        <FeatureGate minTier={2} featureName="Social Media Scheduler">
+          <div />
+        </FeatureGate>
+      </div>
+    )
+  }
+
   // ── FACEBOOK PREVIEW ──────────────────────────────────────────
   if (step === "facebook-preview") {
     return (
@@ -873,19 +889,21 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
               <p className="font-body text-xs mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>One post, one platform, right now</p>
             </div>
           </button>
-          <button
-            onClick={() => setStep("wizard-campaign-setup")}
-            className="flex flex-col items-center gap-3 p-6 rounded-2xl border-2 transition-all hover:shadow-lg"
-            style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-card-bg))" }}
-          >
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: "hsla(28,100%,50%,0.15)" }}>
-              <Calendar className="w-7 h-7" style={{ color: "hsl(28,100%,50%)" }} />
-            </div>
-            <div className="text-center">
-              <p className="font-body font-bold text-base" style={{ color: "hsl(var(--admin-text))" }}>Campaign</p>
-              <p className="font-body text-xs mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>AI-generated batch across multiple days</p>
-            </div>
-          </button>
+          <FeatureGate minTier={3} featureName="Campaign Batch Posting" compact>
+            <button
+              onClick={() => setStep("wizard-campaign-setup")}
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl border-2 transition-all hover:shadow-lg"
+              style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-card-bg))" }}
+            >
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: "hsla(28,100%,50%,0.15)" }}>
+                <Calendar className="w-7 h-7" style={{ color: "hsl(28,100%,50%)" }} />
+              </div>
+              <div className="text-center">
+                <p className="font-body font-bold text-base" style={{ color: "hsl(var(--admin-text))" }}>Campaign</p>
+                <p className="font-body text-xs mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>AI-generated batch across multiple days</p>
+              </div>
+            </button>
+          </FeatureGate>
         </div>
       </div>
     );
@@ -1087,9 +1105,11 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                 ))}
               </div>
             </div>
-            <Button onClick={handleGenerate} disabled={!topic.trim()} className="font-body gap-2 w-full" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
-              <Sparkles className="w-4 h-4" /> Generate Post with AI
-            </Button>
+            <FeatureGate minTier={3} featureName="AI Post Generation" compact>
+              <Button onClick={handleGenerate} disabled={!topic.trim()} className="font-body gap-2 w-full" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
+                <Sparkles className="w-4 h-4" /> Generate Post with AI
+              </Button>
+            </FeatureGate>
           </CardContent>
         </Card>
       </div>
@@ -1106,14 +1126,16 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
           <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Compose, schedule, and manage posts across all platforms.</p>
         </div>
         <div className="flex gap-2">
-          <Button
-            onClick={() => setShowConnections(true)}
-            variant="outline"
-            className="font-body gap-2"
-            style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
-          >
-            <Settings className="w-4 h-4" /> Connections
-          </Button>
+          <FeatureGate minTier={3} featureName="Social Media Connections" compact>
+            <Button
+              onClick={() => setShowConnections(true)}
+              variant="outline"
+              className="font-body gap-2"
+              style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
+            >
+              <Settings className="w-4 h-4" /> Connections
+            </Button>
+          </FeatureGate>
           <Button onClick={() => setShowHistory(!showHistory)} variant="outline" className="font-body gap-2" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}>
             <History className="w-4 h-4" /> {showHistory ? "Queue" : "History"}
           </Button>
@@ -1142,6 +1164,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
         ))}
       </div>
       {/* Posts History */}
+      <FeatureGate minTier={4} featureName="Social Analytics">
       {showHistory && (
         <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
           <CardHeader className="pb-2">
@@ -1175,6 +1198,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
           </CardContent>
         </Card>
       )}
+      </FeatureGate>
 
       <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
         <CardHeader className="pb-2">

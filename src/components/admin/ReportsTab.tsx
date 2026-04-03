@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FileText, Download, Mail, Loader2, Users, PenSquare, MapPin, MessageSquare, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PageHelpBanner from "./PageHelpBanner";
+import { FeatureGate } from './FeatureGate';
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -147,6 +148,7 @@ const ReportsTab = () => {
   return (
     <div className="space-y-6">
       <PageHelpBanner tab="reports" />
+      <FeatureGate minTier={2} featureName="Reports">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>Monthly Reports</h2>
@@ -254,6 +256,7 @@ const ReportsTab = () => {
           </div>
         </>
       )}
+      </FeatureGate>
     </div>
   );
 };

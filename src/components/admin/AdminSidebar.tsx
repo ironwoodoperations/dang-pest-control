@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit, MessageSquareQuote, BookOpen, MapPin, Share2, BarChart3 } from "lucide-react";
+import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit, MessageSquareQuote, BookOpen, MapPin, Share2, BarChart3, Lock } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -13,6 +13,14 @@ import {
 } from "@/components/ui/sidebar";
 import dangLogo from "@/assets/dang-logo.png";
 import { useHolidayMode } from "@/hooks/useHolidayMode";
+import { usePlan } from './usePlan';
+
+const GATED_TABS: Record<string, number> = {
+  blog: 2,
+  seo: 2,
+  social: 2,
+  reports: 2,
+};
 
 const mainNav = [
   { title: "Leads", value: "leads", icon: Users },
@@ -51,6 +59,7 @@ const NavGroup = ({
   activeColor,
   inactiveColor,
   activeBgColor,
+  canAccess,
 }: {
   label: string;
   items: typeof mainNav;
@@ -60,6 +69,7 @@ const NavGroup = ({
   activeColor: string;
   inactiveColor: string;
   activeBgColor: string;
+  canAccess: (minTier: number) => boolean;
 }) => (
   <SidebarGroup>
     {!collapsed && (
@@ -74,11 +84,13 @@ const NavGroup = ({
       <SidebarMenu>
         {items.map((item) => {
           const isActive = activeTab === item.value;
+          const requiredTier = GATED_TABS[item.value];
+          const locked = requiredTier ? !canAccess(requiredTier) : false;
           return (
             <SidebarMenuItem key={item.value}>
               <SidebarMenuButton
                 onClick={() => onTabChange(item.value)}
-                className="font-body text-[13px] rounded-md mx-1 px-2.5 py-1.5 h-8 transition-all duration-150"
+                className={`font-body text-[13px] rounded-md mx-1 px-2.5 py-1.5 h-8 transition-all duration-150 ${locked ? 'opacity-50' : ''}`}
                 style={{
                   background: isActive ? activeBgColor : "transparent",
                   color: isActive ? activeColor : inactiveColor,
@@ -86,7 +98,8 @@ const NavGroup = ({
                 }}
               >
                 <item.icon className="h-3.5 w-3.5 shrink-0" />
-                {!collapsed && <span className="ml-2.5">{item.title}</span>}
+                {!collapsed && <span className="ml-2.5 flex-1 text-left">{item.title}</span>}
+                {!collapsed && locked && <Lock className="w-3.5 h-3.5 shrink-0" />}
               </SidebarMenuButton>
             </SidebarMenuItem>
           );
@@ -100,6 +113,7 @@ export function AdminSidebar({ activeTab, onTabChange, userEmail, companyName, o
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { enabled: holidayOn } = useHolidayMode();
+  const { canAccess } = usePlan();
 
   const activeColor = holidayOn ? "hsl(0, 80%, 55%)" : "hsl(var(--admin-teal))";
   const activeBgColor = holidayOn ? "hsla(0, 80%, 55%, 0.15)" : "hsla(185, 100%, 35%, 0.15)";
@@ -128,9 +142,9 @@ export function AdminSidebar({ activeTab, onTabChange, userEmail, companyName, o
       </div>
 
       <SidebarContent className="py-1">
-        <NavGroup label="Overview" items={mainNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} activeColor={activeColor} inactiveColor={inactiveColor} activeBgColor={activeBgColor} />
-        <NavGroup label="Content" items={contentNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} activeColor={activeColor} inactiveColor={inactiveColor} activeBgColor={activeBgColor} />
-        <NavGroup label="System" items={systemNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} activeColor={activeColor} inactiveColor={inactiveColor} activeBgColor={activeBgColor} />
+        <NavGroup label="Overview" items={mainNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} activeColor={activeColor} inactiveColor={inactiveColor} activeBgColor={activeBgColor} canAccess={canAccess} />
+        <NavGroup label="Content" items={contentNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} activeColor={activeColor} inactiveColor={inactiveColor} activeBgColor={activeBgColor} canAccess={canAccess} />
+        <NavGroup label="System" items={systemNav} activeTab={activeTab} onTabChange={onTabChange} collapsed={collapsed} activeColor={activeColor} inactiveColor={inactiveColor} activeBgColor={activeBgColor} canAccess={canAccess} />
       </SidebarContent>
 
       <SidebarFooter className="border-t px-3 py-3" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>

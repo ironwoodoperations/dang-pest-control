@@ -21,6 +21,7 @@ import KeywordPowerBox from "@/components/admin/KeywordPowerBox";
 import PageHelpBanner from "./PageHelpBanner";
 import KeywordResearch from "./seo/KeywordResearch";
 import AIOTab from "./seo/AIOTab";
+import { FeatureGate } from './FeatureGate';
 
 // —— Types ————————————————————————————————————————————————————————————————
 
@@ -400,6 +401,7 @@ const SEOTab = () => {
   return (
     <div className="space-y-6">
       <PageHelpBanner tab="seo" />
+      <FeatureGate minTier={2} featureName="Full SEO Suite">
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -724,10 +726,14 @@ const SEOTab = () => {
             </CardContent>
           </Card>
 
-          <h3 className="font-body text-lg font-bold" style={{ color: "hsl(var(--admin-text))" }}>Keyword Research</h3>
-          <KeywordResearch onAddKeyword={(kw) => { const updated = [...keywords, { ...kw, keyword: kw.keyword }]; setKeywords(updated); saveToConfig("seo_keywords", updated); }} />
-          <KeywordPowerBox tenantId={tenantId} pages={pages} toast={toast} />
-          <AIOTab />
+          <FeatureGate minTier={3} featureName="AI Keyword Research">
+            <h3 className="font-body text-lg font-bold" style={{ color: "hsl(var(--admin-text))" }}>Keyword Research</h3>
+            <KeywordResearch onAddKeyword={(kw) => { const updated = [...keywords, { ...kw, keyword: kw.keyword }]; setKeywords(updated); saveToConfig("seo_keywords", updated); }} />
+            <KeywordPowerBox tenantId={tenantId} pages={pages} toast={toast} />
+          </FeatureGate>
+          <FeatureGate minTier={3} featureName="AIO Structured Data">
+            <AIOTab />
+          </FeatureGate>
         </div>
       )}
 
@@ -894,6 +900,7 @@ const SEOTab = () => {
           </div>
         </DialogContent>
       </Dialog>
+      </FeatureGate>
     </div>
   );
 };
