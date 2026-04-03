@@ -284,20 +284,6 @@ export default function DashboardTab() {
 
       <PageHelpBanner tab="dashboard" />
 
-      {/* Onboarding Banner */}
-      {!onboardingComplete && (
-        <button
-          onClick={() => navigate("/admin/onboarding")}
-          className="w-full text-left rounded-xl p-4 border-2 border-yellow-300 transition-colors hover:border-yellow-400"
-          style={{ background: "hsl(45, 95%, 92%)" }}
-        >
-          <p className="font-body text-sm font-semibold text-gray-800">
-            New here? Start with the Setup Wizard to get your site ready in 10 minutes.
-          </p>
-          <p className="font-body text-xs text-gray-500 mt-0.5">Click here to launch the guided setup &rarr;</p>
-        </button>
-      )}
-
       {/* Greeting */}
       <div>
         <h2 className="font-display text-2xl tracking-wide uppercase" style={{ color: "hsl(var(--admin-text))" }}>
