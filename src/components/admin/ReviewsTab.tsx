@@ -87,7 +87,7 @@ const ReviewsContent = () => {
   if (error) {
     return (
       <div className="text-center py-20 space-y-4">
-        <p className="font-body text-sm text-red-500">{error}</p>
+        <p className="font-body text-sm text-red-500">{error instanceof Error ? error.message : String(error)}</p>
         <Button variant="outline" size="sm" onClick={fetchReviews}>
           <RefreshCw className="w-4 h-4 mr-2" /> Retry
         </Button>
