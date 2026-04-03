@@ -1,4 +1,4 @@
-# Dang Pest Control — Session 14 Context
+# Dang Pest Control — Session 15 Context
 
 ## PROJECT OVERVIEW
 - **Live build:** https://dang-pest-control.vercel.app
@@ -192,13 +192,27 @@ src/pages/
 - **ScrollToTop** — `src/components/ScrollToTop.tsx` added and wired into App.tsx; fixes sticky page navigation on route change
 - **Mobile responsive — first pass** — QuotePage (grid-cols-1 sm:grid-cols-2, text-base inputs), SpiderControl template (all inline grids → responsive Tailwind), About page (intro grid responsive), Navbar (clamp paddingTop, mobile menu scrollable)
 
+### Session 14
+- **Mobile responsive — second pass (visual QA against live dangpestcontrol.com)**
+- Bugs identified via side-by-side screenshot comparison
+
+### Session 15
+- **Mobile polish pass 2 — all 7 bugs fixed:**
+  1. Process steps cards: inline `gridTemplateColumns: '1fr 1fr'` → responsive `grid grid-cols-1 sm:grid-cols-2 gap-6` across all 15+ service pages
+  2. Why Choose Us cards: inline `repeat(4, 1fr)` → responsive `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6` across all service pages
+  3. Footer nav: added `whitespace-nowrap` to all footer link elements
+  4. Demo seed leak: added `.neq('name', 'demo_seed')` to TestimonialsSection Supabase query
+  5. About page duplicate heading: changed second "About Us" h2 to "Family-Owned, Community-Driven"
+  6. Hero image hidden on mobile: changed HeroSection grid from inline `42fr 58fr` to `grid-cols-1 sm:grid-cols-[42fr_58fr]`
+  7. Navbar logo: replaced "DANG!" text fallback with actual logo `<img>` on mobile hero navbar
+- **Bonus fixes:** Section padding converted from fixed `40px` horizontal to `px-4 md:px-10` across all service/location pages; ReviewsPage, ServiceArea, BlogPage, ContactPage grids made responsive; jspdf dependency installed (was missing)
+
 ---
 
 ## PENDING — WHAT'S LEFT TO BUILD
 
 | Item | Priority | Notes |
 |---|---|---|
-| **Mobile polish — second pass** | High | First pass done, visual QA revealed more issues — start Session 14 here |
 | **Verify Resend live** | High | Submit real quote/contact form, confirm email arrives at info@dangpestcontrol.com |
 | Facebook token | Low | Social posting works in demo mode indefinitely |
 
