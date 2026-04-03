@@ -166,13 +166,13 @@ const WaspHornetControl = () => {
       {/* ══════════════════════════════════════════════════════
           INTRO — image left, text right
       ══════════════════════════════════════════════════════ */}
-      <section style={{
-        padding: '80px 40px 60px', maxWidth: '1200px', margin: '0 auto',
+      <section className="px-4 md:px-10" style={{
+        paddingTop: '80px', paddingBottom: '60px', maxWidth: '1200px', margin: '0 auto',
         background: '#ffffff',
         backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)',
         backgroundSize: '24px 24px',
       }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div style={{ border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
             <VideoImage
               src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/red-wasp.jpg"
@@ -213,7 +213,7 @@ const WaspHornetControl = () => {
       {/* ══════════════════════════════════════════════════════
           TREATMENT PROCESS — gray bg, 2×2 step grid
       ══════════════════════════════════════════════════════ */}
-      <section style={{ background: '#f1f1ef', padding: '70px 40px' }}>
+      <section className="px-4 md:px-10" style={{ background: '#f1f1ef', paddingTop: '70px', paddingBottom: '70px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{ textAlign: 'center', fontWeight: '800', fontSize: 'clamp(26px, 3vw, 40px)', marginBottom: '10px', marginTop: 0 }}>
             Expert Wasp & Hornet Control Service That Works
@@ -221,7 +221,7 @@ const WaspHornetControl = () => {
           <p style={{ textAlign: 'center', color: '#666', marginBottom: '50px', marginTop: 0 }}>
             Here's what you can expect from our wasp and hornet pest control services:
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {steps.map((step, i) => (
               <div key={i} style={{ background: '#fff', borderRadius: '8px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ padding: '24px 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
@@ -249,11 +249,11 @@ const WaspHornetControl = () => {
       {/* ══════════════════════════════════════════════════════
           WHY CHOOSE US — white bg, 4 gray cards
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '70px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '70px', maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '36px', marginTop: 0 }}>
           Why Choose Us?
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {whyCards.map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
@@ -267,8 +267,8 @@ const WaspHornetControl = () => {
       {/* ══════════════════════════════════════════════════════
           CALL US TODAY — text left, image right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0px', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
               Call Us Today to Solve Your Pest Problem
@@ -308,7 +308,7 @@ const WaspHornetControl = () => {
       {/* ══════════════════════════════════════════════════════
           FAQ
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '70px 40px 80px', maxWidth: '900px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '80px', maxWidth: '900px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '36px', marginTop: 0 }}>
           Frequently Asked Questions
         </h2>
@@ -323,7 +323,7 @@ const WaspHornetControl = () => {
       {/* ══════════════════════════════════════════════════════
           EAST TEXAS CTA — yellow diagonal section
       ══════════════════════════════════════════════════════ */}
-      <section style={{ position: 'relative', background: 'hsl(48, 100%, 50%)', padding: '100px 40px 90px', clipPath: 'polygon(0 9%, 100% 0, 100% 100%, 0 100%)', marginTop: '-30px', overflow: 'hidden' }}>
+      <section className="px-4 md:px-10" style={{ position: 'relative', background: 'hsl(48, 100%, 50%)', paddingTop: '100px', paddingBottom: '90px', clipPath: 'polygon(0 9%, 100% 0, 100% 100%, 0 100%)', marginTop: '-30px', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.12) 1.5px, transparent 1.5px)', backgroundSize: '18px 18px', pointerEvents: 'none' }} />
         <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: '820px', margin: '0 auto', paddingTop: '20px' }}>
           <h2 style={{ fontFamily: '"Bangers", cursive', fontSize: 'clamp(42px, 6vw, 76px)', fontStyle: 'italic', color: 'hsl(20, 40%, 12%)', letterSpacing: '0.04em', marginBottom: '24px', marginTop: 0, lineHeight: 1.1, textShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>

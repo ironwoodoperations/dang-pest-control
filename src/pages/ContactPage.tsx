@@ -79,7 +79,7 @@ const ContactPage = () => {
       </section>
 
       {/* FORM */}
-      <section style={{ padding: '60px 40px 80px', maxWidth: '700px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '60px', paddingBottom: '80px', maxWidth: '700px', margin: '0 auto' }}>
         {submitted ? (
           <div style={{ textAlign: 'center', padding: '60px 0' }}>
             <h2 style={{ fontWeight: '800', fontSize: '28px', marginBottom: '16px' }}>Message Sent!</h2>
@@ -88,12 +88,12 @@ const ContactPage = () => {
         ) : (
           <form onSubmit={handleSubmit}>
             {/* Row 1 */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginBottom: '16px' }}>
               <input style={inputStyle} type="text" placeholder="First Name*" required value={form.firstName} onChange={e => setForm({...form, firstName: e.target.value})} />
               <input style={inputStyle} type="text" placeholder="Last Name*" required value={form.lastName} onChange={e => setForm({...form, lastName: e.target.value})} />
             </div>
             {/* Row 2 */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginBottom: '16px' }}>
               <input style={inputStyle} type="tel" placeholder="Phone*" required value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
               <input style={inputStyle} type="email" placeholder="Email*" required value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
             </div>
@@ -102,7 +102,7 @@ const ContactPage = () => {
               <input style={inputStyle} type="text" placeholder="Address*" required value={form.address} onChange={e => setForm({...form, address: e.target.value})} />
             </div>
             {/* City / State */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginBottom: '16px' }}>
               <input style={inputStyle} type="text" placeholder="City*" required value={form.city} onChange={e => setForm({...form, city: e.target.value})} />
               <input style={inputStyle} type="text" placeholder="State*" required value={form.state} onChange={e => setForm({...form, state: e.target.value})} />
             </div>

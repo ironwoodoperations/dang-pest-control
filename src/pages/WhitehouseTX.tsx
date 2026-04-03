@@ -43,8 +43,8 @@ const WhitehouseTX = () => {
       </section>
 
       {/* INTRO */}
-      <section style={{ padding: '80px 40px 60px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '80px', paddingBottom: '60px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div style={{ border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
             <img loading="lazy" width={600} height={400} src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Interior-Attic-Inspectoin-scaled-e1746809087231.jpg" alt="Pest Inspection and Control Treatment Services in Whitehouse TX" style={{ width: '100%', display: 'block' }} />
           </div>
@@ -70,14 +70,14 @@ const WhitehouseTX = () => {
       </section>
 
       {/* SERVICES */}
-      <section style={{ padding: '60px 40px 0', background: '#f3f3f1' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '60px', paddingBottom: '0', background: '#f3f3f1' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(24px, 2.5vw, 36px)', textAlign: 'center', marginBottom: '16px', marginTop: 0 }}>Comprehensive Pest Control Services</h2>
           <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', textAlign: 'center', marginBottom: '16px', marginTop: 0 }}>
             We specialize in eliminating and preventing a wide range of pests that thrive in East Texas. Whether you're dealing with disease-carrying pests, destructive termites, or pesky mosquitos, our expert technicians have you covered.
           </p>
           <h3 style={{ fontWeight: '800', fontSize: 'clamp(20px, 2vw, 28px)', textAlign: 'center', marginBottom: '40px', marginTop: '24px' }}>Our Services Include</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '40px 30px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {services.map((s, i) => (
               <a key={i} href={s.href} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <img loading="lazy" width={120} height={120} src={s.img} alt={s.title.replace('\n', ' ')} style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '4px', marginBottom: '14px', display: 'block' }} />
@@ -95,14 +95,14 @@ const WhitehouseTX = () => {
       </section>
 
       {/* WHY CHOOSE US */}
-      <section style={{ padding: '70px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '70px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '40px', alignItems: 'center', marginBottom: '36px' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', margin: 0 }}>Why Choose Dang Pest Control?</h2>
           <p style={{ fontSize: '16px', color: '#444', lineHeight: 1.7, margin: 0 }}>
             When it comes to protecting your home or business, you need a partner you can trust. Here's why Whitehouse, TX, homeowners and property managers rely on Dang Pest Control:
           </p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" style={{ marginBottom: '20px' }}>
           {whyCards.slice(0, 4).map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
@@ -111,7 +111,7 @@ const WhitehouseTX = () => {
             </div>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {whyCards.slice(4).map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
@@ -123,8 +123,8 @@ const WhitehouseTX = () => {
       </section>
 
       {/* CTA */}
-      <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
               Call Us Today &amp; Get Your Quote

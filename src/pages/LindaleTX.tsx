@@ -44,8 +44,8 @@ const LindaleTX = () => {
       </section>
 
       {/* INTRO */}
-      <section style={{ padding: '80px 40px 60px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '80px', paddingBottom: '60px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div style={{ border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
             <img loading="lazy" width={600} height={400} src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Interior-Sprayer-Crevice-Stove-1-scaled-e1746808347179.jpg" alt="Expert Pest Control Service in Lindale TX" style={{ width: '100%', display: 'block' }} />
           </div>
@@ -69,13 +69,13 @@ const LindaleTX = () => {
       </section>
 
       {/* SERVICES */}
-      <section style={{ padding: '60px 40px 0', background: '#f3f3f1' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '60px', paddingBottom: '0', background: '#f3f3f1' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(24px, 2.5vw, 36px)', textAlign: 'center', marginBottom: '16px', marginTop: 0 }}>Services We Offer</h2>
           <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', textAlign: 'center', marginBottom: '40px', marginTop: 0 }}>
             Whatever pest problem you're facing, Dang Pest Control has the expertise and tools to handle it. Our comprehensive services include:
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '40px 30px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {services.map((s, i) => (
               <a key={i} href={s.href} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <img loading="lazy" width={120} height={120} src={s.img} alt={s.title.replace('\n', ' ')} style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '4px', marginBottom: '14px', display: 'block' }} />
@@ -93,14 +93,14 @@ const LindaleTX = () => {
       </section>
 
       {/* WHY CHOOSE US */}
-      <section style={{ padding: '70px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '70px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '40px', alignItems: 'center', marginBottom: '36px' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', margin: 0 }}>Why Choose Dang Pest Control?</h2>
           <p style={{ fontSize: '16px', color: '#444', lineHeight: 1.7, margin: 0 }}>
             With years of experience serving Lindale, TX, and surrounding areas, Dang Pest Control stands out as a trusted leader in pest management. Here's why you can depend on us:
           </p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" style={{ marginBottom: '20px' }}>
           {whyCards.slice(0, 4).map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
@@ -109,7 +109,7 @@ const LindaleTX = () => {
             </div>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {whyCards.slice(4).map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
@@ -121,8 +121,8 @@ const LindaleTX = () => {
       </section>
 
       {/* CTA — text left, dotted image right */}
-      <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
               Call Us Today or Get Your Free Quote

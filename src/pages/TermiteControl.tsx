@@ -130,8 +130,8 @@ const TermiteControl = () => {
         </div>
       </section>
 
-      <section style={{ padding: '80px 40px 60px', maxWidth: '1200px', margin: '0 auto', background: '#ffffff', backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '80px', paddingBottom: '60px', maxWidth: '1200px', margin: '0 auto', background: '#ffffff', backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div style={{ border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
             <VideoImage
               src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Interior-Bathroom-scaled-e1747162320401.jpg"
@@ -158,11 +158,11 @@ const TermiteControl = () => {
         </div>
       </section>
 
-      <section style={{ background: '#f1f1ef', padding: '70px 40px' }}>
+      <section className="px-4 md:px-10" style={{ background: '#f1f1ef', paddingTop: '70px', paddingBottom: '70px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{ textAlign: 'center', fontWeight: '800', fontSize: 'clamp(26px, 3vw, 40px)', marginBottom: '10px', marginTop: 0 }}>Our Termite Control Process</h2>
           <p style={{ textAlign: 'center', color: '#666', marginBottom: '50px', marginTop: 0 }}>Here's what you can expect from our termite control services:</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {steps.map((step, i) => (
               <div key={i} style={{ background: '#fff', borderRadius: '8px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ padding: '24px 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
@@ -185,7 +185,7 @@ const TermiteControl = () => {
         </div>
       </section>
 
-      <section style={{ padding: '70px 40px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '40px', maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>More About Termites</h2>
         <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '16px', color: '#444', marginTop: 0 }}>
           Termites are social insects that live in colonies. These colonies can grow quickly, causing substantial damage to wood structures, flooring, and even wallpaper. Here are the two most common types of termites in Texas that you should know about:
@@ -201,9 +201,9 @@ const TermiteControl = () => {
         <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '0', color: '#444', marginTop: '12px' }}>While termites can seem overwhelming, controlling them is a task best left to licensed pest control professionals. At Dang Pest Control, we use an Integrated Pest Management (IPM) approach for termite control.</p>
       </section>
 
-      <section style={{ padding: '40px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '40px', paddingBottom: '40px', maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '36px', marginTop: 0 }}>Why Choose Us?</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {whyCards.map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
@@ -214,7 +214,7 @@ const TermiteControl = () => {
         </div>
       </section>
 
-      <section style={{ padding: '0 40px 80px', maxWidth: '900px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0px', paddingBottom: '80px', maxWidth: '900px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '36px', marginTop: 0 }}>Frequently Asked Questions</h2>
         {faqs.map((faq, i) => (
           <div key={i} style={{ marginBottom: '28px' }}>
@@ -224,8 +224,8 @@ const TermiteControl = () => {
         ))}
       </section>
 
-      <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0px', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>More Than Termite Treatments</h2>
             <p style={{ fontSize: '15px', lineHeight: 1.8, marginBottom: '28px', color: '#444', marginTop: 0 }}>
@@ -248,7 +248,7 @@ const TermiteControl = () => {
         .termite-cta-quote { background: #fff !important; color: hsl(28,100%,50%) !important; border: 2px solid #fff !important; }
         .termite-cta-quote:hover { background: hsl(45,95%,52%) !important; color: #fff !important; }
       `}</style>
-      <section style={{ position: 'relative', background: 'hsl(28, 100%, 50%)', padding: '100px 40px 260px', clipPath: 'polygon(0 0, 100% 8%, 100% 100%, 0 100%)', overflow: 'hidden' }}>
+      <section className="px-4 md:px-10" style={{ position: 'relative', background: 'hsl(28, 100%, 50%)', paddingTop: '100px', paddingBottom: '260px', clipPath: 'polygon(0 0, 100% 8%, 100% 100%, 0 100%)', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.12) 1.5px, transparent 1.5px)', backgroundSize: '18px 18px', pointerEvents: 'none', zIndex: 0 }} />
         <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: '900px', margin: '0 auto' }}>
           <h2 style={{ fontFamily: '"Bangers", cursive', fontSize: 'clamp(36px, 5vw, 60px)', fontStyle: 'italic', color: 'hsl(45, 95%, 60%)', letterSpacing: '0.04em', marginBottom: '20px', marginTop: 0, lineHeight: 1.1, WebkitTextStroke: '3px #000000', textShadow: '3px 3px 0 #000000' }}>

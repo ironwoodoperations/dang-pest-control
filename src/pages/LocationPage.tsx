@@ -145,8 +145,8 @@ const LocationPage = () => {
         backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)',
         backgroundSize: '24px 24px',
       }}>
-        <div style={{ padding: '80px 40px', maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+        <div className="px-4 md:px-10" style={{ paddingTop: '80px', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
             <div style={{ border: '5px solid hsl(45, 95%, 60%)', borderRadius: '8px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
               <VideoImage
                 src={(location as any).intro_image_url || "/exterior-treatment.jpg"}
@@ -185,7 +185,7 @@ const LocationPage = () => {
       {/* ══════════════════════════════════════════════════════
           SECTION 3 — OUR SERVICES
       ══════════════════════════════════════════════════════ */}
-      <section style={{ background: '#f1f1ef', padding: '70px 40px' }}>
+      <section className="px-4 md:px-10" style={{ background: '#f1f1ef', paddingTop: '70px', paddingBottom: '70px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{
             fontFamily: '"Bangers", cursive',
@@ -233,12 +233,12 @@ const LocationPage = () => {
       {/* ══════════════════════════════════════════════════════
           SECTION 4 — WHY CHOOSE US (4 cards)
       ══════════════════════════════════════════════════════ */}
-      <section style={{ background: '#fff', padding: '70px 40px' }}>
+      <section className="px-4 md:px-10" style={{ background: '#fff', paddingTop: '70px', paddingBottom: '70px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', textAlign: 'center', marginBottom: '40px', marginTop: 0 }}>
             Why Choose Dang Pest Control?
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {whyCards.map((card, i) => (
               <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
                 <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
@@ -253,9 +253,10 @@ const LocationPage = () => {
       {/* ══════════════════════════════════════════════════════
           SECTION 5 — PROTECT YOUR HOME CTA
       ══════════════════════════════════════════════════════ */}
-      <section style={{
+      <section className="px-4 md:px-10" style={{
         background: 'hsl(28, 100%, 50%)',
-        padding: '80px 40px',
+        paddingTop: '80px',
+        paddingBottom: '80px',
         textAlign: 'center',
         position: 'relative',
         overflow: 'hidden',
@@ -306,7 +307,7 @@ const LocationPage = () => {
       {/* ══════════════════════════════════════════════════════
           SECTION 6 — WE ALSO SERVE
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '60px 40px', maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '60px', paddingBottom: '60px', maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
         <h3 style={{ fontFamily: '"Bangers", cursive', fontSize: '22px', marginBottom: '20px', marginTop: 0 }}>We Also Serve</h3>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '16px' }}>
           {allLocations

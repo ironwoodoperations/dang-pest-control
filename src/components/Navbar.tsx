@@ -208,10 +208,12 @@ const Navbar = () => {
             </div>
 
             {/* Mobile */}
+            <Link to="/" aria-label="Dang Pest Control home" className="md:hidden">
+              <img src={dangLogo} alt="Dang Pest Control" width={48} height={34} className="w-12 h-auto" />
+            </Link>
             <button className="md:hidden" aria-label={mobileOpen ? "Close menu" : "Open menu"} onClick={() => setMobileOpen(!mobileOpen)} style={{ color: 'hsl(20, 40%, 12%)' }}>
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
-            <span className="md:hidden text-comic text-lg" style={{ color: 'hsl(20, 40%, 12%)' }}>DANG!</span>
           </nav>
         </div>
 

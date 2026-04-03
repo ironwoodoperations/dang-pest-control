@@ -62,8 +62,8 @@ const BullardTX = () => {
       </section>
 
       {/* INTRO */}
-      <section style={{ padding: '80px 40px 60px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '80px', paddingBottom: '60px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div style={{ border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
             <img loading="lazy" width={600} height={400} src="https://www.dangpestcontrol.com/wp-content/uploads/2025/05/Interior-Pantry-Spraying-1-scaled-e1746808727305.jpg" alt="Pest Control Technician Providing Services in Bullard TX" style={{ width: '100%', display: 'block' }} />
           </div>
@@ -87,7 +87,7 @@ const BullardTX = () => {
       </section>
 
       {/* COMPREHENSIVE SERVICES */}
-      <section style={{ padding: '20px 40px 0', maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '20px', paddingBottom: '0', maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(24px, 2.5vw, 36px)', marginBottom: '16px', marginTop: 0 }}>Comprehensive Services Designed for You</h2>
         <p style={{ fontSize: '15px', lineHeight: 1.8, color: '#444', marginTop: 0, marginBottom: 0, maxWidth: '900px', margin: '0 auto' }}>
           East Texas has its charm, but it also attracts unwanted guests—pests. Whether you're facing a single ant trail or a major rodent infestation, Dang Pest Control is here to help. Our services are tailored to address and eliminate pests effectively while ensuring they don't return.
@@ -95,10 +95,10 @@ const BullardTX = () => {
       </section>
 
       {/* SERVICES GRID */}
-      <section style={{ padding: '40px 40px 0', background: '#f3f3f1', marginTop: '40px' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '40px', paddingBottom: '0', background: '#f3f3f1', marginTop: '40px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(24px, 2.5vw, 36px)', textAlign: 'center', marginBottom: '40px', marginTop: 0 }}>Our Services Include</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '40px 30px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {services.map((s, i) => (
               <a key={i} href={s.href} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <img loading="lazy" width={120} height={120} src={s.img} alt={s.title.replace('\n', ' ')} style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '4px', marginBottom: '14px', display: 'block' }} />
@@ -118,9 +118,9 @@ const BullardTX = () => {
       </section>
 
       {/* WHY CHOOSE US */}
-      <section style={{ padding: '70px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '70px', maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '36px', marginTop: 0 }}>Why Choose Dang Pest Control?</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" style={{ marginBottom: '20px' }}>
           {whyCards.slice(0, 4).map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
@@ -129,7 +129,7 @@ const BullardTX = () => {
             </div>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {whyCards.slice(4).map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
@@ -141,12 +141,12 @@ const BullardTX = () => {
       </section>
 
       {/* 3 STEPS */}
-      <section style={{ padding: '60px 40px', background: '#f3f3f1' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '60px', paddingBottom: '60px', background: '#f3f3f1' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(24px, 2.8vw, 38px)', textAlign: 'center', marginBottom: '48px', marginTop: 0 }}>
             Leave Pests Behind in 3 Simple Steps
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {steps.slice(0, 2).map((step, i) => (
               <div key={i} style={{ background: '#fff', borderRadius: '4px', padding: '28px 28px 0 28px', position: 'relative' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
@@ -166,7 +166,7 @@ const BullardTX = () => {
               </div>
             ))}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginTop: '32px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6" style={{ marginTop: '32px' }}>
             <div style={{ background: '#fff', borderRadius: '4px', padding: '28px 28px 0 28px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
                 <div style={{ background: steps[2].color, borderRadius: '6px', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '52px', height: '52px' }}>
@@ -191,7 +191,7 @@ const BullardTX = () => {
       </section>
 
       {/* FAQ */}
-      <section style={{ padding: '70px 40px', maxWidth: '900px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '70px', maxWidth: '900px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(24px, 2.5vw, 36px)', textAlign: 'center', marginBottom: '40px', marginTop: 0 }}>
           Frequently Asked Questions
         </h2>
@@ -214,8 +214,8 @@ const BullardTX = () => {
       </section>
 
       {/* CTA — text left, dotted image right */}
-      <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
               Your Trusted Partner in Pest Control

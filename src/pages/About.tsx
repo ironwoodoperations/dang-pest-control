@@ -98,7 +98,7 @@ const About = () => {
               marginBottom: '18px',
               marginTop: 0,
             }}>
-              About Us
+              Family-Owned, Community-Driven
             </h2>
             <p style={{ fontSize: '16px', lineHeight: 1.75, marginBottom: '16px', color: '#444', marginTop: 0 }}>
               We have been in the home services industry for over 15 years and love that our contribution to you is to bring peace and security to a place where you should feel the safest. At{' '}

@@ -95,8 +95,8 @@ const LongviewTX = () => {
       {/* ══════════════════════════════════════════════════════
           INTRO — image left, text right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '80px 40px 60px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '80px', paddingBottom: '60px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div style={{ border: '4px solid rgb(255, 213, 39)', borderRadius: '6px', overflow: 'hidden', boxShadow: '8px 8px 0 rgba(0,0,0,0.1)' }}>
             <img
               loading="lazy"
@@ -131,7 +131,7 @@ const LongviewTX = () => {
       {/* ══════════════════════════════════════════════════════
           SERVICES WE OFFER — L-bracket cards
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '60px 40px', background: '#f3f3f1' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '60px', paddingBottom: '60px', background: '#f3f3f1' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(24px, 2.5vw, 36px)', textAlign: 'center', marginBottom: '16px', marginTop: 0 }}>
             Services We Offer in Longview
@@ -140,7 +140,7 @@ const LongviewTX = () => {
             Our comprehensive pest control services are designed to target the pests unique to the East Texas environment and prevent their return. Whether you're dealing with dangerous pests like scorpions or disease-carrying mosquitos, our skilled technicians will create a customized treatment plan to solve your problem.
           </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {serviceCards.map((card, i) => (
               <a key={i} href={card.href} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div style={{ background: '#fff', borderRadius: '4px', padding: '28px 28px 0 28px', position: 'relative' }}>
@@ -181,14 +181,14 @@ const LongviewTX = () => {
       {/* ══════════════════════════════════════════════════════
           WHY CHOOSE DANG PEST CONTROL — 7 cards (4+3)
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '70px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '70px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '40px', alignItems: 'center', marginBottom: '36px' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', margin: 0 }}>Why Choose Dang Pest Control?</h2>
           <p style={{ fontSize: '16px', color: '#444', lineHeight: 1.7, margin: 0 }}>
             When it comes to protecting your home and family, you deserve a service you can rely on. Here's what sets us apart from the rest:
           </p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" style={{ marginBottom: '20px' }}>
           {whyCards.slice(0, 4).map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
@@ -197,7 +197,7 @@ const LongviewTX = () => {
             </div>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {whyCards.slice(4).map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />
@@ -211,8 +211,8 @@ const LongviewTX = () => {
       {/* ══════════════════════════════════════════════════════
           PROTECT YOUR HOME — text left, dotted image right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
               Protect Your Home with Confidence

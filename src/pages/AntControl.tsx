@@ -171,20 +171,16 @@ const AntControl = () => {
       {/* ══════════════════════════════════════════════════════
           INTRO — image left, text right
       ══════════════════════════════════════════════════════ */}
-      <section style={{
-        padding: '80px 40px 60px',
+      <section className="px-4 md:px-10" style={{
+        paddingTop: '80px',
+        paddingBottom: '60px',
         maxWidth: '1200px',
         margin: '0 auto',
         background: '#ffffff',
         backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)',
         backgroundSize: '24px 24px',
       }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '60px',
-          alignItems: 'center',
-        }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div style={{
             border: '4px solid rgb(255, 213, 39)',
             borderRadius: '6px',
@@ -269,7 +265,7 @@ const AntControl = () => {
       {/* ══════════════════════════════════════════════════════
           TREATMENT PROCESS — gray bg, 2×2 step grid
       ══════════════════════════════════════════════════════ */}
-      <section style={{ background: '#f1f1ef', padding: '70px 40px' }}>
+      <section className="px-4 md:px-10" style={{ background: '#f1f1ef', paddingTop: '70px', paddingBottom: '70px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{
             textAlign: 'center',
@@ -284,7 +280,7 @@ const AntControl = () => {
             Here's what you can expect from our ant pest control services:
           </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {steps.map((step, i) => (
               <div
                 key={i}
@@ -372,7 +368,7 @@ const AntControl = () => {
       {/* ══════════════════════════════════════════════════════
           FIRE ANT TREATMENT & PREVENTION
       ══════════════════════════════════════════════════════ */}
-      <section style={{ background: 'white', padding: '70px 40px' }}>
+      <section className="px-4 md:px-10" style={{ background: 'white', paddingTop: '70px', paddingBottom: '70px' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(24px, 3vw, 36px)', marginBottom: '20px', marginTop: 0 }}>
             Fire Ant Treatment & Prevention
@@ -415,11 +411,11 @@ const AntControl = () => {
       {/* ══════════════════════════════════════════════════════
           WHY CHOOSE US — white bg, 4 gray cards
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '70px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '70px', maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '36px', marginTop: 0 }}>
           Why Choose Us?
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {whyCards.map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img
@@ -440,8 +436,8 @@ const AntControl = () => {
       {/* ══════════════════════════════════════════════════════
           MORE THAN ANT CONTROL — text left, dotted image right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0px', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
               More Than Just Ant Control
@@ -547,7 +543,7 @@ const AntControl = () => {
       {/* ══════════════════════════════════════════════════════
           FAQ
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '70px 40px 80px', maxWidth: '900px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '80px', maxWidth: '900px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '36px', marginTop: 0 }}>
           Frequently Asked Questions
         </h2>

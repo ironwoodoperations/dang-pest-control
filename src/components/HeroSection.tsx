@@ -52,10 +52,9 @@ const HeroSection = ({ dynamicVideoUrl, dynamicVideoType, videoStart, videoEnd }
       className="hero-bg text-white relative overflow-hidden"
       style={{ paddingTop: '60px', paddingBottom: '140px' }}
     >
-      <div className="mx-auto max-w-[1100px] px-12 relative z-10">
+      <div className="mx-auto max-w-[1100px] px-6 sm:px-12 relative z-10">
         <div
-          className="grid items-center"
-          style={{ gridTemplateColumns: '42fr 58fr', gap: '40px' }}
+          className="grid grid-cols-1 sm:grid-cols-[42fr_58fr] items-center gap-8 sm:gap-10"
         >
           {/* Left: text */}
           <div>

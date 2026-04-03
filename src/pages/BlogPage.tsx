@@ -131,7 +131,7 @@ const BlogPage = () => {
               Recent Blog Posts
             </h2>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '36px' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6" style={{ marginBottom: '36px' }}>
               {pagePosts.map((post, i) => (
                 <a
                   key={i}

@@ -181,13 +181,8 @@ const MosquitoControl = () => {
       {/* ══════════════════════════════════════════════════════
           INTRO — image left, text right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '80px 40px 60px', maxWidth: '1200px', margin: '0 auto', background: '#ffffff', backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '60px',
-          alignItems: 'center',
-        }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '80px', paddingBottom: '60px', maxWidth: '1200px', margin: '0 auto', background: '#ffffff', backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           {/* Mosquito photo */}
           <div style={{
             border: '4px solid rgb(255, 213, 39)',
@@ -274,7 +269,7 @@ const MosquitoControl = () => {
       {/* ══════════════════════════════════════════════════════
           TREATMENT PROCESS — gray bg, 2×2 step grid
       ══════════════════════════════════════════════════════ */}
-      <section style={{ background: '#f1f1ef', padding: '70px 40px' }}>
+      <section className="px-4 md:px-10" style={{ background: '#f1f1ef', paddingTop: '70px', paddingBottom: '70px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{
             textAlign: 'center',
@@ -289,11 +284,7 @@ const MosquitoControl = () => {
             Here's what you can expect from our mosquito treatment process:
           </p>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '28px',
-          }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {steps.map((step, i) => (
               <div
                 key={i}
@@ -368,12 +359,8 @@ const MosquitoControl = () => {
       {/* ══════════════════════════════════════════════════════
           IN2CARE STATIONS — text left, video right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '70px 40px 0', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '50px',
-          alignItems: 'center',
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '0', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center" style={{
           marginBottom: '60px',
         }}>
           <div>
@@ -412,11 +399,7 @@ const MosquitoControl = () => {
         </div>
 
         {/* ── MISTING — image left, text right ── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '50px',
-          alignItems: 'center',
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center" style={{
           marginBottom: '50px',
         }}>
           {/* Misting photo */}
@@ -477,13 +460,9 @@ const MosquitoControl = () => {
       {/* ══════════════════════════════════════════════════════
           WHY CHOOSE US — white bg, 4 gray cards
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 40px 70px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0', paddingBottom: '70px', maxWidth: '1200px', margin: '0 auto' }}>
         {/* Header row */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 2fr',
-          gap: '40px',
-          alignItems: 'center',
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center" style={{
           marginBottom: '36px',
         }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', margin: 0 }}>
@@ -495,11 +474,7 @@ const MosquitoControl = () => {
         </div>
 
         {/* 4 cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '20px',
-        }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {whyCards.map((card, i) => (
             <div
               key={i}
@@ -527,7 +502,7 @@ const MosquitoControl = () => {
       {/* ══════════════════════════════════════════════════════
           PROTECT HOME & FAMILY — full-width text block
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 40px 60px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0', paddingBottom: '60px', maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
           Protect Your Home &amp; Family from Mosquitos
         </h2>
@@ -572,13 +547,8 @@ const MosquitoControl = () => {
       {/* ══════════════════════════════════════════════════════
           GET YOUR QUOTE TODAY — text left, dotted image right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '20px 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '60px',
-          alignItems: 'center',
-        }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '20px', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           {/* Text */}
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
@@ -653,7 +623,7 @@ const MosquitoControl = () => {
       {/* ══════════════════════════════════════════════════════
           FAQ
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 40px 80px', maxWidth: '900px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0', paddingBottom: '80px', maxWidth: '900px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '36px', marginTop: 0 }}>
           Frequently Asked Questions
         </h2>
@@ -669,10 +639,12 @@ const MosquitoControl = () => {
           EAST TEXAS CTA — yellow diagonal section
       ══════════════════════════════════════════════════════ */}
       <section
+        className="px-4 md:px-10"
         style={{
           position: 'relative',
           background: 'hsl(48, 100%, 50%)',
-          padding: '100px 40px 90px',
+          paddingTop: '100px',
+          paddingBottom: '90px',
           clipPath: 'polygon(0 9%, 100% 0, 100% 100%, 0 100%)',
           marginTop: '-30px',
           overflow: 'hidden',

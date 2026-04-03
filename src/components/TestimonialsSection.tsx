@@ -39,6 +39,7 @@ const TestimonialsSection = () => {
         .from("testimonials")
         .select("id, name, title, text, rating")
         .eq("is_featured", true)
+        .neq("name", "demo_seed")
         .order("sort_order", { ascending: true })
         .then(({ data }) => {
           if (data && data.length > 0) setTestimonials(data);

@@ -138,7 +138,7 @@ const ReviewsPage = () => {
       </section>
 
       {/* REVIEWS SECTION */}
-      <section style={{ padding: '60px 40px 80px', maxWidth: '1300px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '60px', paddingBottom: '80px', maxWidth: '1300px', margin: '0 auto' }}>
 
         {/* Header row */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '36px', flexWrap: 'wrap', gap: '16px' }}>
@@ -184,7 +184,7 @@ const ReviewsPage = () => {
 
         {/* Loading skeleton */}
         {loading && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: '32px' }}>
             {[...Array(4)].map((_, i) => (
               <div key={i} style={{ background: '#f3f3f1', borderRadius: '10px', padding: '20px', height: '180px', animation: 'pulse 1.5s infinite' }} />
             ))}
@@ -193,7 +193,7 @@ const ReviewsPage = () => {
 
         {/* Review cards grid */}
         {!loading && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: '32px' }}>
             {visibleReviews.map((review, i) => (
               <div key={i} style={{ background: '#f3f3f1', borderRadius: '10px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>

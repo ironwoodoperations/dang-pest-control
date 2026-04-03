@@ -114,13 +114,8 @@ const TermiteInspections = () => {
       {/* ══════════════════════════════════════════════════════
           INTRO — image left, text right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '80px 40px 60px', maxWidth: '1200px', margin: '0 auto', background: '#ffffff', backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '60px',
-          alignItems: 'center',
-        }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '80px', paddingBottom: '60px', maxWidth: '1200px', margin: '0 auto', background: '#ffffff', backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div style={{
             border: '4px solid rgb(255, 213, 39)',
             borderRadius: '6px',
@@ -205,7 +200,7 @@ const TermiteInspections = () => {
       {/* ══════════════════════════════════════════════════════
           COMPREHENSIVE TERMITE INSPECTIONS
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '70px 40px 0', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '0', maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
           Comprehensive Termite Inspections
         </h2>
@@ -217,13 +212,8 @@ const TermiteInspections = () => {
       {/* ══════════════════════════════════════════════════════
           IDENTIFYING TERMITES — text left, image right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '50px 40px 0', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '60px',
-          alignItems: 'center',
-        }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '50px', paddingBottom: '0', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
               Identifying Termites
@@ -278,7 +268,7 @@ const TermiteInspections = () => {
       {/* ══════════════════════════════════════════════════════
           SIGNS OF A TERMITE INFESTATION
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '50px 40px 0', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '50px', paddingBottom: '0', maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
           Signs of a Termite Infestation
         </h2>
@@ -304,7 +294,7 @@ const TermiteInspections = () => {
       {/* ══════════════════════════════════════════════════════
           PROFESSIONAL TERMITE INSPECTIONS — text + CTA
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '50px 40px 0', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '50px', paddingBottom: '0', maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(22px, 2.5vw, 34px)', marginBottom: '18px', marginTop: 0 }}>
           Professional Termite Inspections
         </h2>
@@ -331,7 +321,7 @@ const TermiteInspections = () => {
       {/* ══════════════════════════════════════════════════════
           WHY CHOOSE US — white bg, 5 gray cards
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '70px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '70px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 2fr',
@@ -347,11 +337,7 @@ const TermiteInspections = () => {
           </p>
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(5, 1fr)',
-          gap: '20px',
-        }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {whyCards.map((card, i) => (
             <div
               key={i}
@@ -379,13 +365,8 @@ const TermiteInspections = () => {
       {/* ══════════════════════════════════════════════════════
           CALL US TODAY — text left, dotted image right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '60px',
-          alignItems: 'center',
-        }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
               Call Us Today &amp; Protect What Matters

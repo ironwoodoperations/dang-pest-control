@@ -95,13 +95,8 @@ const ServiceArea = () => {
       {/* ══════════════════════════════════════════════════════
           CITY GRID
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '60px 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '40px 20px',
-          textAlign: 'center',
-        }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '60px', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10" style={{ textAlign: 'center' }}>
           {cities.map((city) => {
             const slug = cityToSlug(city);
             const isLive = liveSlugs.has(slug);

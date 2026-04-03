@@ -188,20 +188,16 @@ const RodentControl = () => {
       {/* ══════════════════════════════════════════════════════
           INTRO — image left, text right
       ══════════════════════════════════════════════════════ */}
-      <section style={{
-        padding: '80px 40px 60px',
+      <section className="px-4 md:px-10" style={{
+        paddingTop: '80px',
+        paddingBottom: '60px',
         maxWidth: '1200px',
         margin: '0 auto',
         background: '#ffffff',
         backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)',
         backgroundSize: '24px 24px',
       }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '60px',
-          alignItems: 'center',
-        }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           {/* Rodent photo */}
           <div style={{
             border: '4px solid rgb(255, 213, 39)',
@@ -290,7 +286,7 @@ const RodentControl = () => {
       {/* ══════════════════════════════════════════════════════
           TREATMENT PROCESS — gray bg, 2×2 step grid
       ══════════════════════════════════════════════════════ */}
-      <section style={{ background: '#f1f1ef', padding: '70px 40px' }}>
+      <section className="px-4 md:px-10" style={{ background: '#f1f1ef', paddingTop: '70px', paddingBottom: '70px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{
             textAlign: 'center',
@@ -305,11 +301,7 @@ const RodentControl = () => {
             Here's what you can expect from our rodent pest control services:
           </p>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '28px',
-          }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {steps.map((step, i) => (
               <div
                 key={i}
@@ -429,16 +421,12 @@ const RodentControl = () => {
       {/* ══════════════════════════════════════════════════════
           WHY CHOOSE US — white bg, 4 gray cards
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '70px 40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '70px', maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '36px', marginTop: 0 }}>
           Why Choose Us?
         </h2>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '20px',
-        }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {whyCards.map((card, i) => (
             <div
               key={i}
@@ -466,13 +454,8 @@ const RodentControl = () => {
       {/* ══════════════════════════════════════════════════════
           MORE THAN RODENT CONTROL — text left, dotted image right
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 40px 80px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '60px',
-          alignItems: 'center',
-        }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '0', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
             <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '20px', marginTop: 0 }}>
               More Than Rodent Control
@@ -553,7 +536,7 @@ const RodentControl = () => {
         .rodent-cta-quote { background: #fff !important; color: hsl(28,100%,50%) !important; border: 2px solid #fff !important; }
         .rodent-cta-quote:hover { background: hsl(45,95%,52%) !important; color: #fff !important; }
       `}</style>
-      <section style={{ position: 'relative', background: 'hsl(28, 100%, 50%)', padding: '100px 40px 260px', clipPath: 'polygon(0 0, 100% 8%, 100% 100%, 0 100%)', overflow: 'hidden' }}>
+      <section className="px-4 md:px-10" style={{ position: 'relative', background: 'hsl(28, 100%, 50%)', paddingTop: '100px', paddingBottom: '260px', clipPath: 'polygon(0 0, 100% 8%, 100% 100%, 0 100%)', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.12) 1.5px, transparent 1.5px)', backgroundSize: '18px 18px', pointerEvents: 'none', zIndex: 0 }} />
         <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: '900px', margin: '0 auto' }}>
           <h2 style={{ fontFamily: '"Bangers", cursive', fontSize: 'clamp(36px, 5vw, 60px)', fontStyle: 'italic', color: 'hsl(45, 95%, 60%)', letterSpacing: '0.04em', marginBottom: '20px', marginTop: 0, lineHeight: 1.1, WebkitTextStroke: '3px #000000', textShadow: '3px 3px 0 #000000' }}>
@@ -575,7 +558,7 @@ const RodentControl = () => {
       {/* ══════════════════════════════════════════════════════
           FAQ
       ══════════════════════════════════════════════════════ */}
-      <section style={{ padding: '70px 40px 80px', maxWidth: '900px', margin: '0 auto' }}>
+      <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '80px', maxWidth: '900px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', marginBottom: '36px', marginTop: 0 }}>
           Frequently Asked Questions
         </h2>
@@ -591,10 +574,12 @@ const RodentControl = () => {
           EAST TEXAS CTA — yellow diagonal section
       ══════════════════════════════════════════════════════ */}
       <section
+        className="px-4 md:px-10"
         style={{
           position: 'relative',
           background: 'hsl(48, 100%, 50%)',
-          padding: '100px 40px 90px',
+          paddingTop: '100px',
+          paddingBottom: '90px',
           clipPath: 'polygon(0 9%, 100% 0, 100% 100%, 0 100%)',
           marginTop: '-30px',
           overflow: 'hidden',
