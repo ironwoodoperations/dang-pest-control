@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye, Upload, Image, X, History, Settings, Check } from "lucide-react";
+import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye, Upload, Image, X, History, Settings, Check, Calendar, Layers, ChevronDown, ChevronRight, Zap, Pencil, Linkedin, Twitter } from "lucide-react";
 import PageHelpBanner from "./PageHelpBanner";
 
 interface SocialPost {
@@ -145,7 +145,7 @@ const TEMPLATES = [
   },
 ];
 
-type Step = "queue" | "wizard-topic" | "wizard-generating" | "wizard-review" | "wizard-template" | "wizard-schedule" | "wizard-confirm" | "facebook-preview";
+type Step = "queue" | "wizard-topic" | "wizard-generating" | "wizard-review" | "wizard-template" | "wizard-schedule" | "wizard-confirm" | "facebook-preview" | "wizard-type-select" | "wizard-campaign-setup" | "wizard-campaign-generating" | "wizard-campaign-review";
 
 const SvgCard = ({ templateId, caption, size = 200 }: { templateId: string; caption: string; size?: number }) => {
   const t = TEMPLATES.find((t) => t.id === templateId);
@@ -221,6 +221,15 @@ export default function SocialTab() {
   const [ayrshareProfileKey, setAyrshareProfileKey] = useState("");
   const [connTab, setConnTab] = useState<"export" | "diy" | "buffer" | "ayrshare">("export");
   const [connSaving, setConnSaving] = useState(false);
+
+  // Campaign state
+  const [campaignTopic, setCampaignTopic] = useState('')
+  const [campaignDuration, setCampaignDuration] = useState<1|7|14|30>(7)
+  const [campaignPlatforms, setCampaignPlatforms] = useState<string[]>(['facebook'])
+  const [campaignTitle, setCampaignTitle] = useState('')
+  const [campaignPosts, setCampaignPosts] = useState<Array<{day:number,platform:string,caption:string,hashtags:string,image_prompt:string}>>([])
+  const [campaignSummary, setCampaignSummary] = useState('')
+  const [expandedCampaigns, setExpandedCampaigns] = useState<Set<string>>(new Set())
 
   // Load integration settings
   useEffect(() => {
@@ -436,6 +445,131 @@ export default function SocialTab() {
     setSelectedPlatforms(["facebook", "instagram"]); setScheduledAt("");
     setPreviewPost(null); setStep("queue");
   };
+
+  const loadPosts = () => {
+    if (!tenantId) return;
+    supabase.from("social_posts" as any).select("*").eq("tenant_id", tenantId).order("created_at", { ascending: false }).then(({ data }) => {
+      if (data) setPostHistory(data);
+    });
+  };
+
+  async function generateCampaign() {
+    const postCount = campaignDuration === 1 ? 2
+      : campaignDuration === 7 ? 14
+      : campaignDuration === 14 ? 28
+      : 30
+
+    const rotation: string[] = []
+    for (let i = 0; i < postCount; i++) {
+      rotation.push(campaignPlatforms[i % campaignPlatforms.length])
+    }
+
+    const getDay = (i: number): number => {
+      if (campaignDuration === 1) return 1
+      if (campaignDuration === 30) return i + 1
+      return Math.floor(i / 2) + 1
+    }
+
+    const prompt = `You are a social media content expert for a pest control company called Dang Pest Control.
+
+Generate exactly ${postCount} social media posts for a campaign.
+Campaign title: "${campaignTitle}"
+Campaign topic: "${campaignTopic}"
+Duration: ${campaignDuration} day(s)
+Platforms in rotation: ${rotation.join(', ')}
+
+Return ONLY a valid JSON array. No explanation, no markdown, no code fences. Just the raw JSON array.
+
+Each object must have exactly these fields:
+- day: number (which day of the campaign, 1-based)
+- platform: string (the platform for this post — use the rotation order provided)
+- caption: string (the post text, appropriate length for the platform)
+- hashtags: string (space-separated hashtags, 3-6 tags)
+- image_prompt: string (a one-sentence description of an image that would accompany this post)
+
+Rotation order for posts 1 through ${postCount}:
+${rotation.map((p, i) => `Post ${i+1}: day ${getDay(i)}, platform: ${p}`).join('\n')}
+
+Make the captions varied, engaging, and specific to pest control services. Avoid repetition across posts.`
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY || '',
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 4000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      })
+      const data = await response.json()
+      const text = data.content?.[0]?.text || '[]'
+      const cleaned = text.replace(/```json|```/g, '').trim()
+      const parsed = JSON.parse(cleaned)
+      setCampaignPosts(parsed)
+      setCampaignSummary(`${parsed.length} posts across ${campaignDuration} day(s)`)
+      setStep('wizard-campaign-review')
+    } catch (err) {
+      console.error('Campaign generation failed', err)
+      setStep('wizard-campaign-setup')
+      alert('Generation failed. Please try again.')
+    }
+  }
+
+  async function confirmCampaign() {
+    const campTenantId = tenantId || '1282b822-825b-4713-9dc9-6d14a2094d06'
+    const today = new Date()
+
+    const getDay = (i: number): number => {
+      if (campaignDuration === 1) return 1
+      if (campaignDuration === 30) return i + 1
+      return Math.floor(i / 2) + 1
+    }
+
+    const getHour = (i: number): number => {
+      if (campaignDuration === 30) return 9
+      if (campaignDuration === 1) return i === 0 ? 9 : 14
+      return i % 2 === 0 ? 9 : 14
+    }
+
+    const rows = campaignPosts.map((post, i) => {
+      const dayOffset = getDay(i) - 1
+      const hour = getHour(i)
+      const scheduledAt = new Date(today)
+      scheduledAt.setDate(today.getDate() + dayOffset)
+      scheduledAt.setHours(hour + 6, 0, 0, 0)
+      return {
+        tenant_id: campTenantId,
+        platform: post.platform,
+        content: `${post.caption}\n\n${post.hashtags}`,
+        hashtags: post.hashtags.split(' ').filter(Boolean),
+        scheduled_at: scheduledAt.toISOString(),
+        status: 'draft',
+        ai_generated: true,
+        campaign_title: campaignTitle,
+      }
+    })
+
+    const { error } = await supabase.from('social_posts' as any).insert(rows)
+    if (error) {
+      alert('Failed to save campaign. Please try again.')
+      return
+    }
+
+    setCampaignTopic('')
+    setCampaignTitle('')
+    setCampaignDuration(7)
+    setCampaignPlatforms(['facebook'])
+    setCampaignPosts([])
+    setStep('queue')
+    loadPosts()
+    alert(`✅ ${rows.length} posts scheduled across ${campaignDuration} day(s)!`)
+  }
 
   const scheduled = posts.filter((p) => p.status === "scheduled");
   const drafts = posts.filter((p) => p.status === "draft");
@@ -717,6 +851,213 @@ export default function SocialTab() {
     );
   }
 
+  // ── TYPE SELECT ────────────────────────────────────────────────
+  if (step === "wizard-type-select") {
+    return (
+      <div className="space-y-6 max-w-xl mx-auto">
+        <button onClick={handleReset} className="flex items-center gap-1.5 text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+          <ArrowLeft className="w-4 h-4" /> Back
+        </button>
+        <h2 className="text-xl font-bold font-body text-center" style={{ color: "hsl(var(--admin-text))" }}>What would you like to create?</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <button
+            onClick={() => setStep("wizard-topic")}
+            className="flex flex-col items-center gap-3 p-6 rounded-2xl border-2 transition-all hover:shadow-lg"
+            style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-card-bg))" }}
+          >
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: "hsla(185,65%,42%,0.15)" }}>
+              <Pencil className="w-7 h-7" style={{ color: "hsl(185,65%,42%)" }} />
+            </div>
+            <div className="text-center">
+              <p className="font-body font-bold text-base" style={{ color: "hsl(var(--admin-text))" }}>Single Post</p>
+              <p className="font-body text-xs mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>One post, one platform, right now</p>
+            </div>
+          </button>
+          <button
+            onClick={() => setStep("wizard-campaign-setup")}
+            className="flex flex-col items-center gap-3 p-6 rounded-2xl border-2 transition-all hover:shadow-lg"
+            style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-card-bg))" }}
+          >
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: "hsla(28,100%,50%,0.15)" }}>
+              <Calendar className="w-7 h-7" style={{ color: "hsl(28,100%,50%)" }} />
+            </div>
+            <div className="text-center">
+              <p className="font-body font-bold text-base" style={{ color: "hsl(var(--admin-text))" }}>Campaign</p>
+              <p className="font-body text-xs mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>AI-generated batch across multiple days</p>
+            </div>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── CAMPAIGN SETUP ────────────────────────────────────────────
+  if (step === "wizard-campaign-setup") {
+    const CAMPAIGN_PLATFORMS = [
+      { key: "facebook", label: "Facebook" },
+      { key: "instagram", label: "Instagram" },
+      { key: "twitter", label: "X/Twitter" },
+      { key: "linkedin", label: "LinkedIn" },
+      { key: "google", label: "Google Business" },
+    ];
+    const DURATIONS: { days: 1|7|14|30; label: string; posts: number }[] = [
+      { days: 1, label: "1 Day", posts: 2 },
+      { days: 7, label: "7 Days", posts: 14 },
+      { days: 14, label: "14 Days", posts: 28 },
+      { days: 30, label: "30 Days", posts: 30 },
+    ];
+    const canGenerate = campaignTitle.trim() && campaignTopic.trim() && campaignPlatforms.length > 0;
+
+    return (
+      <div className="space-y-6 max-w-xl">
+        <button onClick={() => setStep("wizard-type-select")} className="flex items-center gap-1.5 text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+          <ArrowLeft className="w-4 h-4" /> Back
+        </button>
+        <h2 className="text-xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>Campaign Setup</h2>
+        <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+          <CardContent className="pt-5 space-y-4">
+            <div>
+              <Label className="font-body text-xs font-semibold uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Campaign Title</Label>
+              <Input value={campaignTitle} onChange={(e) => setCampaignTitle(e.target.value)} placeholder="e.g. Spring Mosquito Blitz" className="font-body text-sm mt-1" />
+            </div>
+            <div>
+              <Label className="font-body text-xs font-semibold uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>What's this campaign about?</Label>
+              <textarea value={campaignTopic} onChange={(e) => setCampaignTopic(e.target.value)}
+                placeholder="e.g. Spring mosquito treatment special, new termite inspection service..."
+                rows={3} className="w-full rounded-xl border px-3 py-2 text-sm font-body resize-none focus:outline-none focus:ring-2 mt-1"
+                style={{ background: "hsl(var(--admin-bg))", borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }} />
+            </div>
+            <div>
+              <Label className="font-body text-xs font-semibold uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Duration</Label>
+              <div className="flex gap-2 mt-2">
+                {DURATIONS.map(({ days, label, posts }) => (
+                  <button key={days} onClick={() => setCampaignDuration(days)}
+                    className="flex-1 flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl border text-xs font-body font-semibold transition-all"
+                    style={{
+                      borderColor: campaignDuration === days ? "hsl(28,100%,50%)" : "hsl(var(--admin-sidebar-border))",
+                      background: campaignDuration === days ? "hsla(28,100%,50%,0.12)" : "transparent",
+                      color: campaignDuration === days ? "hsl(28,100%,50%)" : "hsl(var(--admin-text-muted))",
+                    }}>
+                    {label}
+                    <span className="font-normal opacity-70">({posts} posts)</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label className="font-body text-xs font-semibold uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Platforms</Label>
+              <div className="flex gap-2 flex-wrap mt-2">
+                {CAMPAIGN_PLATFORMS.map(({ key, label }) => (
+                  <button key={key} onClick={() => {
+                    setCampaignPlatforms(prev =>
+                      prev.includes(key) ? (prev.length > 1 ? prev.filter(p => p !== key) : prev) : [...prev, key]
+                    )
+                  }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-body font-semibold border transition-all"
+                    style={{
+                      borderColor: campaignPlatforms.includes(key) ? "hsl(28,100%,50%)" : "hsl(var(--admin-sidebar-border))",
+                      background: campaignPlatforms.includes(key) ? "hsla(28,100%,50%,0.12)" : "transparent",
+                      color: campaignPlatforms.includes(key) ? "hsl(28,100%,50%)" : "hsl(var(--admin-text-muted))",
+                    }}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Button
+              onClick={() => { setStep("wizard-campaign-generating"); generateCampaign(); }}
+              disabled={!canGenerate}
+              className="font-body gap-2 w-full"
+              style={{ background: canGenerate ? "hsl(var(--admin-teal))" : undefined, color: canGenerate ? "#fff" : undefined }}
+            >
+              <Sparkles className="w-4 h-4" /> Generate Campaign
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // ── CAMPAIGN GENERATING ───────────────────────────────────────
+  if (step === "wizard-campaign-generating") {
+    const postCount = campaignDuration === 1 ? 2 : campaignDuration === 7 ? 14 : campaignDuration === 14 ? 28 : 30;
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <div className="w-12 h-12 rounded-full flex items-center justify-center animate-spin" style={{ background: "hsla(28,100%,50%,0.15)" }}>
+          <Zap className="w-6 h-6" style={{ color: "hsl(28,100%,50%)" }} />
+        </div>
+        <p className="font-body text-sm font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Generating your campaign...</p>
+        <p className="font-body text-xs" style={{ color: "hsl(var(--admin-text-muted))" }}>Creating {postCount} posts across {campaignDuration} day(s)</p>
+      </div>
+    );
+  }
+
+  // ── CAMPAIGN REVIEW ───────────────────────────────────────────
+  if (step === "wizard-campaign-review") {
+    const today = new Date();
+    const getDay = (i: number): number => {
+      if (campaignDuration === 1) return 1;
+      if (campaignDuration === 30) return i + 1;
+      return Math.floor(i / 2) + 1;
+    };
+    const getHour = (i: number): number => {
+      if (campaignDuration === 30) return 9;
+      if (campaignDuration === 1) return i === 0 ? 9 : 14;
+      return i % 2 === 0 ? 9 : 14;
+    };
+
+    return (
+      <div className="space-y-6 max-w-2xl">
+        <button onClick={() => { setCampaignPosts([]); setStep("wizard-type-select"); }} className="flex items-center gap-1.5 text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+          <ArrowLeft className="w-4 h-4" /> Start Over
+        </button>
+        <div>
+          <h2 className="text-xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>Review Campaign — {campaignTitle}</h2>
+          <p className="text-sm font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>
+            {campaignPosts.length} posts · {campaignDuration} day(s) · {campaignPlatforms.join(', ')}
+          </p>
+        </div>
+        <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+          {campaignPosts.map((post, i) => {
+            const dayOffset = getDay(i) - 1;
+            const hour = getHour(i);
+            const scheduledDate = new Date(today);
+            scheduledDate.setDate(today.getDate() + dayOffset);
+            scheduledDate.setHours(hour, 0, 0, 0);
+            return (
+              <Card key={i} style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-xl">
+                <CardContent className="py-3 px-4 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <Badge className="font-body text-xs border-0 rounded-full px-2" style={{ background: "hsla(28,100%,50%,0.15)", color: "hsl(28,100%,50%)" }}>
+                      Day {post.day}
+                    </Badge>
+                    <span className="text-xs font-body font-semibold" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                      {post.platform}
+                    </span>
+                    <span className="text-xs font-body ml-auto flex items-center gap-1" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                      <Clock className="w-3 h-3" />
+                      {scheduledDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })} at {hour === 9 ? "9:00 AM" : "2:00 PM"} CST
+                    </span>
+                  </div>
+                  <p className="text-sm font-body line-clamp-3" style={{ color: "hsl(var(--admin-text))" }}>{post.caption}</p>
+                  <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{post.hashtags}</p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+        <div className="flex gap-3">
+          <Button onClick={confirmCampaign} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
+            <Send className="w-4 h-4" /> Schedule All Posts
+          </Button>
+          <Button onClick={() => { setCampaignPosts([]); setCampaignTopic(''); setCampaignTitle(''); setStep("wizard-type-select"); }} variant="outline" className="font-body" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}>
+            Start Over
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // ── TOPIC ──────────────────────────────────────────────────────
   if (step === "wizard-topic") {
     return (
@@ -776,7 +1117,7 @@ export default function SocialTab() {
           <Button onClick={() => setShowHistory(!showHistory)} variant="outline" className="font-body gap-2" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}>
             <History className="w-4 h-4" /> {showHistory ? "Queue" : "History"}
           </Button>
-          <Button onClick={() => setStep("wizard-topic")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
+          <Button onClick={() => setStep("wizard-type-select")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
             <Plus className="w-4 h-4" /> New Post
           </Button>
         </div>
@@ -872,6 +1213,78 @@ export default function SocialTab() {
           })}
         </CardContent>
       </Card>
+
+      {/* Campaign Groups */}
+      {(() => {
+        const campaignGroups: Record<string, any[]> = {};
+        postHistory.forEach((hp: any) => {
+          if (hp.campaign_title) {
+            if (!campaignGroups[hp.campaign_title]) campaignGroups[hp.campaign_title] = [];
+            campaignGroups[hp.campaign_title].push(hp);
+          }
+        });
+        const campaignNames = Object.keys(campaignGroups);
+        if (campaignNames.length === 0) return null;
+        return (
+          <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+            <CardHeader className="pb-2">
+              <CardTitle className="font-body text-base flex items-center gap-2" style={{ color: "hsl(var(--admin-text))" }}>
+                <Layers className="w-4 h-4" /> Campaigns
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {campaignNames.map((name) => {
+                const isExpanded = expandedCampaigns.has(name);
+                const groupPosts = campaignGroups[name];
+                return (
+                  <div key={name}>
+                    <button
+                      onClick={() => setExpandedCampaigns(prev => {
+                        const next = new Set(prev);
+                        if (next.has(name)) next.delete(name); else next.add(name);
+                        return next;
+                      })}
+                      className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-xl border transition-all hover:bg-muted/30"
+                      style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}
+                    >
+                      {isExpanded ? <ChevronDown className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} /> : <ChevronRight className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} />}
+                      <span className="font-body font-semibold text-sm" style={{ color: "hsl(var(--admin-text))" }}>{name}</span>
+                      <Badge className="font-body text-xs border-0 rounded-full px-2 ml-auto" style={{ background: "hsla(28,100%,50%,0.15)", color: "hsl(28,100%,50%)" }}>
+                        {groupPosts.length} posts
+                      </Badge>
+                    </button>
+                    {isExpanded && (
+                      <div className="space-y-2 mt-2 ml-6">
+                        {groupPosts.map((hp: any) => {
+                          const statusStyle = STATUS_STYLES[hp.status === "published" ? "posted" : hp.status] || STATUS_STYLES.draft;
+                          return (
+                            <div key={hp.id} className="flex gap-3 p-3 rounded-xl border" style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-bg))" }}>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-body line-clamp-2 mb-1" style={{ color: "hsl(var(--admin-text))" }}>{hp.caption || hp.content}</p>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{hp.platform}</span>
+                                  {hp.scheduled_at && (
+                                    <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                                      {new Date(hp.scheduled_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <Badge className="font-body text-xs border-0 rounded-full px-2 shrink-0" style={{ background: `${statusStyle.color}22`, color: statusStyle.color }}>
+                                {statusStyle.label}
+                              </Badge>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {showConnections && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowConnections(false)}>
