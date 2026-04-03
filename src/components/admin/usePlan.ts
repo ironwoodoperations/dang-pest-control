@@ -82,7 +82,7 @@ export function usePlan(): PlanData {
         .from('settings')
         .select('value')
         .eq('tenant_id', TENANT_ID)
-        .eq('key', 'plan')
+        .eq('key', 'subscription')
         .single()
 
       if (data?.value) {
