@@ -19,6 +19,10 @@ export const DEMO_BLOG_TITLES = [
 
 const DEMO_CAMPAIGN_TITLE = 'Spring Pest Prevention Campaign'
 
+const DEMO_TESTIMONIAL_NAMES = [
+  'Tom & Linda R.', 'Maria G.', 'James P.', 'Sandra K.', 'David & Amy T.', 'Rachel M.',
+]
+
 // ── Helpers ──
 function slugify(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
@@ -127,12 +131,12 @@ export async function seedDemoData(tenantId: string, supabase: SupabaseClient) {
 
   // Testimonials — 6
   const testimonials = [
-    { name: 'Tom & Linda R.', rating: 5, text: 'Kirk and his team were amazing. No more roaches after just one treatment. Highly recommend!', title: 'demo_seed' },
-    { name: 'Maria G.', rating: 5, text: 'Fast response and very professional. They found the termite entry point nobody else could.', title: 'demo_seed' },
-    { name: 'James P.', rating: 4, text: 'Good service overall. Mice are gone and they sealed every gap they could find.', title: 'demo_seed' },
-    { name: 'Sandra K.', rating: 5, text: 'We use them quarterly and haven\'t seen a single bug since. Worth every penny.', title: 'demo_seed' },
-    { name: 'David & Amy T.', rating: 4, text: 'Handled our bed bug problem quickly and discreetly. Very grateful.', title: 'demo_seed' },
-    { name: 'Rachel M.', rating: 5, text: 'The best pest control in East Texas. They even followed up a week later to check on things.', title: 'demo_seed' },
+    { name: 'Tom & Linda R.', rating: 5, text: 'Kirk and his team were amazing. No more roaches after just one treatment. Highly recommend!', title: 'Highly Recommend!' },
+    { name: 'Maria G.', rating: 5, text: 'Fast response and very professional. They found the termite entry point nobody else could.', title: 'Fast and Professional' },
+    { name: 'James P.', rating: 4, text: 'Good service overall. Mice are gone and they sealed every gap they could find.', title: 'Great Experience' },
+    { name: 'Sandra K.', rating: 5, text: 'We use them quarterly and haven\'t seen a single bug since. Worth every penny.', title: 'Best Pest Control Around' },
+    { name: 'David & Amy T.', rating: 4, text: 'Handled our bed bug problem quickly and discreetly. Very grateful.', title: 'Excellent Service' },
+    { name: 'Rachel M.', rating: 5, text: 'The best pest control in East Texas. They even followed up a week later to check on things.', title: 'Will Use Again' },
   ].map((t, i) => ({
     ...t,
     tenant_id: tenantId,
@@ -172,7 +176,7 @@ export async function resetToLive(tenantId: string, supabase: SupabaseClient) {
     supabase.from('leads').delete().eq('tenant_id', tenantId).in('name', DEMO_LEAD_NAMES),
     supabase.from('blog_posts').delete().eq('tenant_id', tenantId).in('title', DEMO_BLOG_TITLES),
     supabase.from('social_posts' as any).delete().eq('tenant_id', tenantId).eq('campaign_title', DEMO_CAMPAIGN_TITLE),
-    supabase.from('testimonials').delete().eq('tenant_id', tenantId).eq('title', 'demo_seed'),
+    supabase.from('testimonials').delete().eq('tenant_id', tenantId).in('name', DEMO_TESTIMONIAL_NAMES),
     supabase.from('site_config').upsert(
       { tenant_id: tenantId, key: 'demo_mode', value: { active: false, went_live_at: new Date().toISOString() } },
       { onConflict: 'key,tenant_id' }

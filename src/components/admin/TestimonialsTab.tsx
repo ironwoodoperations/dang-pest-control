@@ -253,7 +253,7 @@ const TestimonialsTab = () => {
               testimonials.map((t) => (
                 <TableRow key={t.id}>
                   <TableCell className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                    <GripVertical className="h-4 w-4 inline" /> {t.sort_order}
+                    <GripVertical className="h-4 w-4 inline" />
                   </TableCell>
                   <TableCell className="font-body font-medium" style={{ color: "hsl(var(--admin-text))" }}>{t.name}</TableCell>
                   <TableCell className="font-body text-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>{t.title}</TableCell>
