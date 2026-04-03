@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { TenantProvider } from "@/hooks/useTenant";
+import { PlanProvider } from "@/components/admin/usePlan";
 import AdminLayout from "@/components/admin/AdminLayout";
 import DashboardTab from "@/components/admin/DashboardTab";
 import LeadsTab from "@/components/admin/LeadsTab";
@@ -18,19 +19,21 @@ const AdminPage = () => {
 
   return (
     <TenantProvider>
-      <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
-        {activeTab === "dashboard" && <DashboardTab />}
-        {activeTab === "leads" && <LeadsTab />}
-        {activeTab === "content" && <ContentTab />}
-        {activeTab === "blog" && <BlogTab />}
-        {activeTab === "locations" && <LocationsTab />}
-        {activeTab === "social" && <SocialTab />}
-        {activeTab === "testimonials" && <TestimonialsTab />}
-        {activeTab === "seo" && <SEOTab />}
-        {activeTab === "reports" && <ReportsTab />}
-        {activeTab === "settings" && <SettingsTab />}
-        {activeTab === "team" && <TeamTab />}
-      </AdminLayout>
+      <PlanProvider>
+        <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
+          {activeTab === "dashboard" && <DashboardTab />}
+          {activeTab === "leads" && <LeadsTab />}
+          {activeTab === "content" && <ContentTab />}
+          {activeTab === "blog" && <BlogTab />}
+          {activeTab === "locations" && <LocationsTab />}
+          {activeTab === "social" && <SocialTab />}
+          {activeTab === "testimonials" && <TestimonialsTab />}
+          {activeTab === "seo" && <SEOTab />}
+          {activeTab === "reports" && <ReportsTab />}
+          {activeTab === "settings" && <SettingsTab />}
+          {activeTab === "team" && <TeamTab />}
+        </AdminLayout>
+      </PlanProvider>
     </TenantProvider>
   );
 };

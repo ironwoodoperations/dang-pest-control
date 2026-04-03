@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, createContext, useContext, type ReactNode } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 
 const TENANT_ID = '1282b822-825b-4713-9dc9-6d14a2094d06'
@@ -70,7 +70,9 @@ export const TIER_FEATURES: Record<PlanTier, string[]> = {
   ],
 }
 
-export function usePlan(): PlanData {
+const PlanContext = createContext<PlanData | null>(null)
+
+export function PlanProvider({ children }: { children: ReactNode }) {
   const [tier, setTier] = useState<PlanTier>(1)
   const [planName, setPlanName] = useState('Starter')
   const [monthlyPrice, setMonthlyPrice] = useState(149)
@@ -123,5 +125,17 @@ export function usePlan(): PlanData {
     await fetchPlan()
   }, [fetchPlan])
 
-  return { tier, planName, monthlyPrice, loading, canAccess, refreshPlan: fetchPlan, setTier: updateTier }
+  return (
+    <PlanContext.Provider value={{ tier, planName, monthlyPrice, loading, canAccess, refreshPlan: fetchPlan, setTier: updateTier }}>
+      {children}
+    </PlanContext.Provider>
+  )
+}
+
+export function usePlan(): PlanData {
+  const context = useContext(PlanContext)
+  if (!context) {
+    throw new Error('usePlan must be used within a PlanProvider')
+  }
+  return context
 }
