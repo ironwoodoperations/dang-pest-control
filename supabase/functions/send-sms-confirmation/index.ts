@@ -13,14 +13,10 @@ serve(async (req) => {
     if (!phone) return new Response(JSON.stringify({ error: 'No phone' }), { status: 400, headers: corsHeaders })
 
     const apiKey = Deno.env.get('SIMPLETEXTING_API_KEY')
-    const fromNumber = '9032181938'
-
-    // Normalize phone — digits only
     const digits = phone.replace(/\D/g, '')
-
     const message = `Hi ${firstName || 'there'}! Thanks for contacting Dang Pest Control. We received your request and will be in touch shortly. Reply STOP to opt out.`
 
-    const response = await fetch('https://api.simpletexting.com/v2/api/messages', {
+    const response = await fetch('https://api-app2.simpletexting.com/v2/api/messages', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -29,13 +25,15 @@ serve(async (req) => {
       body: JSON.stringify({
         contactPhone: digits,
         text: message,
-        accountPhone: fromNumber,
+        accountPhone: '9032181938',
       }),
     })
 
     const result = await response.json()
+    console.log('SimpleTexting response:', JSON.stringify(result))
     return new Response(JSON.stringify(result), { headers: corsHeaders })
   } catch (err) {
+    console.error('Error:', err.message)
     return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders })
   }
 })
