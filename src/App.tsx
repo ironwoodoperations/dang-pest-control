@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ScrollToTop from "@/components/ScrollToTop";
 const Index = lazy(() => import("./pages/Index"));
 const QuotePage = lazy(() => import("./pages/QuotePage"));
 const About = lazy(() => import("./pages/About"));
@@ -50,6 +51,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Suspense fallback={<div style={{ minHeight: "100vh", background: "#fff" }} />}>
           <FloatingTextUs />
           <Routes>
