@@ -116,7 +116,7 @@ export function usePlan(): PlanData {
     await supabase
       .from('settings')
       .upsert(
-        { tenant_id: TENANT_ID, key: 'plan', value: { tier: newTier, ...meta } },
+        { tenant_id: TENANT_ID, key: 'subscription', value: { tier: newTier, ...meta } },
         { onConflict: 'tenant_id,key' }
       )
 
