@@ -7,6 +7,7 @@ import { ShieldAlert } from "lucide-react";
 import { useHolidayMode } from "@/hooks/useHolidayMode";
 import { useTenant } from "@/hooks/useTenant";
 import { useToast } from "@/hooks/use-toast";
+import { DemoBanner } from "./DemoMode";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -124,6 +125,7 @@ const AdminLayout = ({ children, activeTab, onTabChange }: AdminLayoutProps) => 
             </div>
           </header>
           <main className="flex-1 p-5 overflow-auto">
+            <DemoBanner />
             {children}
           </main>
         </div>

@@ -12,6 +12,10 @@ import SettingsMediaLibrary from "./settings/SettingsMediaLibrary";
 import SettingsIntegrations from "./settings/SettingsIntegrations";
 import SettingsNotifications from "./settings/SettingsNotifications";
 import PageHelpBanner from "./PageHelpBanner";
+import { useDemoMode, DemoBanner } from "./DemoMode";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Loader2, Beaker, Rocket } from "lucide-react";
 
 export interface SettingsData {
   // Branding
@@ -124,6 +128,7 @@ const sections = [
   { id: "contact", label: "Contact Info" },
   { id: "notifications", label: "Notifications" },
   { id: "integrations", label: "Integrations" },
+  { id: "demo", label: "Demo Mode" },
 ] as const;
 
 type SectionId = (typeof sections)[number]["id"];
@@ -135,6 +140,34 @@ const SettingsTab = () => {
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
   const { tenantId } = useTenant();
+  const { isDemoMode, loading: demoLoading, enableDemo, disableDemo } = useDemoMode();
+  const [demoActing, setDemoActing] = useState(false);
+
+  const handleSeedDemo = async () => {
+    setDemoActing(true);
+    try {
+      await enableDemo();
+      toast({ title: "Demo data seeded!", description: "Sample leads, posts, and more have been added." });
+      window.location.reload();
+    } catch {
+      toast({ title: "Seed failed", variant: "destructive" });
+    } finally {
+      setDemoActing(false);
+    }
+  };
+
+  const handleGoLive = async () => {
+    setDemoActing(true);
+    try {
+      await disableDemo();
+      toast({ title: "Gone live!", description: "All demo data has been removed." });
+      window.location.reload();
+    } catch {
+      toast({ title: "Reset failed", variant: "destructive" });
+    } finally {
+      setDemoActing(false);
+    }
+  };
 
   useEffect(() => {
     if (!tenantId) return;
@@ -327,6 +360,62 @@ const SettingsTab = () => {
         {activeSection === "contact" && <SettingsContact settings={settings} update={update} />}
         {activeSection === "notifications" && <SettingsNotifications settings={settings} update={update} />}
         {activeSection === "integrations" && <SettingsIntegrations settings={settings} update={update} />}
+
+        {activeSection === "demo" && (
+          <Card style={{ background: "hsl(var(--admin-card-bg))" }}>
+            <CardHeader>
+              <CardTitle className="font-body text-base flex items-center gap-2" style={{ color: "hsl(var(--admin-text))" }}>
+                <Beaker className="w-4 h-4" />
+                Demo Mode
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {isDemoMode && <DemoBanner />}
+              <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                {isDemoMode
+                  ? "Demo mode is active. Your dashboard is showing sample pest control data. Click \"Go Live\" to remove all demo data and start fresh."
+                  : "Seed your dashboard with realistic pest control data — leads, blog posts, social posts, testimonials, and SEO keywords. Perfect for previewing how each section looks with real content."}
+              </p>
+
+              {isDemoMode ? (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button
+                      disabled={demoActing}
+                      className="inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium font-body text-white transition-opacity disabled:opacity-50"
+                      style={{ background: "hsl(0, 70%, 50%)" }}
+                    >
+                      {demoActing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Rocket className="w-4 h-4" />}
+                      Go Live
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Reset to Live Mode?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will delete all demo data (sample leads, blog posts, social posts, and testimonials). Your real data will not be affected. Are you sure?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleGoLive}>Yes, Go Live</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              ) : (
+                <button
+                  onClick={handleSeedDemo}
+                  disabled={demoActing || demoLoading}
+                  className="inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium font-body text-white transition-opacity disabled:opacity-50"
+                  style={{ background: "hsl(140, 55%, 42%)" }}
+                >
+                  {demoActing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Beaker className="w-4 h-4" />}
+                  Seed Demo Data
+                </button>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         <button
           onClick={handleSave}
