@@ -14,7 +14,7 @@ export function useDemoMode() {
     if (!tenantId) return
     try {
       const { data } = await supabase
-        .from('site_config')
+        .from('settings')
         .select('value')
         .eq('tenant_id', tenantId)
         .eq('key', 'demo_mode')
