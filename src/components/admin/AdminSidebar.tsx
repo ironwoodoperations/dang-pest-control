@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit, MessageSquareQuote, BookOpen, MapPin, Share2, BarChart3, Lock } from "lucide-react";
+import { LayoutDashboard, Users, Search, Settings, LogOut, UserCog, FileEdit, MessageSquareQuote, BookOpen, MapPin, Share2, BarChart3, Lock, Star } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -21,6 +21,7 @@ const GATED_TABS: Record<string, number> = {
   seo: 2,
   social: 2,
   reports: 2,
+  reviews: 4,
 };
 
 const mainNav = [
@@ -38,6 +39,7 @@ const contentNav = [
 
 const systemNav = [
   { title: "SEO", value: "seo", icon: Search },
+  { title: "Reviews", value: "reviews", icon: Star },
   { title: "Reports", value: "reports", icon: BarChart3 },
   { title: "Settings", value: "settings", icon: Settings },
   { title: "Team", value: "team", icon: UserCog },

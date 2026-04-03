@@ -46,6 +46,7 @@ src/components/admin/
   DemoMode.tsx             — Session 10 → useDemoMode hook + DemoBanner component
   DemoSeed.ts              — Session 10 → seedDemoData() + resetToLive()
   ReportsTab.tsx           — Session 10 → real charts, tier-gated analytics
+  ReviewsTab.tsx           — Session 12 → Elite-gated live Google reviews, sync to testimonials
   SEOTab.tsx               — tier-2 full gate, tier-3 on Keywords + AIO
   SocialTab.tsx            — tier-2 full gate, tier-3 AI/Campaign/Connections, tier-4 Analytics
   LeadsTab.tsx             — tap-to-contact links + sms: tap-to-text link + SMS consent badges
@@ -92,6 +93,7 @@ src/pages/
   - `notify-new-lead` → Resend integration, fires on contact + quote form submit (verify still working)
   - `weekly-seo-report` → weekly SEO digest
   - `send-sms-confirmation` → SimpleTexting SMS confirmation, fires on quote submit if transactional consent given
+  - `fetch-google-reviews` → Google Places API (New), returns live rating + reviews for Place ID ChIJq5K4j8_MR4YR0rDrPjJjJiM
 
 ---
 
@@ -149,6 +151,12 @@ src/pages/
 - **SMS consent badges** → green/blue badges on lead detail showing opt-in status
 - **_session-context/ directory created** → session-current.md and history/ now live in repo
 
+### Session 12
+- **LeadFusion Local — ReviewsTab** → Elite (tier 4) gated admin tab with live Google reviews via `fetch-google-reviews` edge function, "Sync to Testimonials" button per review card
+- **ReviewsPage upgraded** → public reviews page now fetches live from Google Places API (New), falls back to static reviews on failure
+- **fetch-google-reviews edge function** → deployed, calls Google Places API with Place ID `ChIJq5K4j8_MR4YR0rDrPjJjJiM`, returns rating + reviews
+- **Admin sidebar wired** → Reviews tab (Star icon) added after SEO in system nav, tier-4 lock icon for non-Elite
+
 ---
 
 ## PENDING — WHAT'S LEFT TO BUILD
@@ -156,7 +164,7 @@ src/pages/
 | Item | Priority | Notes |
 |---|---|---|
 | **Verify Resend live** | High | Test real form submit, confirm email arrives at info@dangpestcontrol.com → notify-new-lead function |
-| **LeadFusion Local** | Medium | Live Google reviews widget on public site, Elite tier gate in admin |
+| **LeadFusion Local** | ✅ Done | ReviewsTab (Elite-gated) + live ReviewsPage via fetch-google-reviews edge function |
 | **Facebook token** | Low | Social posting is still demo mode → needs real FB token to go live |
 | **Twilio** | ❌ Dropped | PestFlow Pro spec item only → SimpleTexting handles SMS for Dang |
 

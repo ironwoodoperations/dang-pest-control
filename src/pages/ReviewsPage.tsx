@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { supabase } from '@/integrations/supabase/client';
 
-const allReviews = [
+const staticReviews = [
   { initials: 'EM', name: 'Evelyn M', date: 'Mar 13, 2026', stars: 5, text: "They're always so friendly and kind whenever they service us! Definitely recommend!", source: 'google' },
   { initials: 'EC', name: 'Efrain Chavez', date: 'Mar 11, 2026', stars: 5, text: 'Kirk was absolutely amazing. He came in and took care of everything within just a few visits. We are very happy with the customer service and the quality of service.', source: 'google' },
   { initials: 'N', name: 'Nick', date: 'Mar 02, 2026', stars: 5, text: "Kirk is an absolute professional. He's been taking care of my businesses regularly. Sometimes coming in two times a day or even between visits if I so needed. Would not use anyone else!", source: 'google' },
@@ -21,8 +22,26 @@ const allReviews = [
   { initials: 'TB', name: 'Theresa Byrd', date: 'Sep 24, 2025', stars: 5, text: 'Dang good work! Dispatched my wasp problem (in my truck and catio!) in record time. Reasonable price and a very kind person!', source: 'google' },
 ];
 
-const INITIAL_COUNT = 8;
-const LOAD_MORE_COUNT = 8;
+interface GoogleReview {
+  authorAttribution?: { displayName?: string };
+  rating?: number;
+  text?: { text?: string };
+  relativePublishTimeDescription?: string;
+}
+
+const AVATAR_COLORS = [
+  'hsl(207, 40%, 55%)',
+  'hsl(28, 80%, 50%)',
+  'hsl(150, 40%, 45%)',
+  'hsl(340, 50%, 55%)',
+  'hsl(260, 40%, 55%)',
+];
+
+const getInitials = (name: string) => {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return name[0]?.toUpperCase() || '?';
+};
 
 const GoogleIcon = () => (
   <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -33,10 +52,55 @@ const GoogleIcon = () => (
   </svg>
 );
 
+const INITIAL_COUNT = 8;
+const LOAD_MORE_COUNT = 8;
+
 const ReviewsPage = () => {
+  const [liveReviews, setLiveReviews] = useState<GoogleReview[] | null>(null);
+  const [liveRating, setLiveRating] = useState<number | null>(null);
+  const [liveCount, setLiveCount] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
 
-  const visibleReviews = allReviews.slice(0, visibleCount);
+  useEffect(() => {
+    const fetchLive = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('fetch-google-reviews');
+        if (error || data?.error) throw new Error('fetch failed');
+        setLiveReviews(data.reviews || []);
+        setLiveRating(data.rating || null);
+        setLiveCount(data.userRatingCount || null);
+      } catch {
+        // Fall back to static
+        setLiveReviews(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLive();
+  }, []);
+
+  const useLive = liveReviews !== null && liveReviews.length > 0;
+  const displayRating = useLive ? (liveRating?.toFixed(2) || '5.00') : '5.00';
+  const displayCount = useLive ? (liveCount || liveReviews.length) : 37;
+  const displayStars = useLive ? Math.round(liveRating || 5) : 5;
+
+  // Build unified review list
+  const reviews = useLive
+    ? liveReviews.slice(0, 5).map((r, i) => ({
+        initials: getInitials(r.authorAttribution?.displayName || 'A'),
+        name: r.authorAttribution?.displayName || 'Anonymous',
+        date: r.relativePublishTimeDescription || '',
+        stars: r.rating || 5,
+        text: r.text?.text || '',
+        source: 'google' as const,
+        avatarColor: AVATAR_COLORS[i % AVATAR_COLORS.length],
+      }))
+    : staticReviews.map((r, i) => ({ ...r, avatarColor: AVATAR_COLORS[i % AVATAR_COLORS.length] }));
+
+  // For static, paginate; for live, show all (max 5)
+  const visibleReviews = useLive ? reviews : reviews.slice(0, visibleCount);
+  const totalReviews = useLive ? reviews.length : staticReviews.length;
 
   return (
     <div style={{ fontFamily: "'Open Sans', sans-serif", color: 'hsl(20, 40%, 12%)', overflowX: 'hidden' }}>
@@ -83,13 +147,19 @@ const ReviewsPage = () => {
           </h2>
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '48px', fontWeight: '800', lineHeight: 1 }}>5.00</div>
-              <div style={{ display: 'flex', gap: '3px', margin: '4px 0' }}>
-                {[...Array(5)].map((_, i) => (
-                  <span key={i} style={{ color: 'hsl(28, 100%, 50%)', fontSize: '22px' }}>★</span>
-                ))}
-              </div>
-              <div style={{ fontSize: '14px', color: 'hsl(28, 100%, 50%)', fontWeight: '600' }}>37 reviews</div>
+              {loading ? (
+                <div style={{ width: '80px', height: '48px', background: '#eee', borderRadius: '8px', animation: 'pulse 1.5s infinite' }} />
+              ) : (
+                <>
+                  <div style={{ fontSize: '48px', fontWeight: '800', lineHeight: 1 }}>{displayRating}</div>
+                  <div style={{ display: 'flex', gap: '3px', margin: '4px 0' }}>
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} style={{ color: i < displayStars ? 'hsl(28, 100%, 50%)' : '#ccc', fontSize: '22px' }}>★</span>
+                    ))}
+                  </div>
+                  <div style={{ fontSize: '14px', color: 'hsl(28, 100%, 50%)', fontWeight: '600' }}>{displayCount} reviews</div>
+                </>
+              )}
             </div>
             <a
               href="https://g.page/r/review"
@@ -112,59 +182,70 @@ const ReviewsPage = () => {
           </div>
         </div>
 
+        {/* Loading skeleton */}
+        {loading && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} style={{ background: '#f3f3f1', borderRadius: '10px', padding: '20px', height: '180px', animation: 'pulse 1.5s infinite' }} />
+            ))}
+          </div>
+        )}
+
         {/* Review cards grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
-          {visibleReviews.map((review, i) => (
-            <div key={i} style={{ background: '#f3f3f1', borderRadius: '10px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                {/* Stars + date */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ color: 'hsl(28, 100%, 50%)', fontWeight: '800', fontSize: '16px' }}>{review.stars}</span>
-                    <div style={{ display: 'flex', gap: '2px' }}>
-                      {[...Array(review.stars)].map((_, j) => (
-                        <span key={j} style={{ color: 'hsl(28, 100%, 50%)', fontSize: '14px' }}>★</span>
-                      ))}
+        {!loading && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
+            {visibleReviews.map((review, i) => (
+              <div key={i} style={{ background: '#f3f3f1', borderRadius: '10px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  {/* Stars + date */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ color: 'hsl(28, 100%, 50%)', fontWeight: '800', fontSize: '16px' }}>{review.stars}</span>
+                      <div style={{ display: 'flex', gap: '2px' }}>
+                        {[...Array(review.stars)].map((_, j) => (
+                          <span key={j} style={{ color: 'hsl(28, 100%, 50%)', fontSize: '14px' }}>★</span>
+                        ))}
+                      </div>
                     </div>
+                    <span style={{ fontSize: '12px', color: '#888' }}>{review.date}</span>
                   </div>
-                  <span style={{ fontSize: '12px', color: '#888' }}>{review.date}</span>
+
+                  {/* Review text */}
+                  <p style={{ fontSize: '14px', lineHeight: 1.65, color: '#444', margin: '0 0 16px' }}>{review.text}</p>
                 </div>
 
-                {/* Review text */}
-                <p style={{ fontSize: '14px', lineHeight: 1.65, color: '#444', margin: '0 0 16px' }}>{review.text}</p>
-              </div>
-
-              {/* Reviewer row */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    background: 'hsl(207, 40%, 55%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#fff',
-                    fontWeight: '700',
-                    fontSize: '13px',
-                    flexShrink: 0,
-                  }}>
-                    {review.initials}
+                {/* Reviewer row */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: review.avatarColor || 'hsl(207, 40%, 55%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontWeight: '700',
+                      fontSize: '13px',
+                      flexShrink: 0,
+                    }}>
+                      {review.initials}
+                    </div>
+                    <span style={{ fontWeight: '600', fontSize: '14px', color: 'hsl(20, 40%, 12%)' }}>{review.name}</span>
                   </div>
-                  <span style={{ fontWeight: '600', fontSize: '14px', color: 'hsl(20, 40%, 12%)' }}>{review.name}</span>
+                  <GoogleIcon />
                 </div>
-                <GoogleIcon />
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {/* Load More + Powered by */}
-        {visibleCount < allReviews.length && (
+        {/* Load More + Powered by (static fallback only) */}
+        {!loading && !useLive && visibleCount < totalReviews && (
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
             <button
-              onClick={() => setVisibleCount(v => Math.min(v + LOAD_MORE_COUNT, allReviews.length))}
+              onClick={() => setVisibleCount(v => Math.min(v + LOAD_MORE_COUNT, staticReviews.length))}
               style={{
                 padding: '12px 32px',
                 background: 'none',
@@ -181,7 +262,7 @@ const ReviewsPage = () => {
             <span style={{ fontSize: '13px', color: '#888' }}>Powered by <strong>LeadFusion Local</strong></span>
           </div>
         )}
-        {visibleCount >= allReviews.length && (
+        {!loading && (useLive || visibleCount >= totalReviews) && (
           <div style={{ textAlign: 'right' }}>
             <span style={{ fontSize: '13px', color: '#888' }}>Powered by <strong>LeadFusion Local</strong></span>
           </div>

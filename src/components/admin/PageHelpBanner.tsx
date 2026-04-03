@@ -133,6 +133,14 @@ const HELP: Record<string, HelpContent> = {
       { title: "Remove a user", detail: "Click the trash icon on any team member row to revoke their access." },
     ],
   },
+  reviews: {
+    summary: "These are your live Google reviews pulled directly from your Google Business Profile. Use 'Sync to Testimonials' to add a review to your public testimonials section.",
+    steps: [
+      { title: "Live reviews", detail: "Reviews are fetched in real-time from the Google Places API. Click 'Refresh Reviews' to re-fetch." },
+      { title: "Sync to Testimonials", detail: "Click the button on any review card to copy it into your Testimonials section on the public site." },
+      { title: "Rating overview", detail: "The card at the top shows your overall Google rating and total review count." },
+    ],
+  },
   social: {
     summary: "Compose AI-written posts, pick a branded template, and schedule to Facebook & Instagram.",
     steps: [
