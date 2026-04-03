@@ -134,7 +134,7 @@ const Navbar = () => {
       </header>
 
       {/* Hero navbar - yellow pill with logo floating above */}
-      <header className="hero-bg relative z-50" style={{ paddingTop: '56px', paddingBottom: '0' }}>
+      <header className="hero-bg relative z-50" style={{ paddingTop: 'clamp(48px, 8vw, 56px)', paddingBottom: '0' }}>
         <div className="mx-auto max-w-[1400px] px-4">
           <nav className="navbar-pill flex items-center justify-between px-6 md:px-10 py-4 relative">
 
@@ -217,7 +217,7 @@ const Navbar = () => {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden bg-white border-b border-yellow-200 px-4 pb-4 mx-4 rounded-b-2xl shadow-lg">
+          <div className="md:hidden bg-white border-b border-yellow-200 px-4 pb-4 mx-4 rounded-b-2xl shadow-lg overflow-y-auto max-h-screen">
             <button className="w-full text-left py-2 text-sm font-bold flex justify-between"
               onClick={() => setOpenDropdown(openDropdown === "pests" ? null : "pests")}>
               Pests <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === "pests" ? "rotate-180" : ""}`} />

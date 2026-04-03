@@ -43,7 +43,7 @@ const serviceOptions = [
 ];
 
 const labelStyle = { color: 'hsl(20, 40%, 12%)' };
-const inputClass = "w-full rounded-xl border border-orange-200 px-4 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors";
+const inputClass = "w-full rounded-xl border border-orange-200 px-4 py-2.5 text-base focus:outline-none focus:border-primary transition-colors";
 
 const QuotePage = () => {
   const { toast } = useToast();
@@ -147,7 +147,7 @@ const QuotePage = () => {
         <div className="container mx-auto px-4 max-w-2xl">
           <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl shadow-sm border border-orange-100 p-8 space-y-6">
             {/* Name */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-semibold mb-1 block" style={labelStyle}>First Name *</label>
                 <input {...register("firstName")} className={inputClass} />
@@ -161,7 +161,7 @@ const QuotePage = () => {
             </div>
 
             {/* Email & Phone */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-semibold mb-1 block" style={labelStyle}>Email *</label>
                 <input type="email" {...register("email")} className={inputClass} />
@@ -202,7 +202,7 @@ const QuotePage = () => {
             {/* Services */}
             <div>
               <label className="text-sm font-semibold mb-2 block" style={labelStyle}>Service(s) Requested *</label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {serviceOptions.map((service) => (
                   <label key={service} className="flex items-center gap-2 text-sm" style={{color: 'hsl(20, 20%, 35%)'}}>
                     <input type="checkbox" value={service} {...register("services")} className="rounded" />
