@@ -72,7 +72,7 @@ const QuotePage = () => {
       const { error } = await supabase.from("leads").insert(leadData);
       if (error) throw error;
 
-      supabase.functions.invoke("notify-new-lead", { body: leadData }).catch(() => {});
+      supabase.functions.invoke("notify-new-lead", { body: { ...leadData, form_type: 'quote' } }).catch(() => {});
 
       toast({
         title: "Quote Request Sent!",

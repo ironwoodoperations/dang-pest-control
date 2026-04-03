@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { supabase } from '@/integrations/supabase/client';
 
 const ContactPage = () => {
   const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', email: '', address: '', city: '', state: '', zip: '', message: '' });
@@ -20,8 +21,25 @@ const ContactPage = () => {
     color: 'hsl(20, 40%, 12%)',
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const leadData = {
+      name: `${form.firstName} ${form.lastName}`,
+      email: form.email,
+      phone: form.phone,
+      message: form.message,
+    };
+
+    try {
+      await supabase.from('leads').insert(leadData);
+    } catch {
+      // lead save failed — still show success to user
+    }
+
+    supabase.functions.invoke('notify-new-lead', {
+      body: { ...leadData, form_type: 'contact' },
+    }).catch(() => {});
+
     setSubmitted(true);
   };
 
