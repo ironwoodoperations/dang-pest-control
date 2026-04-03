@@ -158,7 +158,7 @@ export default function DashboardTab() {
             monthly_price: TIER_PRICES[newTier],
             upgraded_at: new Date().toISOString(),
           },
-        }, { onConflict: 'tenant_id,key' })
+        }, { onConflict: 'key,tenant_id' })
       await refreshPlan()
     } finally {
       setUpgrading(null)

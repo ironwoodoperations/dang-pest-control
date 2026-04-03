@@ -79,10 +79,10 @@ export function usePlan(): PlanData {
   const fetchPlan = useCallback(async () => {
     try {
       const { data } = await supabase
-        .from('settings')
+        .from('site_config')
         .select('value')
         .eq('tenant_id', TENANT_ID)
-        .eq('key', 'subscription')
+        .eq('key', 'plan')
         .single()
 
       if (data?.value) {
@@ -114,10 +114,10 @@ export function usePlan(): PlanData {
     }[newTier]
 
     await supabase
-      .from('settings')
+      .from('site_config')
       .upsert(
-        { tenant_id: TENANT_ID, key: 'subscription', value: { tier: newTier, ...meta } },
-        { onConflict: 'tenant_id,key' }
+        { tenant_id: TENANT_ID, key: 'plan', value: { tier: newTier, ...meta } },
+        { onConflict: 'key,tenant_id' }
       )
 
     await fetchPlan()
