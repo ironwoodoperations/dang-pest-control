@@ -1,13 +1,26 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Users, TrendingUp, TreePine, Clock, CheckCircle2, AlertCircle } from "lucide-react";
-import { useHolidayMode } from "@/hooks/useHolidayMode";
-import { useTenant } from "@/hooks/useTenant";
-import { useNavigate } from "react-router-dom";
-import PageHelpBanner from "./PageHelpBanner";
+// src/components/admin/DashboardTab.tsx
+import { useEffect, useState } from 'react'
+import { Check, ChevronDown, ChevronUp, Users, TrendingUp, TreePine, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
+import { supabase } from '@/integrations/supabase/client'
+import { usePlan, TIER_NAMES, TIER_PRICES, TIER_FEATURES, TIER_COLORS, PlanTier } from './usePlan'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import { useHolidayMode } from '@/hooks/useHolidayMode'
+import { useTenant } from '@/hooks/useTenant'
+import { useNavigate } from 'react-router-dom'
+import PageHelpBanner from './PageHelpBanner'
+
+const TENANT_ID = '1282b822-825b-4713-9dc9-6d14a2094d06'
+
+const TIER_DESCRIPTIONS: Record<PlanTier, string> = {
+  1: 'Website + CRM + basic SEO',
+  2: 'Full SEO + Blog + Social scheduling',
+  3: 'AI tools + campaigns + advanced reports',
+  4: 'All platforms + live reviews + priority support',
+}
+
+const ALL_TIERS: PlanTier[] = [1, 2, 3, 4]
 
 interface Lead {
   id: string;
@@ -74,7 +87,11 @@ const statusColors: Record<string, string> = {
   closed: "bg-[hsl(220,9%,90%)] text-[hsl(220,9%,46%)]",
 };
 
-const DashboardTab = () => {
+export default function DashboardTab() {
+  const { tier, planName, loading, refreshPlan } = usePlan()
+  const [upgrading, setUpgrading] = useState<PlanTier | null>(null)
+  const [featuresOpen, setFeaturesOpen] = useState(false)
+
   const [leadCount, setLeadCount] = useState(0);
   const [newLeads, setNewLeads] = useState(0);
   const [recentLeads, setRecentLeads] = useState<Lead[]>([]);
@@ -126,10 +143,145 @@ const DashboardTab = () => {
     fetchData();
   }, [tenantId]);
 
+  const handleUpgrade = async (newTier: PlanTier) => {
+    if (newTier === tier || newTier < tier) return
+    setUpgrading(newTier)
+    try {
+      await supabase
+        .from('site_config')
+        .upsert({
+          tenant_id: TENANT_ID,
+          key: 'plan',
+          value: {
+            tier: newTier,
+            plan_name: TIER_NAMES[newTier],
+            monthly_price: TIER_PRICES[newTier],
+            upgraded_at: new Date().toISOString(),
+          },
+        }, { onConflict: 'tenant_id,key' })
+      await refreshPlan()
+    } finally {
+      setUpgrading(null)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-48">
+        <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30 border-t-foreground animate-spin" />
+      </div>
+    )
+  }
+
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 p-6">
+
+      {/* ── Plan Selector ── */}
+      <div>
+        <div className="flex items-center gap-3 mb-5">
+          <h2 className="text-xl font-semibold text-foreground">Your Plan</h2>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-green-100 text-green-700">
+            ● Active
+          </span>
+          <span className="text-sm text-muted-foreground ml-1">
+            Currently on <strong>{planName}</strong>
+          </span>
+        </div>
+
+        {/* 4-card grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          {ALL_TIERS.map((t) => {
+            const isCurrent = t === tier
+            const isHigher = t > tier
+            const isLower = t < tier
+            const colors = TIER_COLORS[t]
+            const isUpgrading = upgrading === t
+
+            return (
+              <div
+                key={t}
+                className={`
+                  relative flex flex-col rounded-xl border-2 p-5 transition-all
+                  ${isCurrent ? `${colors.border} shadow-md` : 'border-border'}
+                  ${isLower ? 'opacity-50' : ''}
+                `}
+              >
+                {/* Current badge */}
+                {isCurrent && (
+                  <div className={`absolute -top-3 left-4 flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full ${colors.badge}`}>
+                    <Check className="w-3 h-3" /> Current Plan
+                  </div>
+                )}
+
+                <div className="mb-3">
+                  <p className={`text-xs font-semibold uppercase tracking-wide mb-0.5 ${colors.text}`}>
+                    {TIER_NAMES[t]}
+                  </p>
+                  <p className="text-2xl font-bold text-foreground">
+                    ${TIER_PRICES[t]}<span className="text-sm font-normal text-muted-foreground">/mo</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{TIER_DESCRIPTIONS[t]}</p>
+                </div>
+
+                <ul className="flex-1 space-y-1.5 mb-4">
+                  {TIER_FEATURES[t].slice(0, 5).map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground">
+                      <Check className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${isCurrent || isLower ? colors.text : 'text-muted-foreground/40'}`} />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                {isCurrent && (
+                  <div className={`text-center text-xs font-semibold py-2 rounded-lg ${colors.badge}`}>
+                    ✓ Current Plan
+                  </div>
+                )}
+                {isHigher && (
+                  <button
+                    onClick={() => handleUpgrade(t)}
+                    disabled={!!upgrading}
+                    className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
+                  >
+                    {isUpgrading ? 'Upgrading…' : `Upgrade to ${TIER_NAMES[t]}`}
+                  </button>
+                )}
+                {isLower && (
+                  <div className="text-center text-xs text-muted-foreground py-2 rounded-lg border border-dashed border-border">
+                    Downgrade
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Collapsible feature list */}
+        <div className="mt-4 border border-border rounded-xl overflow-hidden">
+          <button
+            onClick={() => setFeaturesOpen((o) => !o)}
+            className="w-full flex items-center justify-between px-5 py-3.5 text-sm font-medium text-foreground hover:bg-muted/40 transition-colors"
+          >
+            <span>What's included in {planName}</span>
+            {featuresOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+          {featuresOpen && (
+            <div className="px-5 pb-5 pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {TIER_FEATURES[tier].map((f) => (
+                <div key={f} className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Check className={`w-4 h-4 shrink-0 ${TIER_COLORS[tier].text}`} />
+                  {f}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Existing Stats / Widgets ── */}
+
       <PageHelpBanner tab="dashboard" />
 
       {/* Onboarding Banner */}
@@ -234,8 +386,7 @@ const DashboardTab = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
-};
 
-export default DashboardTab;
+    </div>
+  )
+}
