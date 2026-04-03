@@ -79,7 +79,7 @@ export function usePlan(): PlanData {
   const fetchPlan = useCallback(async () => {
     try {
       const { data } = await supabase
-        .from('site_config')
+        .from('settings')
         .select('value')
         .eq('tenant_id', TENANT_ID)
         .eq('key', 'plan')
@@ -114,7 +114,7 @@ export function usePlan(): PlanData {
     }[newTier]
 
     await supabase
-      .from('site_config')
+      .from('settings')
       .upsert(
         { tenant_id: TENANT_ID, key: 'plan', value: { tier: newTier, ...meta } },
         { onConflict: 'tenant_id,key' }
