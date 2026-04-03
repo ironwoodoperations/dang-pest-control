@@ -48,6 +48,8 @@ const inputClass = "w-full rounded-xl border border-orange-200 px-4 py-2.5 text-
 const QuotePage = () => {
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
+  const [smsTransactional, setSmsTransactional] = useState(false);
+  const [smsMarketing, setSmsMarketing] = useState(false);
   const {
     register,
     handleSubmit,
@@ -67,12 +69,20 @@ const QuotePage = () => {
         phone: data.phone,
         service: data.services.join(", "),
         message: data.message || null,
+        sms_transactional_consent: smsTransactional,
+        sms_marketing_consent: smsMarketing,
       };
 
       const { error } = await supabase.from("leads").insert(leadData);
       if (error) throw error;
 
       supabase.functions.invoke("notify-new-lead", { body: { ...leadData, form_type: 'quote' } }).catch(() => {});
+
+      if (smsTransactional && data.phone) {
+        supabase.functions.invoke("send-sms-confirmation", {
+          body: { phone: data.phone, firstName: data.firstName },
+        }).catch(() => {});
+      }
 
       toast({
         title: "Quote Request Sent!",
@@ -209,14 +219,35 @@ const QuotePage = () => {
               <textarea {...register("message")} rows={4} className={inputClass} />
             </div>
 
-            {/* Consent */}
+            {/* Transactional SMS consent */}
             <div>
-              <label className="flex items-start gap-2 text-sm" style={{color: 'hsl(20, 20%, 35%)'}}>
-                <input type="checkbox" {...register("consentTransactional")} className="mt-1 rounded" />
-                <span>I consent to receive transactional communications from Dang Pest Control regarding my service request. *</span>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  {...register("consentTransactional", {
+                    onChange: (e) => setSmsTransactional(e.target.checked),
+                  })}
+                  className="mt-1 w-4 h-4 rounded border-gray-300"
+                />
+                <span className="text-sm text-gray-600">
+                  By checking this box, I consent to receive transactional messages related to Dang Pest Control for my account, orders, or services I have requested. These messages may include appointment reminders, order confirmations, and account notifications among others. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out. *
+                </span>
               </label>
               {errors.consentTransactional && <p className="text-destructive text-xs mt-1">{errors.consentTransactional.message}</p>}
             </div>
+
+            {/* Marketing SMS consent */}
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={smsMarketing}
+                onChange={e => setSmsMarketing(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded border-gray-300"
+              />
+              <span className="text-sm text-gray-600">
+                By checking this box, I consent to receive marketing and promotional messages from Dang Pest Control. Message frequency may vary. Message &amp; Data rates may apply. Reply HELP for help or STOP to opt-out.
+              </span>
+            </label>
 
             <button type="submit" disabled={submitting} className="w-full font-bold rounded-full py-3 text-white text-base transition-all hover:brightness-110 disabled:opacity-50" style={{background: 'hsl(var(--primary))'}}>
               <Send className="w-5 h-5 mr-2 inline" /> {submitting ? "Submitting..." : "Submit Quote Request"}

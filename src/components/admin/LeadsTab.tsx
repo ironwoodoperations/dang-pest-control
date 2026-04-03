@@ -22,6 +22,8 @@ interface Lead {
   message: string | null;
   status: string;
   created_at: string;
+  sms_transactional_consent?: boolean;
+  sms_marketing_consent?: boolean;
 }
 
 const statusConfig: Record<string, { label: string; className: string }> = {
@@ -232,6 +234,16 @@ const LeadsTab = () => {
                   {selectedLead.phone ? <a href={`tel:${selectedLead.phone}`} className="font-body text-sm hover:underline" style={{ color: "hsl(var(--admin-indigo))" }}>{selectedLead.phone}</a> : <p className="font-body text-sm">—</p>}
                 </div>
               </div>
+              {(selectedLead.sms_transactional_consent || selectedLead.sms_marketing_consent) && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {selectedLead.sms_transactional_consent && (
+                    <span className="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-2 py-0.5">SMS transactional ✓</span>
+                  )}
+                  {selectedLead.sms_marketing_consent && (
+                    <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2 py-0.5">SMS marketing ✓</span>
+                  )}
+                </div>
+              )}
               <div>
                 <Label className="font-body text-xs" style={{ color: "hsl(var(--admin-text-muted))" }}>Service Requested</Label>
                 <p className="font-body text-sm">{selectedLead.service || "—"}</p>
