@@ -14,6 +14,7 @@ import {
 import dangLogo from "@/assets/dang-logo.png";
 import { useHolidayMode } from "@/hooks/useHolidayMode";
 import { usePlan } from './usePlan';
+import TierToggle from './TierToggle';
 
 const GATED_TABS: Record<string, number> = {
   blog: 2,
@@ -148,6 +149,7 @@ export function AdminSidebar({ activeTab, onTabChange, userEmail, companyName, o
       </SidebarContent>
 
       <SidebarFooter className="border-t px-3 py-3" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+        {!collapsed && <TierToggle />}
         {!collapsed && (
           <div className="flex items-center gap-2 mb-2 px-1">
             <div

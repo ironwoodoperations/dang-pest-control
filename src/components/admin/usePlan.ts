@@ -12,6 +12,7 @@ export interface PlanData {
   loading: boolean
   canAccess: (minTier: number) => boolean
   refreshPlan: () => Promise<void>
+  setTier: (newTier: PlanTier) => Promise<void>
 }
 
 export const TIER_NAMES: Record<PlanTier, string> = {
@@ -104,5 +105,23 @@ export function usePlan(): PlanData {
 
   const canAccess = (minTier: number) => tier >= minTier
 
-  return { tier, planName, monthlyPrice, loading, canAccess, refreshPlan: fetchPlan }
+  const updateTier = useCallback(async (newTier: PlanTier) => {
+    const meta = {
+      1: { plan_name: 'Starter', monthly_price: 149 },
+      2: { plan_name: 'Grow', monthly_price: 249 },
+      3: { plan_name: 'Pro', monthly_price: 349 },
+      4: { plan_name: 'Elite', monthly_price: 499 },
+    }[newTier]
+
+    await supabase
+      .from('site_config')
+      .upsert(
+        { tenant_id: TENANT_ID, key: 'plan', value: { tier: newTier, ...meta } },
+        { onConflict: 'tenant_id,key' }
+      )
+
+    await fetchPlan()
+  }, [fetchPlan])
+
+  return { tier, planName, monthlyPrice, loading, canAccess, refreshPlan: fetchPlan, setTier: updateTier }
 }
