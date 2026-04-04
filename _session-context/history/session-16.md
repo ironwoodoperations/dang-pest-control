@@ -162,8 +162,14 @@ src/pages/
 ### Session 16 ✅ COMPLETED
 - **Resend email integration verified** — `notify-new-lead` fires from both QuotePage and ContactPage; sends to `site_config.notification_email`; from `leads@pestflo.ai` via Resend API
 - **SMS integration verified** — `send-sms-confirmation` fires from QuotePage when transactional consent checked; sends to lead's phone via SimpleTexting; from `9032181938`
-- **Mobile audit completed** — remaining inline `gridTemplateColumns` cataloged; asymmetric layouts (`1fr 2fr`) on 4 location pages + TermiteInspections + BlogPage are non-critical; `auto-fit minmax` on RoachControl is already responsive; admin-only ClientOnboardingWizard grids excluded
-- **Build clean** — `3094 modules, built in 22.65s`, no errors
+- **Mobile audit completed** — remaining inline `gridTemplateColumns` cataloged
+- **All remaining inline gridTemplateColumns converted to responsive Tailwind** — 9 files, 9 instances:
+  - WhitehouseTX, LongviewTX, LindaleTX, JacksonvilleTX, TermiteInspections: `1fr 2fr` → `grid-cols-1 sm:grid-cols-[1fr_2fr]`
+  - BlogPage: `1fr 340px` → `grid-cols-1 sm:grid-cols-[1fr_340px]`
+  - LocationPage: `repeat(3, 1fr)` → `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`
+  - RoachControl: `auto-fit minmax` → `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`
+  - WhyChooseUs: `1fr 1fr 1fr` → `grid-cols-1 sm:grid-cols-3` (also removed explicit gridColumn/gridRow from children)
+- **Build clean** — `3094 modules, built in 24.31s`, no errors
 
 ---
 
@@ -171,9 +177,6 @@ src/pages/
 
 | Item | Priority | Notes |
 |---|---|---|
-| **Remaining asymmetric grids** | Low | `1fr 2fr` on WhitehouseTX, LongviewTX, LindaleTX, JacksonvilleTX, TermiteInspections; `1fr 340px` on BlogPage — will break on narrow mobile |
-| **WhyChooseUs.tsx homepage** | Low | `1fr 1fr 1fr` inline grid — should be `grid-cols-1 sm:grid-cols-3` |
-| **LocationPage.tsx** | Low | `repeat(3, 1fr)` service grid — should be `grid-cols-1 sm:grid-cols-3` |
 | Facebook token | Low | Social posting works in demo mode indefinitely |
 
 ---
