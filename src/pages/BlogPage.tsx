@@ -123,7 +123,7 @@ const BlogPage = () => {
 
       {/* MAIN CONTENT + SIDEBAR */}
       <section style={{ padding: '60px 40px 80px', maxWidth: '1300px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '48px', alignItems: 'start' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-[1fr_340px]" style={{ gap: '48px', alignItems: 'start' }}>
 
           {/* LEFT — blog grid */}
           <div>

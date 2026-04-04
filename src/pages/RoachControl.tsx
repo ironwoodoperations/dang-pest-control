@@ -268,7 +268,7 @@ const RoachControl = () => {
         <p style={{ fontSize: '15px', color: '#444', marginBottom: '36px', marginTop: 0 }}>
           When it comes to your home or property, you deserve nothing but the best. Here's why Dang Pest Control is the top choice for cockroach pest control in Tyler, TX, and beyond:
         </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: '20px' }}>
           {whyCards.map((card, i) => (
             <div key={i} style={{ background: '#f3f3f1', borderRadius: '8px', padding: '28px 20px' }}>
               <img loading="lazy" width={56} height={56} src={card.icon} alt={card.title} style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: '14px', display: 'block' }} />

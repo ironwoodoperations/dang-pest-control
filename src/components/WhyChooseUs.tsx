@@ -40,19 +40,10 @@ const WhyChooseUs = () => {
       <div className="mx-auto px-8" style={{ maxWidth: '1100px' }}>
 
         {/* 3-column grid, 2 rows */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr 1fr',
-            gridTemplateRows: 'auto auto',
-            gap: '24px',
-          }}
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {/* LEFT COL ROW 1 — Title text */}
           <div
             style={{
-              gridColumn: '1',
-              gridRow: '1',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-start',
@@ -75,8 +66,6 @@ const WhyChooseUs = () => {
           <div
             className="rounded-2xl p-6"
             style={{
-              gridColumn: '2',
-              gridRow: '1',
               background: 'hsl(30, 20%, 93%)',
             }}
           >
@@ -89,8 +78,6 @@ const WhyChooseUs = () => {
           <div
             className="rounded-2xl p-6"
             style={{
-              gridColumn: '3',
-              gridRow: '1',
               background: 'hsl(30, 20%, 93%)',
             }}
           >
@@ -103,8 +90,6 @@ const WhyChooseUs = () => {
           <div
             className="rounded-2xl p-6"
             style={{
-              gridColumn: '1',
-              gridRow: '2',
               background: 'hsl(30, 20%, 93%)',
             }}
           >
@@ -117,8 +102,6 @@ const WhyChooseUs = () => {
           <div
             className="rounded-2xl p-6"
             style={{
-              gridColumn: '2',
-              gridRow: '2',
               background: 'hsl(30, 20%, 93%)',
             }}
           >
@@ -131,8 +114,6 @@ const WhyChooseUs = () => {
           <div
             className="rounded-2xl p-6"
             style={{
-              gridColumn: '3',
-              gridRow: '2',
               background: 'hsl(30, 20%, 93%)',
             }}
           >

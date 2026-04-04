@@ -197,7 +197,7 @@ const LocationPage = () => {
           }}>
             Services We Offer in {location.city}
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {servicesList.map((service) => (
               <a
                 key={service.slug}

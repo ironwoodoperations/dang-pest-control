@@ -133,7 +133,7 @@ const JacksonvilleTX = () => {
           WHY CHOOSE DANG PEST CONTROL — 6 cards
       ══════════════════════════════════════════════════════ */}
       <section className="px-4 md:px-10" style={{ paddingTop: '70px', paddingBottom: '70px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '40px', alignItems: 'center', marginBottom: '36px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr]" style={{ gap: '40px', alignItems: 'center', marginBottom: '36px' }}>
           <h2 style={{ fontWeight: '800', fontSize: 'clamp(26px, 3vw, 38px)', margin: 0 }}>Why Choose Dang Pest Control?</h2>
           <p style={{ fontSize: '16px', color: '#444', lineHeight: 1.7, margin: 0 }}>
             When it comes to protecting your property and loved ones, trust matters. Here's why homeowners and property managers across Jacksonville, TX, choose Dang Pest Control:
