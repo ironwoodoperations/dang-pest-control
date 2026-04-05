@@ -219,7 +219,7 @@ export default function SocialTab() {
   const [imageUploading, setImageUploading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [postHistory, setPostHistory] = useState<any[]>([]);
-  const [fbSettings, setFbSettings] = useState<{ token: string; pageId: string }>({ token: "", pageId: "" });
+  const [fbSettings, setFbSettings] = useState<{ token: string; pageId: string; igAccountId: string }>({ token: "", pageId: "", igAccountId: "" });
   const [showConnections, setShowConnections] = useState(false);
   const [socialProvider, setSocialProvider] = useState<"hands_on" | "diy" | "semi_auto" | "full_autopilot">("semi_auto");
   const [connTab, setConnTab] = useState<"hands_on" | "diy" | "semi_auto" | "full_autopilot">("semi_auto");
@@ -234,7 +234,7 @@ export default function SocialTab() {
 
   // Campaign state
   const [campaignTopic, setCampaignTopic] = useState('')
-  const [campaignDuration, setCampaignDuration] = useState<1|7|14|30>(7)
+  const [campaignDuration, setCampaignDuration] = useState<number>(5)
   const [campaignPlatforms, setCampaignPlatforms] = useState<string[]>(['facebook'])
   const [campaignTitle, setCampaignTitle] = useState('')
   const [campaignPosts, setCampaignPosts] = useState<Array<{day:number,platform:string,caption:string,hashtags:string,image_prompt:string}>>([])
@@ -262,7 +262,7 @@ export default function SocialTab() {
     supabase.from("site_config").select("value").eq("key", "social_diy_config").eq("tenant_id", tenantId).maybeSingle().then(({ data }) => {
       if (data?.value) {
         const v = data.value as any;
-        setFbSettings({ token: v.fb_access_token || "", pageId: v.fb_page_id || "" });
+        setFbSettings({ token: v.fb_access_token || "", pageId: v.fb_page_id || "", igAccountId: v.ig_account_id || "" });
       }
     });
   }, [tenantId]);
@@ -274,7 +274,7 @@ export default function SocialTab() {
       if (data?.value) {
         const v = data.value as any;
         if (!fbSettings.token && v.fb_access_token) {
-          setFbSettings({ token: v.fb_access_token || "", pageId: v.fb_page_id || "" });
+          setFbSettings({ token: v.fb_access_token || "", pageId: v.fb_page_id || "", igAccountId: v.ig_account_id || "" });
         }
       }
     });
@@ -297,6 +297,7 @@ export default function SocialTab() {
       const diyConfig = {
         fb_access_token: fbSettings.token,
         fb_page_id: fbSettings.pageId,
+        ig_account_id: fbSettings.igAccountId,
       };
       if (existingDiy?.id) {
         await supabase.from("site_config").update({ value: diyConfig, updated_at: new Date().toISOString() }).eq("key", "social_diy_config").eq("tenant_id", tenantId);
@@ -988,14 +989,51 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
           </Card>
         )}
 
+        {/* Copy button — always available */}
         <div className="flex gap-2">
-          <Button onClick={() => setStep("wizard-template")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
-            Choose Template →
-          </Button>
-          <Button onClick={handleGenerate} variant="outline" className="font-body gap-2" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}>
-            <Sparkles className="w-4 h-4" /> Regenerate
+          <Button
+            onClick={() => { navigator.clipboard.writeText(generatedCaption); toast({ title: "Copied to clipboard!" }); }}
+            variant="outline" className="font-body gap-2"
+            style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
+          >
+            <Copy className="w-4 h-4" /> Copy
           </Button>
         </div>
+
+        {/* Starter: just Save Post, no scheduling */}
+        {!canAccess(2) ? (
+          <div className="space-y-3">
+            <Button onClick={async () => {
+              await saveSocialPost({ caption: generatedCaption, image_url: imageUrl, status: 'draft' });
+              setPosts(prev => [{ id: Date.now().toString(), caption: generatedCaption, image_url: imageUrl, template_id: selectedTemplate, platforms: selectedPlatforms, scheduled_at: '', status: 'draft', created_at: new Date().toISOString() }, ...prev]);
+              toast({ title: "Post saved!" });
+              handleReset();
+            }} className="font-body gap-2 w-full" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
+              Save Post
+            </Button>
+            <p className="text-xs font-body text-center" style={{ color: "hsl(var(--admin-text-muted))" }}>
+              Copy this post and paste it into your Facebook page.
+            </p>
+          </div>
+        ) : (
+          /* Grow+: scheduling + template */
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs font-body font-semibold mb-2 uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Schedule for</p>
+              <input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)}
+                className="rounded-xl border px-3 py-2 text-sm font-body focus:outline-none w-full"
+                style={{ background: "hsl(var(--admin-bg))", borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }} />
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={() => setStep("wizard-template")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
+                Choose Template →
+              </Button>
+              <Button onClick={handleGenerate} variant="outline" className="font-body gap-2" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}>
+                <Sparkles className="w-4 h-4" /> Regenerate
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -1063,13 +1101,15 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
       { key: "linkedin", label: "LinkedIn" },
       { key: "google", label: "Google Business" },
     ];
-    const DURATIONS: { days: 1|7|14|30; label: string; posts: number }[] = [
+    const DURATIONS: { days: number; label: string; posts: number }[] = [
       { days: 1, label: "1 Day", posts: 2 },
+      { days: 3, label: "3 Days", posts: 6 },
+      { days: 5, label: "5 Days", posts: 10 },
       { days: 7, label: "7 Days", posts: 14 },
       { days: 14, label: "14 Days", posts: 28 },
       { days: 30, label: "30 Days", posts: 30 },
     ];
-    const filteredDurations = canAccess(4) ? DURATIONS : DURATIONS.filter(d => d.days <= 7);
+    const filteredDurations = canAccess(4) ? DURATIONS : DURATIONS.filter(d => d.days <= 5);
     const canGenerate = campaignTitle.trim() && campaignTopic.trim() && campaignPlatforms.length > 0;
 
     return (
@@ -1108,7 +1148,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                 ))}
               </div>
               {tier === 3 && (
-                <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Max 7-day campaigns on Pro plan. Upgrade to Elite for unlimited.</p>
+                <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Max 5 days on Pro plan. Upgrade to Elite for unlimited.</p>
               )}
             </div>
             <div>
@@ -1233,15 +1273,42 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
         <div>
-          <h2 className="text-xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>What's this post about?</h2>
+          <h2 className="text-xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>Create a Post</h2>
           <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Enter a topic or promotion — AI will write the post.</p>
         </div>
         <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
           <CardContent className="pt-5 space-y-4">
-            <textarea value={topic} onChange={(e) => setTopic(e.target.value)}
-              placeholder="e.g. 'Mosquito season is starting — promote our monthly treatment plan'"
-              rows={3} className="w-full rounded-xl border px-3 py-2 text-sm font-body resize-none focus:outline-none focus:ring-2"
-              style={{ background: "hsl(var(--admin-bg))", borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }} />
+            <div>
+              <p className="text-xs font-body font-semibold mb-2 uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Topic or promotion</p>
+              <textarea value={topic} onChange={(e) => setTopic(e.target.value)}
+                placeholder="e.g. Spring special, termite season tips, 10% off this weekend..."
+                rows={3} className="w-full rounded-xl border px-3 py-2 text-sm font-body resize-none focus:outline-none focus:ring-2"
+                style={{ background: "hsl(var(--admin-bg))", borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }} />
+            </div>
+            {/* Platform selector chips */}
+            <div>
+              <p className="text-xs font-body font-semibold mb-2 uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Platforms</p>
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={() => togglePlatform("facebook")}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-body font-semibold border transition-all"
+                  style={{ borderColor: selectedPlatforms.includes("facebook") ? "#1877F2" : "hsl(var(--admin-sidebar-border))", background: selectedPlatforms.includes("facebook") ? "#1877F218" : "transparent", color: selectedPlatforms.includes("facebook") ? "#1877F2" : "hsl(var(--admin-text-muted))" }}>
+                  <Facebook className="w-3.5 h-3.5" /> Facebook
+                </button>
+                {canAccess(2) ? (
+                  <button
+                    onClick={() => togglePlatform("instagram")}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-body font-semibold border transition-all"
+                    style={{ borderColor: selectedPlatforms.includes("instagram") ? "#E1306C" : "hsl(var(--admin-sidebar-border))", background: selectedPlatforms.includes("instagram") ? "#E1306C18" : "transparent", color: selectedPlatforms.includes("instagram") ? "#E1306C" : "hsl(var(--admin-text-muted))" }}>
+                    <Instagram className="w-3.5 h-3.5" /> Instagram
+                  </button>
+                ) : (
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-body font-semibold border opacity-50" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text-muted))" }}>
+                    <Instagram className="w-3.5 h-3.5" /> Instagram <Lock className="w-3 h-3" />
+                  </span>
+                )}
+              </div>
+            </div>
             <div>
               <p className="text-xs font-body mb-2" style={{ color: "hsl(var(--admin-text-muted))" }}>Quick suggestions:</p>
               <div className="flex flex-wrap gap-2">
@@ -1801,7 +1868,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                 canAccess(2) ? (
                   <div className="space-y-3">
                     <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                      You're in control. Use your own social media scheduling tools to manage your posts. We'll help you generate great content — you handle the posting.
+                      You're in control. Connect your Facebook page and we'll post directly for you — no copy/paste needed.
                     </p>
                     <div className="space-y-1">
                       <Label className="font-body text-xs">Facebook Access Token</Label>
@@ -1811,9 +1878,13 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                       <Label className="font-body text-xs">Facebook Page ID</Label>
                       <Input value={fbSettings.pageId} onChange={(e) => setFbSettings(f => ({ ...f, pageId: e.target.value }))} placeholder="Enter Facebook Page ID" className="font-body text-sm" />
                     </div>
-                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                      Instagram posting requires a connected Facebook Business Page.
-                    </p>
+                    <div className="space-y-1">
+                      <Label className="font-body text-xs">Instagram Account ID</Label>
+                      <Input value={fbSettings.igAccountId} onChange={(e) => setFbSettings(f => ({ ...f, igAccountId: e.target.value }))} placeholder="Enter Instagram Account ID" className="font-body text-sm" />
+                      <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                        Requires a connected Facebook Business Page
+                      </p>
+                    </div>
                     <div className="flex gap-2">
                       <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-indigo))" }} onClick={saveConnections} disabled={connSaving}>
                         {connSaving ? "Saving..." : "Save DIY Settings"}
@@ -1844,7 +1915,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                 canAccess(3) ? (
                   <div className="space-y-4">
                     <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                      We set this up for you. Your approved posts will be automatically scheduled and sent to your connected Facebook page on a consistent posting schedule — no extra accounts or tools required on your end.
+                      We set this up for you. Your approved posts will be automatically scheduled and sent to your connected Facebook page on a consistent posting schedule.
                     </p>
                     {socialProvider === "semi_auto" ? (
                       <div className="flex items-center gap-2">
@@ -1880,7 +1951,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                       </Badge>
                     </div>
                     <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                      Sit back and let us handle everything. We connect your accounts and manage your posting schedule across Facebook, Instagram, and more. Your posts go out consistently — without you lifting a finger. Included with your Elite plan.
+                      Sit back and let us handle everything. We manage posting across Facebook, Instagram, Google Business and more — without you lifting a finger.
                     </p>
                     <ul className="space-y-2">
                       {[
@@ -1888,7 +1959,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                         "Instagram",
                         "Google Business Posts",
                         "Consistent weekly posting schedule",
-                        "AI-generated captions",
+                        "AI-generated captions tailored to your business",
                       ].map((item) => (
                         <li key={item} className="flex items-center gap-2 text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
                           <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: "hsl(140,55%,42%)" }} />

@@ -19,7 +19,6 @@ import TierToggle from './TierToggle';
 const GATED_TABS: Record<string, number> = {
   blog: 2,
   seo: 2,
-  social: 2,
   reports: 2,
   reviews: 4,
 };

@@ -43,6 +43,7 @@ export const TIER_FEATURES: Record<PlanTier, string[]> = {
     'Location pages (up to 3)',
     'Basic SEO meta editor',
     'Basic reports',
+    'Manual social media posting (copy/paste)',
   ],
   2: [
     'Everything in Starter',
