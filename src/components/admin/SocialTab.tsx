@@ -226,6 +226,9 @@ export default function SocialTab() {
   const [connTab, setConnTab] = useState<"hands_on" | "diy" | "semi_auto" | "full_autopilot">(tierProvider);
   const [connSaving, setConnSaving] = useState(false);
 
+  // AI rate limit badge
+  const [aiPostCount, setAiPostCount] = useState(0);
+
   // New states
   const [activeMainTab, setActiveMainTab] = useState<'queue' | 'campaigns' | 'analytics'>('queue');
   const [showNewPostModal, setShowNewPostModal] = useState(false);
@@ -272,6 +275,24 @@ export default function SocialTab() {
     });
   }, [tenantId]);
 
+  // Load AI post count for today (rate limit badge)
+  const refreshAiPostCount = async () => {
+    if (!tenantId) return;
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const { count } = await supabase
+      .from('social_posts' as any)
+      .select('*', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId)
+      .eq('ai_generated', true)
+      .gte('created_at', todayStart.toISOString());
+    setAiPostCount(count || 0);
+  };
+
+  useEffect(() => {
+    refreshAiPostCount();
+  }, [tenantId]);
+
   // Load post history
   useEffect(() => {
     if (!tenantId) return;
@@ -305,38 +326,35 @@ export default function SocialTab() {
   };
 
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
     const file = e.target.files[0];
     setImageUploading(true);
-    try {
-      const path = `social/${Date.now()}-${file.name}`;
-      const { error } = await supabase.storage.from("social-uploads").upload(path, file);
-      if (error) {
-        toast({ title: "Upload failed", description: error.message, variant: "destructive" });
-      } else {
-        const { data: urlData } = supabase.storage.from("social-uploads").getPublicUrl(path);
-        setImageUrl(urlData.publicUrl);
-        toast({ title: "Image uploaded!" });
-      }
-    } catch (err) {
-      toast({ title: "Upload failed", description: err instanceof Error ? err.message : "An unexpected error occurred.", variant: "destructive" });
-    } finally {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageUrl(reader.result as string);
       setImageUploading(false);
-    }
+      toast({ title: "Image added!" });
+    };
+    reader.onerror = () => {
+      setImageUploading(false);
+      toast({ title: "Failed to read image", variant: "destructive" });
+    };
+    reader.readAsDataURL(file);
   };
 
-  const saveSocialPost = async (post: { caption: string; image_url: string; status: string; facebook_post_id?: string }) => {
+  const saveSocialPost = async (post: { caption: string; image_url: string; status: string; facebook_post_id?: string; ai_generated?: boolean; scheduled_at?: string | null }) => {
     if (!tenantId) return;
     await supabase.from("social_posts" as any).insert({
       tenant_id: tenantId,
       platform: selectedPlatforms.join(","),
       caption: post.caption,
       image_url: post.image_url || null,
-      scheduled_for: scheduledAt ? new Date(scheduledAt).toISOString() : null,
+      scheduled_for: post.scheduled_at !== undefined ? (post.scheduled_at ? new Date(post.scheduled_at).toISOString() : null) : (scheduledAt ? new Date(scheduledAt).toISOString() : null),
       published_at: post.status === "published" ? new Date().toISOString() : null,
       facebook_post_id: post.facebook_post_id || null,
       status: post.status,
+      ai_generated: post.ai_generated || false,
     });
   };
 
@@ -404,10 +422,11 @@ export default function SocialTab() {
         },
         body: JSON.stringify({
           model: "claude-sonnet-4-6",
-          max_tokens: 1000,
+          max_tokens: canAccess(2) ? 400 : 300,
+          system: "You write short, engaging Facebook posts for a local pest control company. Write in a friendly, local tone. Keep it under 280 characters. Include 1-2 relevant hashtags.",
           messages: [{
             role: "user",
-            content: `You are a social media manager for Dang Pest Control, a family-owned pest control company in Tyler, TX serving East Texas. Write a single engaging Facebook/Instagram post about: "${topic}". Requirements: 2-4 sentences max, conversational and friendly tone, include 1-2 relevant emojis, end with a call to action, include 2-3 relevant hashtags at the end, phone number if relevant: (903) 871-0550. Do NOT include quotes, just write the post directly.`
+            content: `Write a Facebook post about: ${topic}`
           }],
         }),
       });
@@ -492,6 +511,7 @@ export default function SocialTab() {
     supabase.from("social_posts" as any).select("*").eq("tenant_id", tenantId).order("created_at", { ascending: false }).then(({ data }) => {
       if (data) setPostHistory(data);
     });
+    refreshAiPostCount();
   };
 
   async function generateCampaign() {
@@ -563,6 +583,10 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
   }
 
   async function confirmCampaign() {
+    if (tier === 3 && campaignDuration > 5) {
+      toast({ title: "Campaign duration is limited to 5 days on the Pro plan.", variant: "destructive" });
+      return;
+    }
     const campTenantId = tenantId || '1282b822-825b-4713-9dc9-6d14a2094d06'
     const today = new Date()
 
@@ -968,9 +992,10 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
         {!canAccess(2) ? (
           <div className="space-y-3">
             <Button onClick={async () => {
-              await saveSocialPost({ caption: generatedCaption, image_url: imageUrl, status: 'draft' });
-              setPosts(prev => [{ id: Date.now().toString(), caption: generatedCaption, image_url: imageUrl, template_id: selectedTemplate, platforms: selectedPlatforms, scheduled_at: '', status: 'draft', created_at: new Date().toISOString() }, ...prev]);
-              toast({ title: "Post saved!" });
+              await saveSocialPost({ caption: generatedCaption, image_url: imageUrl, status: 'draft', ai_generated: true, scheduled_at: null });
+              setPosts(prev => [{ id: Date.now().toString(), caption: generatedCaption, image_url: imageUrl, template_id: selectedTemplate, platforms: ['facebook'], scheduled_at: '', status: 'draft', created_at: new Date().toISOString() }, ...prev]);
+              loadPosts();
+              toast({ title: "Post saved!", description: "Head to your Content Queue to copy and post it to Facebook." });
               handleReset();
             }} className="font-body gap-2 w-full" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
               Save Post
@@ -980,8 +1005,14 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
             </p>
           </div>
         ) : (
-          /* Grow+: scheduling + template */
+          /* Grow+: scheduling + save as draft / schedule */
           <div className="space-y-3">
+            {/* Image preview */}
+            {imageUrl && (
+              <div className="relative inline-block">
+                <img src={imageUrl} alt="Preview" className="w-16 h-16 object-cover rounded-lg" />
+              </div>
+            )}
             <div>
               <p className="text-xs font-body font-semibold mb-2 uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Schedule for</p>
               <input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)}
@@ -989,11 +1020,27 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                 style={{ background: "hsl(var(--admin-bg))", borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }} />
             </div>
             <div className="flex gap-2">
-              <Button onClick={() => setStep("wizard-template")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
-                Choose Template →
+              <Button onClick={async () => {
+                await saveSocialPost({ caption: generatedCaption, image_url: imageUrl, status: 'draft', ai_generated: true, scheduled_at: null });
+                setPosts(prev => [{ id: Date.now().toString(), caption: generatedCaption, image_url: imageUrl, template_id: selectedTemplate, platforms: selectedPlatforms, scheduled_at: '', status: 'draft', created_at: new Date().toISOString() }, ...prev]);
+                loadPosts();
+                toast({ title: "Post saved as draft!" });
+                handleReset();
+              }} variant="outline" className="font-body gap-2" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}>
+                Save as Draft
               </Button>
-              <Button onClick={handleGenerate} variant="outline" className="font-body gap-2" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}>
-                <Sparkles className="w-4 h-4" /> Regenerate
+              <Button onClick={async () => {
+                if (!scheduledAt) {
+                  toast({ title: "Please select a date and time", variant: "destructive" });
+                  return;
+                }
+                await saveSocialPost({ caption: generatedCaption, image_url: imageUrl, status: 'scheduled', ai_generated: true, scheduled_at: scheduledAt });
+                setPosts(prev => [{ id: Date.now().toString(), caption: generatedCaption, image_url: imageUrl, template_id: selectedTemplate, platforms: selectedPlatforms, scheduled_at: scheduledAt, status: 'scheduled', created_at: new Date().toISOString() }, ...prev]);
+                loadPosts();
+                toast({ title: "Post scheduled!", description: `Scheduled for ${new Date(scheduledAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}` });
+                handleReset();
+              }} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
+                <Send className="w-4 h-4" /> Schedule Post
               </Button>
             </div>
           </div>
@@ -1112,7 +1159,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                 ))}
               </div>
               {tier === 3 && (
-                <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Max 5 days on Pro plan. Upgrade to Elite for unlimited.</p>
+                <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Pro plan: up to 5-day campaigns. Upgrade to Elite for unlimited.</p>
               )}
             </div>
             <div>
@@ -1285,8 +1332,31 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                 ))}
               </div>
             </div>
+            {/* Add Image — Grow+ only */}
+            {canAccess(2) && (
+              <div>
+                <p className="text-xs font-body font-semibold mb-2 uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Image (optional)</p>
+                <Label className="inline-block">
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer hover:bg-muted/30 transition-colors" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+                    <Image className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} />
+                    <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                      {imageUploading ? "Reading..." : imageUrl ? "Change Image" : "Add Image"}
+                    </span>
+                  </div>
+                  <input type="file" accept="image/jpg,image/jpeg,image/png,image/gif" onChange={handleImageUpload} className="hidden" disabled={imageUploading} />
+                </Label>
+                {imageUrl && (
+                  <div className="relative inline-block ml-3">
+                    <img src={imageUrl} alt="Preview" className="w-10 h-10 object-cover rounded-lg inline" />
+                    <button onClick={() => setImageUrl("")} className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-destructive text-white flex items-center justify-center">
+                      <X className="w-2.5 h-2.5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
             <Button onClick={handleGenerate} disabled={!topic.trim()} className="font-body gap-2 w-full" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
-              <Sparkles className="w-4 h-4" /> Generate Post with AI
+              <Sparkles className="w-4 h-4" /> Generate with AI
             </Button>
             {!canAccess(3) && (
               <p className="text-xs font-body text-center" style={{ color: "hsl(var(--admin-text-muted))" }}>
@@ -1339,6 +1409,13 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
       </div>
 
       {/* ── Stat Cards ─────────────────────────────────────────── */}
+      {/* AI Rate Limit Badge (Starter & Grow only) */}
+      {!canAccess(3) && (
+        <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+          AI posts: {aiPostCount}/2 used today
+        </p>
+      )}
+
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Scheduled", count: scheduled.length, color: "hsl(260, 55%, 55%)", icon: Clock },
@@ -1362,7 +1439,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
       {/* ── 3 Tabs ─────────────────────────────────────────────── */}
       <div className="flex gap-1 border-b" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
         {([
-          { key: 'campaigns', label: 'Campaigns', icon: Layers, minTier: 3 },
+          { key: 'campaigns', label: 'Campaigns', icon: Layers, minTier: 1 },
           { key: 'queue', label: 'Content Queue', icon: FileEdit, minTier: 1 },
           { key: 'analytics', label: 'Analytics', icon: BarChart3, minTier: 1 },
         ] as const).map(({ key, label, icon: Icon, minTier }) => {
@@ -1533,7 +1610,20 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
       )}
 
       {/* ── Campaigns Tab ──────────────────────────────────────── */}
-      {activeMainTab === 'campaigns' && (
+      {activeMainTab === 'campaigns' && !canAccess(3) && (
+        <div className="flex flex-col items-center justify-center py-16 space-y-3">
+          <Lock className="w-10 h-10" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.4 }} />
+          <p className="text-base font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Campaign Management</p>
+          <p className="text-sm font-body text-center max-w-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>
+            Create multi-day content campaigns. Available on Pro plan and above.
+          </p>
+          <Button variant="outline" className="font-body mt-2" style={{ borderColor: "hsl(260,55%,55%)", color: "hsl(260,55%,55%)" }}>
+            Upgrade to Pro &rarr;
+          </Button>
+        </div>
+      )}
+
+      {activeMainTab === 'campaigns' && canAccess(3) && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
@@ -1609,37 +1699,48 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
       {/* ── Analytics Tab ──────────────────────────────────────── */}
       {activeMainTab === 'analytics' && (
         <>
-          {/* Starter/Grow: locked */}
+          {/* Starter/Grow: locked placeholder */}
           {!canAccess(3) && (
-            <div className="text-center py-16">
-              <Lock className="w-10 h-10 mx-auto mb-3" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.4 }} />
-              <p className="text-sm font-body font-semibold mb-1" style={{ color: "hsl(var(--admin-text))" }}>Analytics available on Pro plan and above</p>
-              <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Upgrade to see post performance, engagement metrics, and more.</p>
-            </div>
-          )}
-          {/* Pro: basic analytics */}
-          {tier === 3 && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {[
-                  { label: "Total Posts", value: postHistory.length, color: "hsl(260, 55%, 55%)" },
-                  { label: "Total Likes", value: "—", color: "hsl(210, 70%, 50%)" },
-                  { label: "Total Impressions", value: "—", color: "hsl(28, 100%, 50%)" },
-                ].map(({ label, value, color }) => (
-                  <Card key={label} style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
-                    <CardContent className="p-4 text-center">
-                      <p className="text-2xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>{value}</p>
-                      <p className="text-xs font-body" style={{ color }}>{label}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-              <p className="text-xs font-body text-center" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                Upgrade to Elite for full analytics with reach, CTR, and per-post breakdown.
+            <div className="flex flex-col items-center justify-center py-16 space-y-3">
+              <BarChart3 className="w-12 h-12" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.3 }} />
+              <p className="text-base font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Social Analytics</p>
+              <p className="text-sm font-body text-center max-w-sm" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                Track likes, impressions, reach, and engagement across your platforms. Available on Pro plan and above.
               </p>
+              <Button variant="outline" className="font-body mt-2" style={{ borderColor: "hsl(260,55%,55%)", color: "hsl(260,55%,55%)" }}>
+                Upgrade to Pro &rarr;
+              </Button>
             </div>
           )}
-          {/* Elite: full analytics */}
+          {/* Pro: basic analytics — 2×2 grid */}
+          {tier === 3 && (() => {
+            const publishedCount = postHistory.filter((hp: any) => hp.status === 'posted' || hp.status === 'published').length;
+            const platformsActive = new Set(postHistory.map((hp: any) => hp.platform).filter(Boolean)).size;
+            return (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { label: "Total Posts Published", value: publishedCount, color: "hsl(260, 55%, 55%)" },
+                    { label: "Total Likes", value: 0, note: "Data syncs after posts publish", color: "hsl(210, 70%, 50%)" },
+                    { label: "Total Impressions", value: 0, note: "Data syncs after posts publish", color: "hsl(28, 100%, 50%)" },
+                    { label: "Platforms Active", value: platformsActive, color: "hsl(140, 55%, 42%)" },
+                  ].map(({ label, value, note, color }) => (
+                    <Card key={label} style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+                      <CardContent className="p-4 text-center">
+                        <p className="text-2xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>{value}</p>
+                        <p className="text-xs font-body" style={{ color }}>{label}</p>
+                        {note && <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>{note}</p>}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                <p className="text-xs font-body text-center" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                  Basic Analytics — upgrade to Elite for full reporting.
+                </p>
+              </div>
+            );
+          })()}
+          {/* Elite: full analytics (unchanged) */}
           {tier === 4 && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
