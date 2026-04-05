@@ -1,500 +1,581 @@
 import { useState } from 'react'
+import { supabase } from '@/integrations/supabase/client'
+import { useToast } from '@/hooks/use-toast'
 
-interface Service { name: string; desc: string }
-interface TeamMember { name: string; role: string; bio: string; photo: string }
+const STEP_LABELS = ['Business', 'Branding', 'Domain', 'Social', 'Plan', 'Review']
 
-const PLAN_NAMES: Record<number,string> = {1:'Starter',2:'Grow',3:'Pro',4:'Elite'}
-const PLAN_PRICES: Record<number,number> = {1:149,2:249,3:349,4:499}
-
-const DEFAULT_SERVICES: Service[] = [
-  {name:'General pest control',desc:'Comprehensive treatment for common household pests'},
-  {name:'Rodent control',desc:'Inspection, exclusion, and removal services'},
-  {name:'Termite treatment',desc:'Liquid barrier and baiting system options'},
+const PACKAGES = [
+  { id: 'template-launch', name: 'Template Launch', price: 'Free\u2013$500 setup', desc: 'Fast template-based setup and branding' },
+  { id: 'growth-setup', name: 'Growth Setup', price: '$500\u2013$1,500 setup', desc: 'Template deployment plus SEO and social integration setup' },
+  { id: 'site-migration', name: 'Site Migration', price: '$2,000\u2013$3,500 setup', desc: 'We rebuild your current website from existing content and launch it in PestFlow Pro' },
+  { id: 'custom-rebuild', name: 'Custom Rebuild', price: 'Custom quote', desc: 'Full custom redesign and multi-week implementation' },
 ]
 
+const TEMPLATES = [
+  { id: 'modern-pro', name: 'Modern Pro', desc: 'Clean and professional. Dark navy with bold accents.', swatches: ['#22c55e', '#3b82f6', '#8b5cf6'] },
+  { id: 'bold-local', name: 'Bold Local', desc: 'Strong and confident. Built for local market leaders.', swatches: ['#f97316', '#ef4444', '#22c55e'] },
+  { id: 'clean-friendly', name: 'Clean & Friendly', desc: 'Approachable and bright. Great for residential focus.', swatches: ['#38bdf8', '#22c55e', '#fb923c'] },
+  { id: 'rustic-rugged', name: 'Rustic & Rugged', desc: 'Warm and established. Perfect for trusted local brands.', swatches: ['#b45309', '#4d7c0f', '#92400e'] },
+]
+
+const PALETTES: Record<string, { name: string; primary: string; accent: string }[]> = {
+  'modern-pro': [
+    { name: 'Classic Emerald', primary: '#22c55e', accent: '#000' },
+    { name: 'Pacific Blue', primary: '#3b82f6', accent: '#000' },
+    { name: 'Royal Violet', primary: '#8b5cf6', accent: '#000' },
+  ],
+  'bold-local': [
+    { name: 'Amber Gold', primary: '#f59e0b', accent: '#000' },
+    { name: 'Cardinal Red', primary: '#ef4444', accent: '#000' },
+    { name: 'Forest Green', primary: '#16a34a', accent: '#000' },
+  ],
+  'clean-friendly': [
+    { name: 'Sky Blue', primary: '#38bdf8', accent: '#0ea5e9' },
+    { name: 'Sage Green', primary: '#22c55e', accent: '#15803d' },
+    { name: 'Coral Warm', primary: '#fb923c', accent: '#ea580c' },
+  ],
+  'rustic-rugged': [
+    { name: 'Rust & Brown', primary: '#c2410c', accent: '#1c1917' },
+    { name: 'Pine Forest', primary: '#166534', accent: '#1c1917' },
+    { name: 'Harvest Gold', primary: '#d97706', accent: '#1c1917' },
+  ],
+}
+
+const PLANS = [
+  { id: 'starter', name: 'Starter', price: 149, badge: '', features: ['Branded website', 'CRM & lead management', 'Basic SEO tools', 'Up to 3 locations', 'Team access'] },
+  { id: 'grow', name: 'Grow', price: 249, badge: 'Most Popular', features: ['Everything in Starter +', 'Full SEO suite', 'Blog management', 'Social scheduling'] },
+  { id: 'pro', name: 'Pro', price: 349, badge: '', features: ['Everything in Grow +', 'AI content tools', 'Advanced reports', 'Campaign management'] },
+  { id: 'elite', name: 'Elite', price: 499, badge: 'Best Value', features: ['Everything in Pro +', 'Social analytics', 'Autopilot posting', 'Live review management'] },
+]
+
+const REGISTRARS = ['GoDaddy', 'Namecheap', 'Google Domains', 'Cloudflare', 'Network Solutions', 'Squarespace', 'Wix', 'Bluehost', 'HostGator', 'Other']
+
+function toKebab(s: string) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 export default function ClientOnboardingWizard() {
-  const [slide, setSlide] = useState(0)
-  const [plan, setPlan] = useState(3)
-  const [template, setTemplate] = useState('bold')
-  const [services, setServices] = useState<Service[]>(DEFAULT_SERVICES)
-  const [team, setTeam] = useState<TeamMember[]>([{name:'',role:'Owner',bio:'',photo:''}])
+  const { toast } = useToast()
+  const [step, setStep] = useState(0)
+  const [maxStep, setMaxStep] = useState(0)
+  const [showPayment, setShowPayment] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Step 1 - Business
   const [form, setForm] = useState({
-    biz_name:'', contact_name:'', onboard_date: new Date().toISOString().split('T')[0],
-    phone:'', email:'', address:'', city_state:'', domain:'', years:'', license:'', radius:'50',
-    tagline:'', biz_desc:'', logo_url:'',
-    color_primary:'#E85D04', color_secondary:'#1D9E75',
-    primary_area:'', service_cities:'',
-    hours_weekday:'Mon–Fri 7am–6pm', hours_weekend:'Sat 8am–2pm / Sun Closed',
-    emergency_phone:'', quote_email:'', contact_email:'',
-    fb_url:'', ig_handle:'', gmb_url:'', yelp_url:'', fb_token:'',
-    gsc_code:'', ga4_id:'', place_id:'', keywords:'', competitors:'',
-    sms_provider:'', sms_number:'', sms_api_key:'', resend_key:'',
-    gcp_project:'', places_api_key:'', place_id_elite:'', ayrshare_key:'',
+    companyName: '', slug: '', phone: '', email: '', address: '', hours: '',
   })
+  // Step 2 - Branding
+  const [selectedPackage, setSelectedPackage] = useState('')
+  const [selectedTemplate, setSelectedTemplate] = useState('')
+  const [selectedPalette, setSelectedPalette] = useState('')
+  const [logoFile, setLogoFile] = useState('')
+  // Step 3 - Domain
+  const [noDomain, setNoDomain] = useState(false)
+  const [domain, setDomain] = useState('')
+  const [registrar, setRegistrar] = useState('')
+  // Step 4 - Social
+  const [social, setSocial] = useState({ facebook: '', google: '', instagram: '', youtube: '' })
+  // Step 5 - Plan
+  const [selectedPlan, setSelectedPlan] = useState('')
+  // Payment
+  const [customSetupAmount, setCustomSetupAmount] = useState('')
 
-  const total = 11
-  const f = (k: keyof typeof form) => form[k]
-  const set = (k: keyof typeof form, v: string) => setForm(p => ({...p, [k]:v}))
-  const inp = (k: keyof typeof form, placeholder='', type='text') => (
-    <input type={type} value={f(k)} placeholder={placeholder}
-      onChange={e => set(k, e.target.value)}
-      style={{width:'100%',padding:'8px 10px',border:'0.5px solid var(--color-border-secondary)',
-        borderRadius:'var(--border-radius-md)',fontSize:'14px',color:'var(--color-text-primary)',
-        background:'var(--color-background-primary)',fontFamily:'var(--font-sans)'}} />
-  )
-  const ta = (k: keyof typeof form, placeholder='', rows=3) => (
-    <textarea value={f(k)} placeholder={placeholder} rows={rows}
-      onChange={e => set(k, e.target.value)}
-      style={{width:'100%',padding:'8px 10px',border:'0.5px solid var(--color-border-secondary)',
-        borderRadius:'var(--border-radius-md)',fontSize:'14px',color:'var(--color-text-primary)',
-        background:'var(--color-background-primary)',fontFamily:'var(--font-sans)',resize:'vertical'}} />
-  )
+  const set = (k: keyof typeof form, v: string) => {
+    setForm(p => {
+      const next = { ...p, [k]: v }
+      if (k === 'companyName') next.slug = toKebab(v)
+      return next
+    })
+  }
 
-  const label = (text: string, hint='') => (
-    <div style={{marginBottom:'5px'}}>
-      <label style={{fontSize:'13px',color:'var(--color-text-secondary)'}}>{text}</label>
-      {hint && <div style={{fontSize:'11px',color:'var(--color-text-tertiary)',marginTop:'2px'}}>{hint}</div>}
-    </div>
-  )
+  const setSoc = (k: keyof typeof social, v: string) => setSocial(p => ({ ...p, [k]: v }))
 
-  const field = (lbl: string, child: React.ReactNode, hint='') => (
-    <div style={{marginBottom:'1.1rem'}}>
-      {label(lbl, hint)}
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '8px 10px', border: '0.5px solid var(--color-border-secondary)',
+    borderRadius: 'var(--border-radius-md)', fontSize: '14px', color: 'var(--color-text-primary)',
+    background: 'var(--color-background-primary)', fontFamily: 'var(--font-sans)',
+  }
+
+  const selectStyle: React.CSSProperties = { ...inputStyle }
+
+  const sBtn = (label: string, color = '#1D9E75') => ({
+    padding: '8px 20px', borderRadius: 'var(--border-radius-md)', fontSize: '14px',
+    cursor: 'pointer', fontFamily: 'var(--font-sans)', background: color,
+    border: 'none', color: '#fff', fontWeight: 500,
+  } as React.CSSProperties)
+
+  const field = (lbl: string, child: React.ReactNode, hint = '', required = false) => (
+    <div style={{ marginBottom: '1.1rem' }}>
+      <div style={{ marginBottom: '5px' }}>
+        <label style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>
+          {lbl}{required && <span style={{ color: '#ef4444' }}> *</span>}
+        </label>
+        {hint && <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', marginTop: '2px' }}>{hint}</div>}
+      </div>
       {child}
     </div>
   )
 
-  const two = (a: React.ReactNode, b: React.ReactNode) => (
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px',marginBottom:'0'}}>
-      {a}{b}
-    </div>
+  const inp = (value: string, onChange: (v: string) => void, placeholder = '', type = 'text') => (
+    <input type={type} value={value} placeholder={placeholder} onChange={e => onChange(e.target.value)} style={inputStyle} />
   )
 
-  const divider = (text: string) => (
-    <div style={{fontSize:'12px',fontWeight:500,color:'var(--color-text-secondary)',
-      textTransform:'uppercase',letterSpacing:'0.05em',margin:'1.25rem 0 0.75rem',
-      paddingBottom:'4px',borderBottom:'0.5px solid var(--color-border-tertiary)'}}>{text}</div>
-  )
-
-  const badge = (text: string, color: string) => (
-    <span style={{display:'inline-block',fontSize:'10px',fontWeight:500,padding:'2px 7px',
-      borderRadius:'10px',marginLeft:'6px',verticalAlign:'middle',...tierStyle(color)}}>{text}</span>
-  )
-
-  function tierStyle(t: string) {
-    const map: Record<string,{background:string,color:string}> = {
-      s:{background:'#E1F5EE',color:'#0F6E56'},
-      g:{background:'#E6F1FB',color:'#185FA5'},
-      p:{background:'#EEEDFE',color:'#534AB7'},
-      e:{background:'#FAEEDA',color:'#854F0B'},
+  // Validation
+  function validateStep(s: number): boolean {
+    const errs: Record<string, string> = {}
+    if (s === 0) {
+      if (!form.companyName.trim()) errs.companyName = 'Company Name is required.'
+      if (!form.slug.trim()) errs.slug = 'Site Slug is required.'
+      if (!form.phone.trim()) errs.phone = 'Phone is required.'
+      if (!form.email.trim()) errs.email = 'Email is required.'
+      if (!form.address.trim()) errs.address = 'Address is required.'
     }
-    return map[t]||map.s
+    if (s === 1) {
+      if (!selectedPackage) errs.package = 'Select a setup package to continue.'
+      if (!selectedTemplate) errs.template = 'Select a site template to continue.'
+    }
+    if (s === 4) {
+      if (!selectedPlan) errs.plan = 'Select a plan to continue.'
+    }
+    setErrors(errs)
+    return Object.keys(errs).length === 0
   }
 
-  const lockNotice = (text: string, show: boolean) => show ? (
-    <div style={{fontSize:'12px',color:'#854F0B',background:'#FAEEDA',borderRadius:'var(--border-radius-md)',
-      padding:'8px 12px',marginBottom:'1rem',display:'flex',alignItems:'center',gap:'8px'}}>
-      {text}
+  function goNext() {
+    if (!validateStep(step)) return
+    const next = step + 1
+    setStep(next)
+    if (next > maxStep) setMaxStep(next)
+  }
+
+  function goToStep(s: number) {
+    if (s <= maxStep) {
+      setShowPayment(false)
+      setStep(s)
+    }
+  }
+
+  const planObj = PLANS.find(p => p.id === selectedPlan)
+  const pkgObj = PACKAGES.find(p => p.id === selectedPackage)
+  const tmplObj = TEMPLATES.find(t => t.id === selectedTemplate)
+  const paletteObj = selectedTemplate && selectedPalette
+    ? (PALETTES[selectedTemplate] || []).find(p => p.name === selectedPalette)
+    : null
+
+  const socialCount = [social.facebook, social.google, social.instagram, social.youtube].filter(Boolean).length
+
+  async function handleSubmit() {
+    try {
+      await (supabase as any).from('client_onboarding_submissions').insert({
+        tenant_id: '1282b822-825b-4713-9dc9-6d14a2094d06',
+        company_name: form.companyName,
+        site_slug: form.slug,
+        phone: form.phone,
+        email: form.email,
+        address: form.address,
+        business_hours: form.hours,
+        package_name: selectedPackage,
+        template_name: selectedTemplate,
+        palette_name: selectedPalette,
+        domain: noDomain ? null : domain,
+        registrar: noDomain ? null : registrar,
+        social_links: { facebook: social.facebook, google: social.google, instagram: social.instagram, youtube: social.youtube },
+        plan_name: planObj?.name || '',
+        plan_price: planObj?.price || 0,
+        custom_setup_amount: customSetupAmount ? Number(customSetupAmount) : null,
+      })
+      toast({ title: 'Payment link generated', description: `Onboarding saved for ${form.companyName}.` })
+    } catch (err) {
+      console.error('Failed to save submission:', err)
+      toast({ title: 'Error', description: 'Failed to save submission. Please try again.', variant: 'destructive' })
+    }
+  }
+
+  function resetAll() {
+    setStep(0); setMaxStep(0); setShowPayment(false); setErrors({})
+    setForm({ companyName: '', slug: '', phone: '', email: '', address: '', hours: '' })
+    setSelectedPackage(''); setSelectedTemplate(''); setSelectedPalette(''); setLogoFile('')
+    setNoDomain(false); setDomain(''); setRegistrar('')
+    setSocial({ facebook: '', google: '', instagram: '', youtube: '' })
+    setSelectedPlan(''); setCustomSetupAmount('')
+  }
+
+  // --- Step progress bar ---
+  const progressBar = (
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>
+      {STEP_LABELS.map((lbl, i) => {
+        const completed = i < step
+        const current = i === step && !showPayment
+        const future = i > step || showPayment
+        return (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', flex: i < STEP_LABELS.length - 1 ? 1 : 'none' }}>
+            <div
+              onClick={() => completed && goToStep(i)}
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: completed ? 'pointer' : 'default',
+                minWidth: '56px',
+              }}
+            >
+              <div style={{
+                width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '14px', fontWeight: 600, color: '#fff',
+                background: completed || current ? '#1D9E75' : '#a1a1aa',
+                transition: 'background 0.2s',
+              }}>
+                {completed ? '\u2713' : i + 1}
+              </div>
+              <div style={{ fontSize: '11px', marginTop: '4px', color: current ? '#1D9E75' : 'var(--color-text-secondary)', fontWeight: current ? 600 : 400 }}>
+                {lbl}
+              </div>
+            </div>
+            {i < STEP_LABELS.length - 1 && (
+              <div style={{ flex: 1, height: '2px', background: completed ? '#1D9E75' : 'var(--color-border-tertiary)', margin: '0 4px', marginBottom: '18px' }} />
+            )}
+          </div>
+        )
+      })}
     </div>
+  )
+
+  // --- Error message ---
+  const errMsg = (key: string) => errors[key] ? (
+    <div style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px' }}>{errors[key]}</div>
   ) : null
 
-  const planCard = (p: number, name: string, price: string, desc: string) => (
-    <div onClick={() => setPlan(p)}
-      style={{padding:'12px',border: plan===p ? '2px solid #1D9E75' : '0.5px solid var(--color-border-tertiary)',
-        borderRadius:'var(--border-radius-lg)',cursor:'pointer',
-        background: plan===p ? 'var(--color-background-secondary)' : 'var(--color-background-primary)'}}>
-      <div style={{fontSize:'14px',fontWeight:500,color:'var(--color-text-primary)'}}>{name}</div>
-      <div style={{fontSize:'18px',fontWeight:500,color:'#1D9E75',margin:'4px 0'}}>{price}</div>
-      <div style={{fontSize:'11px',color:'var(--color-text-secondary)'}}>{desc}</div>
+  // --- STEPS ---
+
+  const step1 = (
+    <div>
+      <div style={{ fontSize: '22px', fontWeight: 500, color: 'var(--color-text-primary)', marginBottom: '0.25rem' }}>Business Info</div>
+      <div style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>Core details about the client's business.</div>
+
+      {field('Company Name', inp(form.companyName, v => set('companyName', v), 'Ironclad Pest Solutions'), '', true)}
+      {errMsg('companyName')}
+
+      {field('Site Slug', inp(form.slug, v => setForm(p => ({ ...p, slug: v })), 'ironclad-pest'), 'Enter your company name above', true)}
+      {errMsg('slug')}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '0' }}>
+        {field('Phone', inp(form.phone, v => set('phone', v), '(555) 555-5555', 'tel'), '', true)}
+        {field('Email', inp(form.email, v => set('email', v), 'info@example.com', 'email'), '', true)}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div>{errMsg('phone')}</div>
+        <div>{errMsg('email')}</div>
+      </div>
+
+      {field('Address', inp(form.address, v => set('address', v), '123 Main St, Houston TX 77001'), '', true)}
+      {errMsg('address')}
+
+      {field('Business Hours', inp(form.hours, v => set('hours', v), 'Mon\u2013Fri 8am\u20136pm, Sat 9am\u20132pm'))}
     </div>
   )
 
-  const tmplCard = (t: string, name: string, desc: string, bg: string) => (
-    <div onClick={() => setTemplate(t)}
-      style={{padding:'12px',border: template===t ? '2px solid #1D9E75' : '0.5px solid var(--color-border-tertiary)',
-        borderRadius:'var(--border-radius-lg)',cursor:'pointer',textAlign:'center',
-        background: template===t ? 'var(--color-background-secondary)' : 'var(--color-background-primary)'}}>
-      <div style={{height:'50px',borderRadius:'6px',marginBottom:'8px',background:bg}}></div>
-      <div style={{fontSize:'13px',fontWeight:500,color:'var(--color-text-primary)'}}>{name}</div>
-      <div style={{fontSize:'11px',color:'var(--color-text-secondary)'}}>{desc}</div>
-    </div>
-  )
+  const step2 = (
+    <div>
+      <div style={{ fontSize: '22px', fontWeight: 500, color: 'var(--color-text-primary)', marginBottom: '0.25rem' }}>Package & Branding</div>
+      <div style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>Select your setup package and visual identity.</div>
 
-  function addService() { setServices(s => [...s,{name:'',desc:''}]) }
-  function removeService(i: number) { setServices(s => s.filter((_,idx)=>idx!==i)) }
-  function updateService(i: number, key: keyof Service, val: string) {
-    setServices(s => s.map((item,idx) => idx===i ? {...item,[key]:val} : item))
-  }
-
-  function addTeam() { setTeam(t => [...t,{name:'',role:'Technician',bio:'',photo:''}]) }
-  function removeTeam(i: number) { setTeam(t => t.filter((_,idx)=>idx!==i)) }
-  function updateTeam(i: number, key: keyof TeamMember, val: string) {
-    setTeam(t => t.map((item,idx) => idx===i ? {...item,[key]:val} : item))
-  }
-
-  function exportMD() {
-    const cities = f('service_cities').split(',').map(c=>c.trim()).filter(Boolean)
-    const keywords = f('keywords').split('\n').map(k=>k.trim()).filter(Boolean)
-    const competitors = f('competitors').split('\n').map(c=>c.trim()).filter(Boolean)
-    const servicesBlock = services.map(s=>`  - name: "${s.name}"\n    description: "${s.desc}"`).join('\n')
-    const teamBlock = team.map(m=>`  - name: "${m.name}"\n    role: "${m.role}"\n    bio: "${m.bio}"\n    photo: "${m.photo}"`).join('\n')
-
-    const md = `# PestFlow Pro — Client Setup File
-# Generated: ${new Date().toISOString()}
-# DO NOT share this file — contains API keys and credentials
-
----
-
-## client
-
-business_name: "${f('biz_name')}"
-contact_name: "${f('contact_name')}"
-onboard_date: "${f('onboard_date')}"
-
-## plan
-
-tier: ${plan}
-plan_name: "${PLAN_NAMES[plan]}"
-monthly_price: ${PLAN_PRICES[plan]}
-
-## design
-
-template: "${template}"
-color_primary: "${f('color_primary')}"
-color_secondary: "${f('color_secondary')}"
-logo_url: "${f('logo_url')}"
-
-## business_info
-
-phone: "${f('phone')}"
-email: "${f('email')}"
-address: "${f('address')}"
-city_state: "${f('city_state')}"
-domain: "${f('domain')}"
-years_in_business: ${f('years')||0}
-license_number: "${f('license')}"
-service_radius_miles: ${f('radius')||50}
-tagline: "${f('tagline')}"
-description: |
-  ${f('biz_desc').replace(/\n/g,'\n  ')}
-
-## hours
-
-weekday: "${f('hours_weekday')}"
-weekend: "${f('hours_weekend')}"
-emergency_phone: "${f('emergency_phone')}"
-
-## contact_routing
-
-quote_email: "${f('quote_email')}"
-contact_email: "${f('contact_email')}"
-
-## services
-
-${servicesBlock}
-
-## service_areas
-
-primary: "${f('primary_area')}"
-cities:
-${cities.map(c=>`  - "${c}"`).join('\n')}
-
-## team
-
-${teamBlock}
-
-## social
-
-facebook_url: "${f('fb_url')}"
-instagram_handle: "${f('ig_handle')}"
-google_business_url: "${f('gmb_url')}"
-yelp_url: "${f('yelp_url')}"
-facebook_page_token: "${f('fb_token')}"
-
-## seo${plan<2?'  # LOCKED — requires Grow+':''}
-
-google_place_id: "${f('place_id')}"
-ga4_measurement_id: "${f('ga4_id')}"
-gsc_verification_code: "${f('gsc_code')}"
-target_keywords:
-${keywords.map(k=>`  - "${k}"`).join('\n')}
-competitor_sites:
-${competitors.map(c=>`  - "${c}"`).join('\n')}
-
-## sms${plan<3?'  # LOCKED — requires Pro+':''}
-
-provider: "${f('sms_provider')}"
-sending_number: "${f('sms_number')}"
-api_key: "${f('sms_api_key')}"
-resend_api_key: "${f('resend_key')}"
-
-## elite${plan<4?'  # LOCKED — requires Elite':''}
-
-google_cloud_project: "${f('gcp_project')}"
-google_places_api_key: "${f('places_api_key')}"
-google_place_id_confirmed: "${f('place_id_elite')}"
-ayrshare_api_key: "${f('ayrshare_key')}"
-
----
-# END OF CLIENT SETUP FILE
-# Load into PestFlow Pro → Admin → Onboarding to auto-generate the client site
-`
-    const blob = new Blob([md],{type:'text/markdown'})
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = (f('biz_name')||'client').toLowerCase().replace(/\s+/g,'-')+'-pestflow-setup.md'
-    a.click()
-    URL.revokeObjectURL(url)
-  }
-
-  const sBtn = (label: string, color='#1D9E75') => ({
-    padding:'8px 20px',borderRadius:'var(--border-radius-md)',fontSize:'14px',
-    cursor:'pointer',fontFamily:'var(--font-sans)',background:color,
-    border:'none',color:'#fff',fontWeight:500
-  } as React.CSSProperties)
-
-  const slides = [
-    // 0 Welcome
-    <div key={0}>
-      <div style={{fontSize:'22px',fontWeight:500,color:'var(--color-text-primary)',marginBottom:'0.25rem'}}>Client onboarding</div>
-      <div style={{fontSize:'14px',color:'var(--color-text-secondary)',marginBottom:'1.5rem'}}>Fill this out during your sales presentation. We'll generate a ready-to-deploy site file at the end.</div>
-      {field('Client business name', inp('biz_name','e.g. Smith\'s Pest Control'))}
-      {field('Client contact name', inp('contact_name','Owner or primary contact'))}
-      {field('Date', inp('onboard_date','','date'))}
-      {divider('Select plan')}
-      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'10px',marginBottom:'1.5rem'}}>
-        {planCard(1,'Starter','$149/mo','Website + CRM + basic SEO')}
-        {planCard(2,'Grow','$249/mo','+ Full SEO + Blog + Social')}
-        {planCard(3,'Pro','$349/mo','+ AI tools + Campaigns')}
-        {planCard(4,'Elite','$499/mo','+ Live reviews + All platforms')}
-      </div>
-    </div>,
-
-    // 1 Business Info
-    <div key={1}>
-      <div style={{fontSize:'22px',fontWeight:500,marginBottom:'0.25rem'}}>Business information</div>
-      <div style={{fontSize:'14px',color:'var(--color-text-secondary)',marginBottom:'1.5rem'}}>Core details that appear across the site.</div>
-      {two(field('Phone', inp('phone','(555) 555-5555','tel')), field('Business email', inp('email','info@example.com','email')))}
-      {two(field('Street address', inp('address','123 Main St')), field('City, State ZIP', inp('city_state','Houston, TX 77001')))}
-      {two(field('Desired domain', inp('domain','smithspestcontrol.com'), 'We\'ll check availability and register it'), field('Years in business', inp('years','e.g. 12','number')))}
-      {two(field('Pest control license #', inp('license','TX-12345')), field('Service radius (miles)', inp('radius','50','number')))}
-      {field('Tagline / slogan', inp('tagline','e.g. Fast, Friendly, and Pest-Free Guaranteed'))}
-      {field('Short business description', ta('biz_desc','What makes this company different? Family-owned? 24/7? Eco-friendly?'))}
-    </div>,
-
-    // 2 Branding
-    <div key={2}>
-      <div style={{fontSize:'22px',fontWeight:500,marginBottom:'0.25rem'}}>Branding & design</div>
-      <div style={{fontSize:'14px',color:'var(--color-text-secondary)',marginBottom:'1.5rem'}}>Colors, logo, and template selection.</div>
-      {field('Logo URL or file path', inp('logo_url','https://... or /public/logo.png'), 'Upload logo to the repo after onboarding if not yet available')}
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px',marginBottom:'1.1rem'}}>
-        <div>
-          {label('Primary brand color')}
-          <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
-            <input type="color" value={f('color_primary')} onChange={e=>set('color_primary',e.target.value)}
-              style={{width:'44px',height:'36px',padding:'2px',cursor:'pointer',border:'0.5px solid var(--color-border-secondary)',borderRadius:'var(--border-radius-md)'}} />
-            <input type="text" value={f('color_primary')} onChange={e=>set('color_primary',e.target.value)}
-              style={{flex:1,padding:'8px 10px',border:'0.5px solid var(--color-border-secondary)',borderRadius:'var(--border-radius-md)',fontSize:'14px',color:'var(--color-text-primary)',background:'var(--color-background-primary)'}} />
+      {/* Setup Package */}
+      <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-text-secondary)', marginBottom: '8px' }}>Setup Package *</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '8px' }}>
+        {PACKAGES.map(pkg => (
+          <div key={pkg.id} onClick={() => setSelectedPackage(pkg.id)}
+            style={{
+              padding: '14px', cursor: 'pointer', borderRadius: 'var(--border-radius-lg)',
+              border: selectedPackage === pkg.id ? '2px solid #1D9E75' : '0.5px solid var(--color-border-tertiary)',
+              background: selectedPackage === pkg.id ? 'var(--color-background-secondary)' : 'var(--color-background-primary)',
+            }}>
+            <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-text-primary)' }}>{pkg.name}</div>
+            <div style={{ fontSize: '13px', fontWeight: 500, color: '#1D9E75', margin: '4px 0' }}>{pkg.price}</div>
+            <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>{pkg.desc}</div>
           </div>
-        </div>
-        <div>
-          {label('Secondary brand color')}
-          <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
-            <input type="color" value={f('color_secondary')} onChange={e=>set('color_secondary',e.target.value)}
-              style={{width:'44px',height:'36px',padding:'2px',cursor:'pointer',border:'0.5px solid var(--color-border-secondary)',borderRadius:'var(--border-radius-md)'}} />
-            <input type="text" value={f('color_secondary')} onChange={e=>set('color_secondary',e.target.value)}
-              style={{flex:1,padding:'8px 10px',border:'0.5px solid var(--color-border-secondary)',borderRadius:'var(--border-radius-md)',fontSize:'14px',color:'var(--color-text-primary)',background:'var(--color-background-primary)'}} />
-          </div>
-        </div>
-      </div>
-      {divider('Design template')}
-      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'10px'}}>
-        {tmplCard('bold','Bold','High-contrast, strong CTAs','linear-gradient(135deg,#E85D04,#FF8C42)')}
-        {tmplCard('clean','Clean','Minimal, professional','linear-gradient(135deg,#185FA5,#378ADD)')}
-        {tmplCard('modern','Modern','Dark accents, sharp','linear-gradient(135deg,#534AB7,#7F77DD)')}
-      </div>
-    </div>,
-
-    // 3 Services
-    <div key={3}>
-      <div style={{fontSize:'22px',fontWeight:500,marginBottom:'0.25rem'}}>Services offered</div>
-      <div style={{fontSize:'14px',color:'var(--color-text-secondary)',marginBottom:'1.5rem'}}>Each service becomes a card on the site.</div>
-      {services.map((s,i) => (
-        <div key={i} style={{border:'0.5px solid var(--color-border-tertiary)',borderRadius:'var(--border-radius-md)',padding:'10px 12px',marginBottom:'10px'}}>
-          <div style={{display:'flex',gap:'8px',alignItems:'center',marginBottom:'6px'}}>
-            <input type="text" value={s.name} placeholder="Service name" onChange={e=>updateService(i,'name',e.target.value)}
-              style={{flex:1,padding:'8px 10px',border:'0.5px solid var(--color-border-secondary)',borderRadius:'var(--border-radius-md)',fontSize:'14px',color:'var(--color-text-primary)',background:'var(--color-background-primary)',fontWeight:500}} />
-            <button onClick={()=>removeService(i)} style={{background:'transparent',border:'none',color:'var(--color-text-tertiary)',cursor:'pointer',fontSize:'18px',padding:'0 4px'}}>×</button>
-          </div>
-          <textarea value={s.desc} placeholder="Brief description" rows={2} onChange={e=>updateService(i,'desc',e.target.value)}
-            style={{width:'100%',padding:'8px 10px',border:'0.5px solid var(--color-border-secondary)',borderRadius:'var(--border-radius-md)',fontSize:'13px',color:'var(--color-text-primary)',background:'var(--color-background-primary)',resize:'vertical'}} />
-        </div>
-      ))}
-      <button onClick={addService} style={{background:'transparent',border:'0.5px dashed var(--color-border-secondary)',color:'var(--color-text-secondary)',borderRadius:'var(--border-radius-md)',padding:'6px 14px',cursor:'pointer',fontSize:'13px',fontFamily:'var(--font-sans)'}}>+ Add service</button>
-      {divider('Service areas')}
-      {field('Primary city / county', inp('primary_area','e.g. Houston, TX'))}
-      {field('Additional service cities (comma separated)', inp('service_cities','Katy, Sugarland, Pearland, The Woodlands'), 'Each city becomes a location page on the site')}
-    </div>,
-
-    // 4 Hours
-    <div key={4}>
-      <div style={{fontSize:'22px',fontWeight:500,marginBottom:'0.25rem'}}>Hours & contact details</div>
-      <div style={{fontSize:'14px',color:'var(--color-text-secondary)',marginBottom:'1.5rem'}}>Displayed on the Contact page and footer.</div>
-      {two(field('Weekday hours', inp('hours_weekday','Mon–Fri 7am–6pm')), field('Weekend hours', inp('hours_weekend','Sat 8am–2pm / Sun Closed')))}
-      {field('Emergency / after-hours line', inp('emergency_phone','Leave blank if none','tel'))}
-      {two(
-        field('Quote form recipient email', inp('quote_email','quotes@example.com','email'), 'Resend will forward quote submissions here'),
-        field('Contact form recipient email', inp('contact_email','info@example.com','email'))
-      )}
-    </div>,
-
-    // 5 Team
-    <div key={5}>
-      <div style={{fontSize:'22px',fontWeight:500,marginBottom:'0.25rem'}}>Team members</div>
-      <div style={{fontSize:'14px',color:'var(--color-text-secondary)',marginBottom:'1.5rem'}}>Owner first, then technicians. Photos can be added later.</div>
-      {team.map((m,i) => (
-        <div key={i} style={{border:'0.5px solid var(--color-border-tertiary)',borderRadius:'var(--border-radius-md)',padding:'10px 12px',marginBottom:'10px'}}>
-          <div style={{display:'flex',alignItems:'center',marginBottom:'8px'}}>
-            <span style={{fontSize:'13px',fontWeight:500,color:'var(--color-text-secondary)'}}>Member {i+1}</span>
-            {i>0 && <button onClick={()=>removeTeam(i)} style={{marginLeft:'auto',background:'transparent',border:'none',color:'var(--color-text-tertiary)',cursor:'pointer',fontSize:'18px'}}>×</button>}
-          </div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px',marginBottom:'8px'}}>
-            <input type="text" value={m.name} placeholder="Full name" onChange={e=>updateTeam(i,'name',e.target.value)}
-              style={{padding:'8px 10px',border:'0.5px solid var(--color-border-secondary)',borderRadius:'var(--border-radius-md)',fontSize:'14px',color:'var(--color-text-primary)',background:'var(--color-background-primary)'}} />
-            <input type="text" value={m.role} placeholder="Role / title" onChange={e=>updateTeam(i,'role',e.target.value)}
-              style={{padding:'8px 10px',border:'0.5px solid var(--color-border-secondary)',borderRadius:'var(--border-radius-md)',fontSize:'14px',color:'var(--color-text-primary)',background:'var(--color-background-primary)'}} />
-          </div>
-          <input type="text" value={m.photo} placeholder="Photo URL (or upload later)" onChange={e=>updateTeam(i,'photo',e.target.value)}
-            style={{width:'100%',padding:'8px 10px',border:'0.5px solid var(--color-border-secondary)',borderRadius:'var(--border-radius-md)',fontSize:'14px',color:'var(--color-text-primary)',background:'var(--color-background-primary)',marginBottom:'8px'}} />
-          <textarea value={m.bio} placeholder="Short bio (1–2 sentences)" rows={2} onChange={e=>updateTeam(i,'bio',e.target.value)}
-            style={{width:'100%',padding:'8px 10px',border:'0.5px solid var(--color-border-secondary)',borderRadius:'var(--border-radius-md)',fontSize:'13px',color:'var(--color-text-primary)',background:'var(--color-background-primary)',resize:'vertical'}} />
-        </div>
-      ))}
-      <button onClick={addTeam} style={{background:'transparent',border:'0.5px dashed var(--color-border-secondary)',color:'var(--color-text-secondary)',borderRadius:'var(--border-radius-md)',padding:'6px 14px',cursor:'pointer',fontSize:'13px',fontFamily:'var(--font-sans)'}}>+ Add team member</button>
-    </div>,
-
-    // 6 Social
-    <div key={6}>
-      <div style={{fontSize:'22px',fontWeight:500,marginBottom:'0.25rem'}}>Social media accounts</div>
-      <div style={{fontSize:'14px',color:'var(--color-text-secondary)',marginBottom:'1.5rem'}}>Links appear in the footer. Connections unlock social scheduling.</div>
-      {field('Facebook page URL', inp('fb_url','https://facebook.com/smithspestcontrol','url'))}
-      {field('Instagram handle', inp('ig_handle','@smithspestcontrol'))}
-      {field('Google Business Profile URL', inp('gmb_url','https://maps.google.com/...','url'))}
-      {field('Yelp page URL', inp('yelp_url','https://yelp.com/biz/...','url'))}
-      {field('Facebook Page Access Token', inp('fb_token','Paste token from Meta Business Suite → Settings → Advanced'), 'Required to enable live social posting from the dashboard')}
-    </div>,
-
-    // 7 SEO
-    <div key={7}>
-      <div style={{fontSize:'22px',fontWeight:500,marginBottom:'0.25rem'}}>SEO & Google setup {badge('Grow+','g')}</div>
-      <div style={{fontSize:'14px',color:'var(--color-text-secondary)',marginBottom:'1rem'}}>These unlock the full SEO suite in the dashboard.</div>
-      {lockNotice('Included for reference — upgrade to Grow or higher to activate these features.', plan<2)}
-      <div style={{opacity: plan<2 ? 0.45 : 1, pointerEvents: plan<2 ? 'none' : 'auto'}}>
-        {field('Google Search Console verification code', inp('gsc_code','Paste meta tag content value from GSC'), 'Go to Google Search Console → Add Property → HTML tag method')}
-        {field('Google Analytics 4 Measurement ID', inp('ga4_id','G-XXXXXXXXXX'))}
-        {field('Google Business Profile — Place ID', inp('place_id','ChIJ...'), 'Find at developers.google.com/maps/documentation/javascript/examples/places-placeid-finder')}
-        {two(
-          field('Target keywords (top 5)', ta('keywords','pest control Houston\nexterminator near me\nrodent control Katy TX')),
-          field('Competitor sites to track', ta('competitors','competitor1.com\ncompetitor2.com'))
-        )}
-      </div>
-    </div>,
-
-    // 8 SMS
-    <div key={8}>
-      <div style={{fontSize:'22px',fontWeight:500,marginBottom:'0.25rem'}}>SMS & communications {badge('Pro+','p')}</div>
-      <div style={{fontSize:'14px',color:'var(--color-text-secondary)',marginBottom:'1rem'}}>Enables SMS confirmation texts after quote form submissions.</div>
-      {lockNotice('Included for reference — upgrade to Pro or higher to activate SMS features.', plan<3)}
-      <div style={{opacity: plan<3 ? 0.45 : 1, pointerEvents: plan<3 ? 'none' : 'auto'}}>
-        {field('SMS provider',
-          <select value={f('sms_provider')} onChange={e=>set('sms_provider',e.target.value)}
-            style={{width:'100%',padding:'8px 10px',border:'0.5px solid var(--color-border-secondary)',borderRadius:'var(--border-radius-md)',fontSize:'14px',color:'var(--color-text-primary)',background:'var(--color-background-primary)'}}>
-            <option value="">Select provider</option>
-            <option value="simpletexting">SimpleTexting</option>
-            <option value="twilio">Twilio</option>
-            <option value="none">Not yet / set up later</option>
-          </select>
-        )}
-        {two(field('Sending phone number', inp('sms_number','(555) 555-5555','tel')), field('API key', inp('sms_api_key','Paste SMS provider API key')))}
-        {field('Resend API key (email delivery)', inp('resend_key','re_...'), 'Create a free account at resend.com — needed for quote + contact form email delivery')}
-      </div>
-    </div>,
-
-    // 9 Elite
-    <div key={9}>
-      <div style={{fontSize:'22px',fontWeight:500,marginBottom:'0.25rem'}}>Reviews & Elite features {badge('Elite','e')}</div>
-      <div style={{fontSize:'14px',color:'var(--color-text-secondary)',marginBottom:'1rem'}}>Unlocks live Google Reviews and Ayrshare all-platform posting.</div>
-      {lockNotice('Included for reference — upgrade to Elite to activate these features.', plan<4)}
-      <div style={{opacity: plan<4 ? 0.45 : 1, pointerEvents: plan<4 ? 'none' : 'auto'}}>
-        {divider('LeadFusion Local — live Google reviews')}
-        {field('Google Cloud project name', inp('gcp_project','e.g. smiths-pest-control'), 'Create at console.cloud.google.com — enable Places API (New)')}
-        {field('Google Places API key', inp('places_api_key','AIza...'), 'Restrict key to Places API (New) only for security')}
-        {field('Google Place ID (confirm)', inp('place_id_elite','ChIJ...'))}
-        {divider('Ayrshare — all-platform social posting')}
-        {field('Ayrshare API key', inp('ayrshare_key','Paste from app.ayrshare.com → API Key'), '$29/mo Ayrshare account enables FB, IG, LinkedIn, Twitter, TikTok, Pinterest')}
-      </div>
-    </div>,
-
-    // 10 Summary
-    <div key={10}>
-      <div style={{fontSize:'22px',fontWeight:500,marginBottom:'0.25rem'}}>Review & export</div>
-      <div style={{fontSize:'14px',color:'var(--color-text-secondary)',marginBottom:'1.5rem'}}>Confirm the details below, then export the client file to load into PestFlow Pro.</div>
-      {[
-        {title:'Account', rows:[['Business name',f('biz_name')],['Contact',f('contact_name')],['Plan',`${PLAN_NAMES[plan]} — $${PLAN_PRICES[plan]}/mo`],['Template',template]]},
-        {title:'Business', rows:[['Phone',f('phone')],['Email',f('email')],['Domain',f('domain')],['License',f('license')],['Tagline',f('tagline')]]},
-        {title:'Services', rows: services.map((s,i)=>[`${i+1}. ${s.name}`,s.desc.slice(0,60)+(s.desc.length>60?'...':'')] as [string,string])},
-        {title:'Service areas', rows:[['Primary',f('primary_area')],['Cities',f('service_cities')]]},
-        {title:'Team', rows: team.map(m=>[m.role||'Member',m.name||'(unnamed)'] as [string,string])},
-        {title:'Social', rows:[['Facebook',f('fb_url')],['Instagram',f('ig_handle')],['GMB',f('gmb_url')]]},
-        ...(plan>=2?[{title:'SEO & Google', rows:[['Place ID',f('place_id')],['GA4 ID',f('ga4_id')],['GSC code',f('gsc_code')?'✓ provided':'—']] as [string,string][]}]:[]),
-        ...(plan>=3?[{title:'SMS & Email', rows:[['Provider',f('sms_provider')],['SMS number',f('sms_number')],['Resend key',f('resend_key')?'✓ provided':'—']] as [string,string][]}]:[]),
-        ...(plan>=4?[{title:'Elite', rows:[['GCP project',f('gcp_project')],['Places API key',f('places_api_key')?'✓ provided':'—'],['Ayrshare key',f('ayrshare_key')?'✓ provided':'—']] as [string,string][]}]:[]),
-      ].map(section => (
-        <div key={section.title} style={{background:'var(--color-background-secondary)',borderRadius:'var(--border-radius-lg)',padding:'1rem 1.25rem',marginBottom:'1rem'}}>
-          <div style={{fontSize:'12px',fontWeight:500,color:'var(--color-text-secondary)',textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:'10px'}}>{section.title}</div>
-          {section.rows.map(([k,v]) => (
-            <div key={k} style={{display:'flex',justifyContent:'space-between',fontSize:'13px',padding:'4px 0',borderBottom:'0.5px solid var(--color-border-tertiary)'}}>
-              <span style={{color:'var(--color-text-secondary)'}}>{k}</span>
-              <span style={{color:'var(--color-text-primary)',fontWeight:500,textAlign:'right',maxWidth:'60%',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{v||'—'}</span>
-            </div>
-          ))}
-        </div>
-      ))}
-      <div style={{textAlign:'center',marginTop:'1.5rem'}}>
-        <button onClick={exportMD} style={{...sBtn('Export',undefined),background:'#534AB7',padding:'10px 28px',fontSize:'15px'}}>
-          Export client setup file (.md)
-        </button>
-        <div style={{fontSize:'12px',color:'var(--color-text-secondary)',marginTop:'8px'}}>Exports a structured markdown file ready to load into PestFlow Pro</div>
-      </div>
-    </div>,
-  ]
-
-  return (
-    <div style={{maxWidth:'720px',margin:'0 auto',padding:'1.5rem 0'}}>
-      {/* Progress bar */}
-      <div style={{display:'flex',gap:'4px',marginBottom:'1.5rem'}}>
-        {Array.from({length:total},(_,i) => (
-          <div key={i} style={{height:'4px',flex:1,borderRadius:'2px',
-            background: i<slide ? '#1D9E75' : i===slide ? '#0F6E56' : 'var(--color-border-tertiary)',
-            transition:'background 0.3s'}} />
         ))}
       </div>
-
-      {/* Current slide */}
-      {slides[slide]}
-
-      {/* Navigation */}
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',
-        marginTop:'2rem',paddingTop:'1rem',borderTop:'0.5px solid var(--color-border-tertiary)'}}>
-        {slide>0
-          ? <button onClick={()=>setSlide(s=>s-1)} style={{padding:'8px 20px',borderRadius:'var(--border-radius-md)',fontSize:'14px',cursor:'pointer',background:'transparent',border:'0.5px solid var(--color-border-secondary)',color:'var(--color-text-secondary)',fontFamily:'var(--font-sans)'}}>← Back</button>
-          : <div />}
-        <span style={{fontSize:'13px',color:'var(--color-text-secondary)'}}>Step {slide+1} of {total}</span>
-        {slide<total-1
-          ? <button onClick={()=>setSlide(s=>s+1)} style={sBtn('Next')}>Next →</button>
-          : <div />}
+      <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', marginBottom: '1.25rem' }}>
+        Most Starter accounts can launch with little or no setup fee. Migration and custom work are quoted based on complexity.
       </div>
+      {errMsg('package')}
+
+      {/* Site Template */}
+      <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-text-secondary)', marginBottom: '8px' }}>Site Template *</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '10px', marginBottom: '1.25rem' }}>
+        {TEMPLATES.map(t => (
+          <div key={t.id} onClick={() => { setSelectedTemplate(t.id); setSelectedPalette('') }}
+            style={{
+              padding: '12px', cursor: 'pointer', borderRadius: 'var(--border-radius-lg)', textAlign: 'center',
+              border: selectedTemplate === t.id ? '2px solid #1D9E75' : '0.5px solid var(--color-border-tertiary)',
+              background: selectedTemplate === t.id ? 'var(--color-background-secondary)' : 'var(--color-background-primary)',
+            }}>
+            <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', marginBottom: '8px' }}>
+              {t.swatches.map((c, i) => (
+                <div key={i} style={{ width: '20px', height: '20px', borderRadius: '50%', background: c }} />
+              ))}
+            </div>
+            <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-text-primary)' }}>{t.name}</div>
+            <div style={{ fontSize: '11px', color: 'var(--color-text-secondary)', marginTop: '2px' }}>{t.desc}</div>
+          </div>
+        ))}
+      </div>
+      {errMsg('template')}
+
+      {/* Color Palette */}
+      {selectedTemplate && PALETTES[selectedTemplate] && (
+        <>
+          <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-text-secondary)', marginBottom: '8px' }}>Color Palette</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '1.25rem' }}>
+            {PALETTES[selectedTemplate].map(pal => (
+              <div key={pal.name} onClick={() => setSelectedPalette(pal.name)}
+                style={{
+                  padding: '12px', cursor: 'pointer', borderRadius: 'var(--border-radius-lg)', textAlign: 'center',
+                  border: selectedPalette === pal.name ? '2px solid #1D9E75' : '0.5px solid var(--color-border-tertiary)',
+                  background: selectedPalette === pal.name ? 'var(--color-background-secondary)' : 'var(--color-background-primary)',
+                }}>
+                <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginBottom: '6px' }}>
+                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: pal.primary, border: '1px solid var(--color-border-tertiary)' }} />
+                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: pal.accent, border: '1px solid var(--color-border-tertiary)' }} />
+                </div>
+                <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--color-text-primary)' }}>{pal.name}</div>
+                <div style={{ fontSize: '10px', color: 'var(--color-text-tertiary)', marginTop: '2px' }}>Primary &middot; Accent</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Logo upload */}
+      <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-text-secondary)', marginBottom: '8px' }}>Logo</div>
+      <div style={{
+        border: '2px dashed var(--color-border-secondary)', borderRadius: 'var(--border-radius-lg)',
+        padding: '24px', textAlign: 'center', marginBottom: '4px', cursor: 'pointer', position: 'relative',
+      }}>
+        <div style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
+          {logoFile ? logoFile : 'Click to upload'}
+        </div>
+        <input type="file" accept="image/*"
+          onChange={e => { if (e.target.files?.[0]) setLogoFile(e.target.files[0].name) }}
+          style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
+      </div>
+      <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+        <span onClick={() => setLogoFile('')}
+          style={{ fontSize: '12px', color: '#1D9E75', cursor: 'pointer', textDecoration: 'underline' }}>
+          Skip for now
+        </span>
+      </div>
+    </div>
+  )
+
+  const step3 = (
+    <div>
+      <div style={{ fontSize: '22px', fontWeight: 500, color: 'var(--color-text-primary)', marginBottom: '0.25rem' }}>Domain</div>
+      <div style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>Where does this client's domain live?</div>
+
+      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--color-text-primary)', marginBottom: '1.25rem', cursor: 'pointer' }}>
+        <input type="checkbox" checked={noDomain} onChange={e => setNoDomain(e.target.checked)} />
+        I don't have a domain yet
+      </label>
+
+      {!noDomain && (
+        <>
+          {field('Current domain', inp(domain, setDomain, 'e.g. ironclad-pest.com'))}
+          {field('Domain registrar',
+            <select value={registrar} onChange={e => setRegistrar(e.target.value)} style={selectStyle}>
+              <option value="">Select registrar</option>
+              {REGISTRARS.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          )}
+        </>
+      )}
+
+      <div style={{ fontSize: '12px', color: 'var(--color-text-tertiary)', background: 'var(--color-background-secondary)', borderRadius: 'var(--border-radius-md)', padding: '10px 14px', marginTop: '1rem' }}>
+        We'll need to update your domain's DNS settings to point to your new site. Our team will walk you through this during onboarding &mdash; no technical knowledge needed.
+      </div>
+    </div>
+  )
+
+  const step4 = (
+    <div>
+      <div style={{ fontSize: '22px', fontWeight: 500, color: 'var(--color-text-primary)', marginBottom: '0.25rem' }}>Social Links</div>
+      <div style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginBottom: '0.5rem' }}>Fill in what you have &mdash; we can find the rest during setup.</div>
+      <div style={{ fontSize: '12px', color: 'var(--color-text-tertiary)', marginBottom: '1.5rem' }}>All fields optional.</div>
+
+      {field('Facebook Page URL', inp(social.facebook, v => setSoc('facebook', v), 'https://facebook.com/yourpage', 'url'))}
+      {field('Google Business Profile URL', inp(social.google, v => setSoc('google', v), 'https://maps.google.com/...', 'url'))}
+      {field('Instagram URL', inp(social.instagram, v => setSoc('instagram', v), 'https://instagram.com/yourprofile', 'url'))}
+      {field('YouTube Channel URL', inp(social.youtube, v => setSoc('youtube', v), 'https://youtube.com/@yourchannel', 'url'))}
+    </div>
+  )
+
+  const step5 = (
+    <div>
+      <div style={{ fontSize: '22px', fontWeight: 500, color: 'var(--color-text-primary)', marginBottom: '0.25rem' }}>Select Plan</div>
+      <div style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>Choose the monthly subscription for this client.</div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1rem' }}>
+        {PLANS.map(p => (
+          <div key={p.id} onClick={() => setSelectedPlan(p.id)}
+            style={{
+              padding: '16px', cursor: 'pointer', borderRadius: 'var(--border-radius-lg)', position: 'relative',
+              border: selectedPlan === p.id ? '2px solid #1D9E75' : '0.5px solid var(--color-border-tertiary)',
+              background: selectedPlan === p.id ? 'var(--color-background-secondary)' : 'var(--color-background-primary)',
+            }}>
+            {p.badge && (
+              <span style={{
+                position: 'absolute', top: '8px', right: '8px', fontSize: '10px', fontWeight: 600,
+                padding: '2px 8px', borderRadius: '10px', background: '#E1F5EE', color: '#0F6E56',
+              }}>{p.badge}</span>
+            )}
+            <div style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-text-primary)' }}>{p.name}</div>
+            <div style={{ fontSize: '20px', fontWeight: 600, color: '#1D9E75', margin: '6px 0 10px' }}>${p.price}/mo</div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {p.features.map((f, i) => (
+                <li key={i} style={{ fontSize: '12px', color: 'var(--color-text-secondary)', padding: '2px 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ color: '#1D9E75', fontSize: '12px' }}>{'\u2713'}</span> {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      {errMsg('plan')}
+    </div>
+  )
+
+  const summaryRow = (label: string, value: React.ReactNode) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '8px 0', borderBottom: '0.5px solid var(--color-border-tertiary)' }}>
+      <span style={{ color: 'var(--color-text-secondary)' }}>{label}</span>
+      <span style={{ color: 'var(--color-text-primary)', fontWeight: 500, textAlign: 'right', maxWidth: '60%' }}>{value}</span>
+    </div>
+  )
+
+  const step6 = (
+    <div>
+      <div style={{ fontSize: '22px', fontWeight: 500, color: 'var(--color-text-primary)', marginBottom: '0.25rem' }}>Review Client Details</div>
+      <div style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>Confirm everything looks correct, then proceed to generate the payment link.</div>
+
+      <div style={{ background: 'var(--color-background-secondary)', borderRadius: 'var(--border-radius-lg)', padding: '1rem 1.25rem', marginBottom: '1.5rem' }}>
+        {summaryRow('Business', form.companyName)}
+        {summaryRow('Site URL', <span style={{ color: '#1D9E75' }}>{form.slug}.pestflowpro.com</span>)}
+        {summaryRow('Contact', `${form.phone} \u00b7 ${form.email}`)}
+        {summaryRow('Address', form.address)}
+        {summaryRow('Package', <span>{pkgObj?.name} <span style={{ color: 'var(--color-text-tertiary)' }}>{pkgObj?.price}</span></span>)}
+        {summaryRow('Template', tmplObj?.name || '\u2014')}
+        {summaryRow('Palette', paletteObj ? (
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: paletteObj.primary, display: 'inline-block', border: '1px solid var(--color-border-tertiary)' }} />
+            <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: paletteObj.accent, display: 'inline-block', border: '1px solid var(--color-border-tertiary)' }} />
+            {paletteObj.name}
+          </span>
+        ) : '\u2014')}
+        {summaryRow('Logo', logoFile ? logoFile : 'Will add later')}
+        {summaryRow('Domain', noDomain ? 'No domain yet' : (domain || '\u2014'))}
+        {summaryRow('Social', socialCount > 0 ? `${socialCount} account(s) provided` : 'Will fill in during setup')}
+        {summaryRow('Plan', planObj ? `${planObj.name} \u2014 $${planObj.price}/mo` : '\u2014')}
+      </div>
+
+      <button onClick={() => setShowPayment(true)}
+        style={{ ...sBtn('Continue to Payment'), width: '100%', padding: '12px', fontSize: '15px' }}>
+        Continue to Payment &rarr;
+      </button>
+    </div>
+  )
+
+  // --- Payment step ---
+  const paymentStep = (
+    <div>
+      <div style={{ fontSize: '22px', fontWeight: 500, color: 'var(--color-text-primary)', marginBottom: '0.25rem' }}>Payment & Setup Fee</div>
+      <div style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}></div>
+
+      {/* Package read-only */}
+      {field('Package',
+        <div style={{ ...inputStyle, background: 'var(--color-background-secondary)', color: 'var(--color-text-secondary)' }}>
+          {pkgObj?.name} &mdash; {pkgObj?.price}
+        </div>
+      )}
+
+      {/* Custom setup amount */}
+      {field('Custom Setup Amount',
+        <div style={{ position: 'relative' }}>
+          <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-tertiary)', fontSize: '14px' }}>$</span>
+          <input type="number" value={customSetupAmount} onChange={e => setCustomSetupAmount(e.target.value)}
+            placeholder="Leave blank to use package default"
+            style={{ ...inputStyle, paddingLeft: '24px' }} />
+        </div>,
+        '(optional \u2014 overrides package default)'
+      )}
+
+      {/* Monthly plan read-only */}
+      {field('Monthly Plan',
+        <div style={{ ...inputStyle, background: 'var(--color-background-secondary)', color: 'var(--color-text-secondary)' }}>
+          {planObj?.name} &mdash; ${planObj?.price}/mo
+        </div>
+      )}
+
+      {/* Summary card */}
+      <div style={{ background: 'var(--color-background-secondary)', borderRadius: 'var(--border-radius-lg)', padding: '1rem 1.25rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+          <div>
+            <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Client Email</div>
+            <div style={{ fontSize: '13px', color: 'var(--color-text-primary)', fontWeight: 500 }}>{form.email || '\u2014'}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Business</div>
+            <div style={{ fontSize: '13px', color: 'var(--color-text-primary)', fontWeight: 500 }}>{form.companyName || '\u2014'}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Site</div>
+            <div style={{ fontSize: '13px', color: '#1D9E75', fontWeight: 500 }}>{form.slug}.pestflowpro.com</div>
+          </div>
+        </div>
+      </div>
+
+      <button onClick={handleSubmit}
+        style={{ ...sBtn('Generate Payment Link'), width: '100%', padding: '12px', fontSize: '15px' }}>
+        Generate Payment Link
+      </button>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1.25rem' }}>
+        <span onClick={() => setShowPayment(false)}
+          style={{ fontSize: '14px', color: 'var(--color-text-secondary)', cursor: 'pointer' }}>
+          &larr; Back
+        </span>
+        <span onClick={resetAll}
+          style={{ fontSize: '14px', color: '#1D9E75', cursor: 'pointer' }}>
+          Start New Client
+        </span>
+      </div>
+    </div>
+  )
+
+  const steps = [step1, step2, step3, step4, step5, step6]
+  const isLastStep = step === 5
+  const isReviewStep = step === 5
+
+  return (
+    <div style={{ maxWidth: '720px', margin: '0 auto', padding: '1.5rem 0' }}>
+      {!showPayment && progressBar}
+
+      {showPayment ? paymentStep : steps[step]}
+
+      {/* Navigation (hidden on Review and Payment) */}
+      {!showPayment && !isReviewStep && (
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          marginTop: '2rem', paddingTop: '1rem', borderTop: '0.5px solid var(--color-border-tertiary)',
+        }}>
+          {step > 0
+            ? <button onClick={() => setStep(s => s - 1)}
+                style={{ padding: '8px 20px', borderRadius: 'var(--border-radius-md)', fontSize: '14px', cursor: 'pointer', background: 'transparent', border: '0.5px solid var(--color-border-secondary)', color: 'var(--color-text-secondary)', fontFamily: 'var(--font-sans)' }}>
+                &larr; Back
+              </button>
+            : <div />}
+          <span style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>Step {step + 1} of 6</span>
+          {step === 4
+            ? <button onClick={goNext} style={sBtn('Review')}>Review &rarr;</button>
+            : <button onClick={goNext} style={sBtn('Next')}>Next &rarr;</button>}
+        </div>
+      )}
     </div>
   )
 }

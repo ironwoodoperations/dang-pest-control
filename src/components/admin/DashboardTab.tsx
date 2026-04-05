@@ -1,15 +1,18 @@
 // src/components/admin/DashboardTab.tsx
 import { useEffect, useState } from 'react'
-import { Check, ChevronDown, ChevronUp, Users, TrendingUp, TreePine, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
+import { Check, ChevronDown, ChevronUp, Users, TrendingUp, CalendarDays, Percent, CheckCircle2, AlertCircle, BarChart3, Share2, Database } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 import { usePlan, TIER_NAMES, TIER_PRICES, TIER_FEATURES, TIER_COLORS, PlanTier } from './usePlan'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { useHolidayMode } from '@/hooks/useHolidayMode'
 import { useTenant } from '@/hooks/useTenant'
 import { useNavigate } from 'react-router-dom'
+import { useToast } from '@/hooks/use-toast'
 import PageHelpBanner from './PageHelpBanner'
+import { seedDemoData } from './DemoSeed'
 
 const TENANT_ID = '1282b822-825b-4713-9dc9-6d14a2094d06'
 
@@ -93,52 +96,86 @@ export default function DashboardTab() {
   const [featuresOpen, setFeaturesOpen] = useState(false)
 
   const [leadCount, setLeadCount] = useState(0);
-  const [newLeads, setNewLeads] = useState(0);
+  const [newThisMonth, setNewThisMonth] = useState(0);
+  const [newThisWeek, setNewThisWeek] = useState(0);
+  const [conversionRate, setConversionRate] = useState('0%');
   const [recentLeads, setRecentLeads] = useState<Lead[]>([]);
   const [seoConfigured, setSeoConfigured] = useState(0);
   const [seoTotal, setSeoTotal] = useState(0);
-  const [holidayMode, setHolidayMode] = useState(false);
+  const [lastSeoScore, setLastSeoScore] = useState<number | null>(null);
+  const [scheduledPostCount, setScheduledPostCount] = useState(0);
+  const [monthlyLeads, setMonthlyLeads] = useState<{ month: string; count: number }[]>([]);
+  const [loadingDemo, setLoadingDemo] = useState(false);
   const [onboardingComplete, setOnboardingComplete] = useState(true);
   const { enabled: holidayOn } = useHolidayMode();
   const { tenantId } = useTenant();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const accent = holidayOn ? "hsl(0, 80%, 55%)" : "hsl(150, 45%, 30%)";
 
   useEffect(() => {
     if (!tenantId) return;
     const fetchData = async () => {
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 86400000).toISOString();
+
       const [
         { count: total },
-        { count: newCount },
+        { count: monthCount },
+        { count: weekCount },
+        { data: allLeads },
         { data: recent },
-        { data: config },
         { data: seoRows },
+        { data: snapshots },
+        { count: scheduledCount },
       ] = await Promise.all([
         supabase.from("leads").select("*", { count: "exact", head: true }).eq("tenant_id", tenantId),
-        supabase.from("leads").select("*", { count: "exact", head: true }).eq("tenant_id", tenantId).eq("status", "new"),
-        supabase.from("leads").select("*").eq("tenant_id", tenantId).order("created_at", { ascending: false }).limit(8),
-        supabase.from("site_config").select("value").eq("key", "holiday_mode").eq("tenant_id", tenantId).single(),
+        supabase.from("leads").select("*", { count: "exact", head: true }).eq("tenant_id", tenantId).gte("created_at", startOfMonth),
+        supabase.from("leads").select("*", { count: "exact", head: true }).eq("tenant_id", tenantId).gte("created_at", sevenDaysAgo),
+        supabase.from("leads").select("status, created_at").eq("tenant_id", tenantId),
+        supabase.from("leads").select("*").eq("tenant_id", tenantId).order("created_at", { ascending: false }).limit(5),
         supabase.from("site_config").select("key, seo_title, seo_description").eq("tenant_id", tenantId).like("key", "seo:%"),
+        supabase.from("page_snapshots" as any).select("score").eq("tenant_id", tenantId).order("created_at", { ascending: false }).limit(1),
+        supabase.from("social_posts" as any).select("*", { count: "exact", head: true }).eq("tenant_id", tenantId).eq("status", "scheduled"),
       ]);
 
       setLeadCount(total || 0);
-      setNewLeads(newCount || 0);
+      setNewThisMonth(monthCount || 0);
+      setNewThisWeek(weekCount || 0);
+      setScheduledPostCount(scheduledCount || 0);
+
+      // Conversion rate
+      if (allLeads && allLeads.length > 0) {
+        const converted = allLeads.filter((l: any) => l.status === 'converted').length;
+        setConversionRate(`${Math.round((converted / allLeads.length) * 100)}%`);
+      }
+
+      // Monthly leads for chart (last 6 months)
+      if (allLeads) {
+        const months: Record<string, number> = {};
+        for (let i = 5; i >= 0; i--) {
+          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          const key = d.toLocaleDateString('en-US', { month: 'short' });
+          months[key] = 0;
+        }
+        allLeads.forEach((l: any) => {
+          const d = new Date(l.created_at);
+          const key = d.toLocaleDateString('en-US', { month: 'short' });
+          if (key in months) months[key]++;
+        });
+        setMonthlyLeads(Object.entries(months).map(([month, count]) => ({ month, count })));
+      }
+
       setRecentLeads((recent as Lead[]) || []);
-      if (config) setHolidayMode((config.value as { enabled: boolean }).enabled);
       if (seoRows) {
         setSeoTotal(seoRows.length);
         setSeoConfigured(seoRows.filter(r => r.seo_title && r.seo_description).length);
       }
-
-      // Check onboarding status
-      const { data: obRow } = await supabase
-        .from("site_config")
-        .select("value")
-        .eq("key", "onboarding_complete")
-        .eq("tenant_id", tenantId)
-        .single();
-      setOnboardingComplete(!!(obRow?.value as Record<string, unknown>)?.completed);
+      if (snapshots && snapshots.length > 0) {
+        setLastSeoScore((snapshots[0] as any).score);
+      }
     };
     fetchData();
   }, [tenantId]);
@@ -295,10 +332,120 @@ export default function DashboardTab() {
       {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={Users} label="Total Leads" value={leadCount} color={accent} sparkData={[2, 4, 3, 7, 5, 8, 6, 9]} />
-        <StatCard icon={TrendingUp} label="New Leads" value={newLeads} subtitle="Awaiting response" color="hsl(160, 70%, 45%)" sparkData={[1, 3, 2, 4, 3, 5, 4, 6]} />
-        <StatCard icon={TreePine} label="Holiday Mode" value={holidayMode ? "ON" : "OFF"} color={holidayMode ? "hsl(0, 80%, 55%)" : "hsl(220, 9%, 46%)"} />
-        <StatCard icon={Clock} label="SEO Health" value={`${seoConfigured}/${seoTotal}`} subtitle="Pages configured" color="hsl(28, 100%, 50%)" />
+        <StatCard icon={TrendingUp} label="New This Month" value={newThisMonth} subtitle="Since 1st of month" color="hsl(160, 70%, 45%)" sparkData={[1, 3, 2, 4, 3, 5, 4, 6]} />
+        <StatCard icon={CalendarDays} label="New This Week" value={newThisWeek} subtitle="Last 7 days" color="hsl(210, 70%, 50%)" sparkData={[2, 1, 3, 2, 4, 3, 5]} />
+        <StatCard icon={Percent} label="Conversion Rate" value={conversionRate} subtitle="Converted / total" color="hsl(28, 100%, 50%)" />
       </div>
+
+      {/* Quick Cards Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* SEO Performance */}
+        <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <BarChart3 className="w-4 h-4" style={{ color: "hsl(28, 100%, 50%)" }} />
+              <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>SEO Performance</p>
+            </div>
+            <p className="text-sm font-body mb-3" style={{ color: "hsl(var(--admin-text-muted))" }}>
+              {lastSeoScore !== null ? `Last audit score: ${lastSeoScore}` : "No audit run yet"}
+            </p>
+            <button
+              onClick={() => navigate('/admin', { state: { tab: 'seo' } })}
+              className="text-sm font-body font-medium"
+              style={{ color: "hsl(var(--admin-teal))" }}
+            >
+              Run SEO Audit →
+            </button>
+          </CardContent>
+        </Card>
+
+        {/* Social Media */}
+        <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <Share2 className="w-4 h-4" style={{ color: "hsl(260, 55%, 55%)" }} />
+              <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Social Media</p>
+            </div>
+            <p className="text-sm font-body mb-3" style={{ color: "hsl(var(--admin-text-muted))" }}>
+              {scheduledPostCount > 0 ? `${scheduledPostCount} post${scheduledPostCount === 1 ? '' : 's'} scheduled` : "No posts scheduled yet"}
+            </p>
+            <button
+              onClick={() => navigate('/admin', { state: { tab: 'social' } })}
+              className="text-sm font-body font-medium"
+              style={{ color: "hsl(var(--admin-teal))" }}
+            >
+              Go to Social →
+            </button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Load Demo Data */}
+      <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+        <CardContent className="p-5">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: "hsla(260,55%,55%,0.15)" }}>
+              <Database className="h-4 w-4" style={{ color: "hsl(260, 55%, 55%)" }} />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Demo Data</p>
+              <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Populate leads, blog posts, social posts, and testimonials with realistic demo content.</p>
+            </div>
+            <Button
+              onClick={async () => {
+                if (!tenantId) return;
+                setLoadingDemo(true);
+                try {
+                  await seedDemoData(tenantId, supabase);
+                  toast({ title: "Demo data loaded!" });
+                  window.location.reload();
+                } catch (err) {
+                  toast({ title: "Failed to load demo data", variant: "destructive" });
+                } finally {
+                  setLoadingDemo(false);
+                }
+              }}
+              disabled={loadingDemo}
+              size="sm"
+              className="font-body"
+              style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}
+            >
+              {loadingDemo ? "Loading..." : "Load Demo Data"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Leads Per Month Chart */}
+      {monthlyLeads.length > 0 && (
+        <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+          <CardHeader className="pb-2">
+            <CardTitle className="font-body text-lg" style={{ color: "hsl(var(--admin-text))" }}>Leads Per Month</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-end gap-3 h-40">
+              {monthlyLeads.map(({ month, count }) => {
+                const maxCount = Math.max(...monthlyLeads.map(m => m.count), 1);
+                const heightPct = (count / maxCount) * 100;
+                return (
+                  <div key={month} className="flex-1 flex flex-col items-center gap-1">
+                    <span className="text-xs font-body font-medium" style={{ color: "hsl(var(--admin-text))" }}>{count}</span>
+                    <div
+                      className="w-full rounded-t-md transition-all"
+                      style={{
+                        height: `${Math.max(heightPct, 4)}%`,
+                        background: accent,
+                        minHeight: '4px',
+                      }}
+                    />
+                    <span className="text-[10px] font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{month}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Recent Leads Table */}
       <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
@@ -349,27 +496,6 @@ export default function DashboardTab() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
-      </Card>
-
-      {/* SEO Health Summary */}
-      <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
-        <CardHeader className="pb-2">
-          <CardTitle className="font-body text-lg" style={{ color: "hsl(var(--admin-text))" }}>SEO Configuration</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-3">
-            {seoConfigured === seoTotal && seoTotal > 0 ? (
-              <CheckCircle2 className="w-5 h-5" style={{ color: "hsl(160, 70%, 40%)" }} />
-            ) : (
-              <AlertCircle className="w-5 h-5" style={{ color: "hsl(28, 100%, 50%)" }} />
-            )}
-            <p className="font-body text-sm" style={{ color: "hsl(var(--admin-text))" }}>
-              {seoConfigured === seoTotal && seoTotal > 0
-                ? `All ${seoTotal} pages have complete SEO metadata.`
-                : `${seoConfigured} of ${seoTotal} pages have SEO metadata configured. Go to the SEO tab to fill in the rest.`}
-            </p>
-          </div>
         </CardContent>
       </Card>
 

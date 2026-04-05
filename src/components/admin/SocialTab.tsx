@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye, Upload, Image, X, History, Settings, Check, Calendar, Layers, ChevronDown, ChevronRight, Zap, Pencil, Linkedin, Twitter } from "lucide-react";
+import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye, Upload, Image, X, History, Settings, Check, Calendar, Layers, ChevronDown, ChevronRight, Zap, Pencil, Linkedin, Twitter, BarChart3, Filter } from "lucide-react";
 import PageHelpBanner from "./PageHelpBanner";
 import { FeatureGate } from './FeatureGate';
 import { usePlan } from './usePlan';
@@ -19,7 +19,7 @@ interface SocialPost {
   template_id: string;
   platforms: string[];
   scheduled_at: string;
-  status: "draft" | "scheduled" | "posted";
+  status: "draft" | "scheduled" | "posted" | "approved" | "published" | "failed";
   created_at: string;
 }
 
@@ -31,8 +31,11 @@ const PLATFORMS = [
 
 const STATUS_STYLES: Record<string, { label: string; color: string }> = {
   draft: { label: "Draft", color: "hsl(45, 95%, 52%)" },
-  scheduled: { label: "Scheduled", color: "hsl(185, 65%, 42%)" },
-  posted: { label: "Posted", color: "hsl(140, 55%, 42%)" },
+  scheduled: { label: "Scheduled", color: "hsl(260, 55%, 55%)" },
+  posted: { label: "Published", color: "hsl(140, 55%, 42%)" },
+  published: { label: "Published", color: "hsl(140, 55%, 42%)" },
+  approved: { label: "Approved", color: "hsl(210, 70%, 50%)" },
+  failed: { label: "Failed", color: "hsl(0, 70%, 50%)" },
 };
 
 const TOPIC_SUGGESTIONS = [
@@ -218,12 +221,16 @@ export default function SocialTab() {
   const [postHistory, setPostHistory] = useState<any[]>([]);
   const [fbSettings, setFbSettings] = useState<{ token: string; pageId: string }>({ token: "", pageId: "" });
   const [showConnections, setShowConnections] = useState(false);
-  const [socialProvider, setSocialProvider] = useState<"export" | "diy" | "buffer" | "ayrshare">("export");
-  const [bufferToken, setBufferToken] = useState("");
-  const [ayrshareKey, setAyrshareKey] = useState("");
-  const [ayrshareProfileKey, setAyrshareProfileKey] = useState("");
-  const [connTab, setConnTab] = useState<"export" | "diy" | "buffer" | "ayrshare">("export");
+  const [socialProvider, setSocialProvider] = useState<"hands_on" | "diy" | "semi_auto" | "full_autopilot">("semi_auto");
+  const [connTab, setConnTab] = useState<"hands_on" | "diy" | "semi_auto" | "full_autopilot">("semi_auto");
   const [connSaving, setConnSaving] = useState(false);
+
+  // New states
+  const [activeMainTab, setActiveMainTab] = useState<'queue' | 'campaigns' | 'analytics'>('queue');
+  const [showNewPostModal, setShowNewPostModal] = useState(false);
+  const [filterPlatform, setFilterPlatform] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterCampaign, setFilterCampaign] = useState('all');
 
   // Campaign state
   const [campaignTopic, setCampaignTopic] = useState('')
@@ -234,18 +241,41 @@ export default function SocialTab() {
   const [campaignSummary, setCampaignSummary] = useState('')
   const [expandedCampaigns, setExpandedCampaigns] = useState<Set<string>>(new Set())
 
-  // Load integration settings
+  // Load social provider from settings table
+  useEffect(() => {
+    if (!tenantId) return;
+    supabase.from("site_config").select("value").eq("key", "social_provider").eq("tenant_id", tenantId).maybeSingle().then(({ data }) => {
+      if (data?.value) {
+        const v = data.value as any;
+        const provider = (typeof v === 'string' ? v : v.provider) as "hands_on" | "diy" | "semi_auto" | "full_autopilot";
+        if (provider) {
+          setSocialProvider(provider);
+          setConnTab(provider);
+        }
+      }
+    });
+  }, [tenantId]);
+
+  // Load DIY config from settings table
+  useEffect(() => {
+    if (!tenantId) return;
+    supabase.from("site_config").select("value").eq("key", "social_diy_config").eq("tenant_id", tenantId).maybeSingle().then(({ data }) => {
+      if (data?.value) {
+        const v = data.value as any;
+        setFbSettings({ token: v.fb_access_token || "", pageId: v.fb_page_id || "" });
+      }
+    });
+  }, [tenantId]);
+
+  // Load integration settings (legacy, keep for backward compat)
   useEffect(() => {
     if (!tenantId) return;
     supabase.from("site_config").select("value").eq("key", "integrations").eq("tenant_id", tenantId).maybeSingle().then(({ data }) => {
       if (data?.value) {
         const v = data.value as any;
-        setFbSettings({ token: v.fb_access_token || "", pageId: v.fb_page_id || "" });
-        setBufferToken(v.buffer_token || "");
-        setAyrshareKey(v.ayrshare_key || "");
-        setAyrshareProfileKey(v.ayrshare_profile_key || "");
-        setSocialProvider(v.social_provider || "export");
-        setConnTab(v.social_provider || "export");
+        if (!fbSettings.token && v.fb_access_token) {
+          setFbSettings({ token: v.fb_access_token || "", pageId: v.fb_page_id || "" });
+        }
       }
     });
   }, [tenantId]);
@@ -262,24 +292,39 @@ export default function SocialTab() {
     if (!tenantId) return;
     setConnSaving(true);
     try {
-      const { data: existing } = await supabase.from("site_config").select("id, value").eq("key", "integrations").eq("tenant_id", tenantId).maybeSingle();
-      const current = (existing?.value as any) || {};
-      const updated = {
-        ...current,
-        social_provider: connTab,
+      // Save DIY config separately
+      const { data: existingDiy } = await supabase.from("site_config").select("id").eq("key", "social_diy_config").eq("tenant_id", tenantId).maybeSingle();
+      const diyConfig = {
         fb_access_token: fbSettings.token,
         fb_page_id: fbSettings.pageId,
-        buffer_token: bufferToken,
-        ayrshare_key: ayrshareKey,
-        ayrshare_profile_key: ayrshareProfileKey,
       };
-      if (existing?.id) {
-        await supabase.from("site_config").update({ value: updated, updated_at: new Date().toISOString() }).eq("key", "integrations").eq("tenant_id", tenantId);
+      if (existingDiy?.id) {
+        await supabase.from("site_config").update({ value: diyConfig, updated_at: new Date().toISOString() }).eq("key", "social_diy_config").eq("tenant_id", tenantId);
       } else {
-        await supabase.from("site_config").insert({ key: "integrations", value: updated, tenant_id: tenantId });
+        await supabase.from("site_config").insert({ key: "social_diy_config", value: diyConfig, tenant_id: tenantId });
       }
-      setSocialProvider(connTab);
-      toast({ title: "Connection saved!" });
+      toast({ title: "DIY settings saved!" });
+    } catch (err) {
+      toast({ title: "Save failed", description: String(err), variant: "destructive" });
+    } finally {
+      setConnSaving(false);
+    }
+  };
+
+  const saveActiveProvider = async (provider: "hands_on" | "diy" | "semi_auto" | "full_autopilot") => {
+    if (!tenantId) return;
+    setConnSaving(true);
+    try {
+      const { data: existing } = await supabase.from("site_config").select("id").eq("key", "social_provider").eq("tenant_id", tenantId).maybeSingle();
+      const val = { provider };
+      if (existing?.id) {
+        await supabase.from("site_config").update({ value: val, updated_at: new Date().toISOString() }).eq("key", "social_provider").eq("tenant_id", tenantId);
+      } else {
+        await supabase.from("site_config").insert({ key: "social_provider", value: val, tenant_id: tenantId });
+      }
+      setSocialProvider(provider);
+      setConnTab(provider);
+      toast({ title: "Active provider updated!" });
     } catch (err) {
       toast({ title: "Save failed", description: String(err), variant: "destructive" });
     } finally {
@@ -571,12 +616,94 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
     setCampaignPosts([])
     setStep('queue')
     loadPosts()
-    alert(`✅ ${rows.length} posts scheduled across ${campaignDuration} day(s)!`)
+    alert(`Campaign saved! ${rows.length} posts scheduled across ${campaignDuration} day(s).`)
   }
 
   const scheduled = posts.filter((p) => p.status === "scheduled");
   const drafts = posts.filter((p) => p.status === "draft");
-  const posted = posts.filter((p) => p.status === "posted");
+  const posted = posts.filter((p) => p.status === "posted" || p.status === "published");
+
+  // Helper: get unique campaign titles from postHistory
+  const campaignTitlesFromHistory = Array.from(new Set(postHistory.filter((hp: any) => hp.campaign_title).map((hp: any) => hp.campaign_title)));
+
+  // Helper: get platform display info
+  const getPlatformBadge = (platformKey: string) => {
+    const found = PLATFORMS.find(p => p.key === platformKey);
+    if (platformKey === 'twitter' || platformKey === 'x') return { label: 'X / Twitter', color: '#000000' };
+    if (platformKey === 'linkedin') return { label: 'LinkedIn', color: '#0A66C2' };
+    if (found) return { label: found.label, color: found.color };
+    return { label: platformKey, color: 'hsl(var(--admin-text-muted))' };
+  };
+
+  // Filter posts for Content Queue
+  const getFilteredPosts = () => {
+    let filtered = [...posts];
+    if (filterPlatform !== 'all') {
+      filtered = filtered.filter(p => p.platforms.includes(filterPlatform));
+    }
+    if (filterStatus !== 'all') {
+      filtered = filtered.filter(p => {
+        if (filterStatus === 'published') return p.status === 'posted' || p.status === 'published';
+        return p.status === filterStatus;
+      });
+    }
+    // filterCampaign not applicable to sample posts (no campaign_title), but keep for future
+    return filtered;
+  };
+
+  // Filter postHistory for Content Queue (DB posts)
+  const getFilteredHistory = () => {
+    let filtered = [...postHistory];
+    if (filterPlatform !== 'all') {
+      filtered = filtered.filter((hp: any) => hp.platform?.includes(filterPlatform));
+    }
+    if (filterStatus !== 'all') {
+      filtered = filtered.filter((hp: any) => {
+        if (filterStatus === 'published') return hp.status === 'posted' || hp.status === 'published';
+        return hp.status === filterStatus;
+      });
+    }
+    if (filterCampaign !== 'all') {
+      filtered = filtered.filter((hp: any) => hp.campaign_title === filterCampaign);
+    }
+    return filtered;
+  };
+
+  // Approve all drafts
+  const handleApproveAll = () => {
+    setPosts(prev => prev.map(p => p.status === 'draft' ? { ...p, status: 'approved' as const } : p));
+    toast({ title: `${drafts.length} draft(s) approved!` });
+  };
+
+  // Smart schedule: spread drafts across next 7 days
+  const handleSmartSchedule = () => {
+    const draftPosts = posts.filter(p => p.status === 'draft');
+    if (draftPosts.length === 0) return;
+    const now = new Date();
+    const intervalMs = (7 * 24 * 60 * 60 * 1000) / draftPosts.length;
+    let idx = 0;
+    setPosts(prev => prev.map(p => {
+      if (p.status === 'draft') {
+        const schedDate = new Date(now.getTime() + intervalMs * idx);
+        schedDate.setHours(9 + (idx % 3) * 3, 0, 0, 0); // 9am, 12pm, 3pm rotation
+        idx++;
+        return { ...p, scheduled_at: schedDate.toISOString().slice(0, 16), status: 'scheduled' as const };
+      }
+      return p;
+    }));
+    toast({ title: "Smart Schedule applied!", description: `${draftPosts.length} post(s) spread across the next 7 days.` });
+  };
+
+  // Provider display names
+  const providerDisplayName = (p: string) => {
+    switch (p) {
+      case 'hands_on': return 'Hands On';
+      case 'diy': return 'DIY';
+      case 'semi_auto': return 'Semi-Auto';
+      case 'full_autopilot': return 'Full Autopilot';
+      default: return p;
+    }
+  };
 
   // ── TIER-2 GATE ───────────────────────────────────────────────
   if (planLoading) return null
@@ -928,7 +1055,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
 
     return (
       <div className="space-y-6 max-w-xl">
-        <button onClick={() => setStep("wizard-type-select")} className="flex items-center gap-1.5 text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+        <button onClick={() => { setStep("queue"); setActiveMainTab("campaigns"); }} className="flex items-center gap-1.5 text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
         <h2 className="text-xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>Campaign Setup</h2>
@@ -1117,9 +1244,24 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
   }
 
   // ── MAIN QUEUE ─────────────────────────────────────────────────
+  const filteredPosts = getFilteredPosts();
+  const filteredHistory = getFilteredHistory();
+
+  // Build campaign groups for Campaigns tab
+  const campaignGroups: Record<string, any[]> = {};
+  postHistory.forEach((hp: any) => {
+    if (hp.campaign_title) {
+      if (!campaignGroups[hp.campaign_title]) campaignGroups[hp.campaign_title] = [];
+      campaignGroups[hp.campaign_title].push(hp);
+    }
+  });
+  const campaignNames = Object.keys(campaignGroups);
+
   return (
     <div className="space-y-6">
       <PageHelpBanner tab="social" />
+
+      {/* ── Header Row ─────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>Social Media</h2>
@@ -1136,19 +1278,18 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
               <Settings className="w-4 h-4" /> Connections
             </Button>
           </FeatureGate>
-          <Button onClick={() => setShowHistory(!showHistory)} variant="outline" className="font-body gap-2" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}>
-            <History className="w-4 h-4" /> {showHistory ? "Queue" : "History"}
-          </Button>
-          <Button onClick={() => setStep("wizard-type-select")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
+          <Button onClick={() => setShowNewPostModal(true)} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
             <Plus className="w-4 h-4" /> New Post
           </Button>
         </div>
       </div>
+
+      {/* ── Stat Cards ─────────────────────────────────────────── */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Scheduled", count: scheduled.length, color: "hsl(185, 65%, 42%)", icon: Clock },
+          { label: "Scheduled", count: scheduled.length, color: "hsl(260, 55%, 55%)", icon: Clock },
           { label: "Drafts", count: drafts.length, color: "hsl(45, 95%, 52%)", icon: FileEdit },
-          { label: "Posted", count: posted.length, color: "hsl(140, 55%, 42%)", icon: CheckCircle2 },
+          { label: "Published", count: posted.length, color: "hsl(140, 55%, 42%)", icon: CheckCircle2 },
         ].map(({ label, count, color, icon: Icon }) => (
           <Card key={label} style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
             <CardContent className="pt-5 pb-4 flex items-center gap-3">
@@ -1163,153 +1304,338 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
           </Card>
         ))}
       </div>
-      {/* Posts History */}
-      <FeatureGate minTier={4} featureName="Social Analytics">
-      {showHistory && (
-        <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="font-body text-base" style={{ color: "hsl(var(--admin-text))" }}>Post History</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {postHistory.length === 0 ? (
-              <p className="text-sm font-body py-4 text-center" style={{ color: "hsl(var(--admin-text-muted))" }}>No posts yet. Create your first post above.</p>
-            ) : postHistory.map((hp: any) => {
-              const statusStyle = STATUS_STYLES[hp.status === "published" ? "posted" : hp.status] || STATUS_STYLES.draft;
-              return (
-                <div key={hp.id} className="flex gap-3 p-3 rounded-xl border" style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-bg))" }}>
-                  {hp.image_url && <img src={hp.image_url} alt="" className="w-14 h-14 rounded-lg object-cover" />}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-body line-clamp-2 mb-1" style={{ color: "hsl(var(--admin-text))" }}>{hp.caption}</p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{hp.platform}</span>
-                      {hp.published_at && (
-                        <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                          {new Date(hp.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <Badge className="font-body text-xs border-0 rounded-full px-2 shrink-0" style={{ background: `${statusStyle.color}22`, color: statusStyle.color }}>
-                    {statusStyle.label}
-                  </Badge>
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
-      )}
-      </FeatureGate>
 
-      <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
-        <CardHeader className="pb-2">
-          <CardTitle className="font-body text-base" style={{ color: "hsl(var(--admin-text))" }}>Post Queue</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {posts.map((post) => {
-            const statusStyle = STATUS_STYLES[post.status];
-            return (
-              <div key={post.id} className="flex gap-3 p-3 rounded-xl border" style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-bg))" }}>
-                <SvgCard templateId={post.template_id} caption={post.caption} size={56} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-body line-clamp-2 mb-1" style={{ color: "hsl(var(--admin-text))" }}>{post.caption}</p>
-                  <div className="flex items-center gap-2">
-                    {PLATFORMS.filter((p) => post.platforms.includes(p.key)).map(({ key, icon: Icon, color }) => (
-                      <Icon key={key} className="w-3.5 h-3.5" style={{ color }} />
-                    ))}
+      {/* ── 3 Tabs ─────────────────────────────────────────────── */}
+      <div className="flex gap-1 border-b" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+        {([
+          { key: 'campaigns', label: 'Campaigns', icon: Layers },
+          { key: 'queue', label: 'Content Queue', icon: FileEdit },
+          { key: 'analytics', label: 'Analytics', icon: BarChart3 },
+        ] as const).map(({ key, label, icon: Icon }) => (
+          <button
+            key={key}
+            onClick={() => setActiveMainTab(key)}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-body font-medium border-b-2 transition-all -mb-[1px]"
+            style={{
+              borderColor: activeMainTab === key ? "hsl(var(--admin-teal))" : "transparent",
+              color: activeMainTab === key ? "hsl(var(--admin-teal))" : "hsl(var(--admin-text-muted))",
+            }}
+          >
+            <Icon className="w-4 h-4" />
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* ── Content Queue Tab ──────────────────────────────────── */}
+      {activeMainTab === 'queue' && (
+        <div className="space-y-4">
+          {/* Draft banner */}
+          {drafts.length > 0 && (
+            <div className="flex items-center justify-between px-4 py-3 rounded-xl" style={{ background: "hsla(140, 55%, 42%, 0.1)", border: "1px solid hsla(140, 55%, 42%, 0.2)" }}>
+              <p className="text-sm font-body font-medium" style={{ color: "hsl(140, 55%, 42%)" }}>
+                {drafts.length} draft post{drafts.length !== 1 ? 's' : ''} ready for review
+              </p>
+              <div className="flex gap-2">
+                <Button size="sm" className="font-body text-xs gap-1.5" style={{ background: "hsl(140, 55%, 42%)", color: "#fff" }} onClick={handleApproveAll}>
+                  <Check className="w-3.5 h-3.5" /> Approve All ({drafts.length})
+                </Button>
+                <Button size="sm" variant="outline" className="font-body text-xs gap-1.5" style={{ borderColor: "hsl(140, 55%, 42%)", color: "hsl(140, 55%, 42%)" }} onClick={handleSmartSchedule}>
+                  <Calendar className="w-3.5 h-3.5" /> Smart Schedule
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Filter row */}
+          <div className="flex gap-3 flex-wrap">
+            <select
+              value={filterPlatform}
+              onChange={(e) => setFilterPlatform(e.target.value)}
+              className="rounded-xl border px-3 py-2 text-sm font-body focus:outline-none"
+              style={{ background: "hsl(var(--admin-bg))", borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
+            >
+              <option value="all">All Platforms</option>
+              <option value="facebook">Facebook</option>
+              <option value="instagram">Instagram</option>
+              <option value="twitter">X / Twitter</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="google">Google Business</option>
+            </select>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="rounded-xl border px-3 py-2 text-sm font-body focus:outline-none"
+              style={{ background: "hsl(var(--admin-bg))", borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
+            >
+              <option value="all">All Status</option>
+              <option value="draft">Draft</option>
+              <option value="approved">Approved</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="published">Published</option>
+              <option value="failed">Failed</option>
+            </select>
+            <select
+              value={filterCampaign}
+              onChange={(e) => setFilterCampaign(e.target.value)}
+              className="rounded-xl border px-3 py-2 text-sm font-body focus:outline-none"
+              style={{ background: "hsl(var(--admin-bg))", borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
+            >
+              <option value="all">All Campaigns</option>
+              {campaignTitlesFromHistory.map(t => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Post cards grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredPosts.map((post) => {
+              const statusStyle = STATUS_STYLES[post.status] || STATUS_STYLES.draft;
+              const platformBadges = post.platforms.map(pk => getPlatformBadge(pk));
+              return (
+                <Card key={post.id} style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl overflow-hidden">
+                  <CardContent className="pt-4 pb-3 space-y-3">
+                    {/* Top: platform + status badges */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-1.5 flex-wrap">
+                        {platformBadges.map((pb, idx) => (
+                          <span key={idx} className="text-xs font-body font-semibold px-2 py-0.5 rounded-full" style={{ background: `${pb.color}18`, color: pb.color }}>
+                            {pb.label}
+                          </span>
+                        ))}
+                      </div>
+                      <Badge className="font-body text-xs border-0 rounded-full px-2 shrink-0" style={{ background: `${statusStyle.color}22`, color: statusStyle.color }}>
+                        {statusStyle.label}
+                      </Badge>
+                    </div>
+                    {/* Body: caption */}
+                    <p className="text-sm font-body line-clamp-3" style={{ color: "hsl(var(--admin-text))" }}>{post.caption}</p>
+                    {/* Date row */}
                     {post.scheduled_at && (
                       <p className="text-xs font-body flex items-center gap-1" style={{ color: "hsl(var(--admin-text-muted))" }}>
                         <Clock className="w-3 h-3" />
                         {new Date(post.scheduled_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
                       </p>
                     )}
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-2 shrink-0">
-                  <Badge className="font-body text-xs border-0 rounded-full px-2" style={{ background: `${statusStyle.color}22`, color: statusStyle.color }}>
-                    {statusStyle.label}
-                  </Badge>
-                  <button onClick={() => handleDelete(post.id)} className="opacity-40 hover:opacity-100 transition-opacity">
-                    <Trash2 className="w-3.5 h-3.5" style={{ color: "hsl(var(--admin-text-muted))" }} />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 pt-1 border-t" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+                      <button
+                        onClick={() => { setPreviewPost(post); setStep("facebook-preview"); }}
+                        className="text-xs font-body font-medium px-2 py-1 rounded-lg hover:bg-muted/30 transition-colors"
+                        style={{ color: "hsl(var(--admin-text-muted))" }}
+                      >
+                        Preview
+                      </button>
+                      {post.status === 'draft' && (
+                        <button
+                          onClick={() => setPosts(prev => prev.map(p => p.id === post.id ? { ...p, status: 'approved' as const } : p))}
+                          className="text-xs font-body font-medium px-2 py-1 rounded-lg hover:bg-muted/30 transition-colors"
+                          style={{ color: "hsl(210, 70%, 50%)" }}
+                        >
+                          Approve
+                        </button>
+                      )}
+                      <button
+                        onClick={() => {
+                          setGeneratedCaption(post.caption);
+                          setSelectedTemplate(post.template_id);
+                          setSelectedPlatforms(post.platforms);
+                          setScheduledAt(post.scheduled_at);
+                          setStep("wizard-review");
+                        }}
+                        className="text-xs font-body font-medium px-2 py-1 rounded-lg hover:bg-muted/30 transition-colors"
+                        style={{ color: "hsl(var(--admin-text-muted))" }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(post.id)}
+                        className="ml-auto text-xs font-body font-medium px-2 py-1 rounded-lg hover:bg-muted/30 transition-colors"
+                        style={{ color: "hsl(0, 70%, 50%)" }}
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
 
-      {/* Campaign Groups */}
-      {(() => {
-        const campaignGroups: Record<string, any[]> = {};
-        postHistory.forEach((hp: any) => {
-          if (hp.campaign_title) {
-            if (!campaignGroups[hp.campaign_title]) campaignGroups[hp.campaign_title] = [];
-            campaignGroups[hp.campaign_title].push(hp);
-          }
-        });
-        const campaignNames = Object.keys(campaignGroups);
-        if (campaignNames.length === 0) return null;
-        return (
-          <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
-            <CardHeader className="pb-2">
-              <CardTitle className="font-body text-base flex items-center gap-2" style={{ color: "hsl(var(--admin-text))" }}>
-                <Layers className="w-4 h-4" /> Campaigns
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {campaignNames.map((name) => {
-                const isExpanded = expandedCampaigns.has(name);
-                const groupPosts = campaignGroups[name];
-                return (
-                  <div key={name}>
-                    <button
-                      onClick={() => setExpandedCampaigns(prev => {
-                        const next = new Set(prev);
-                        if (next.has(name)) next.delete(name); else next.add(name);
-                        return next;
-                      })}
-                      className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-xl border transition-all hover:bg-muted/30"
-                      style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}
-                    >
-                      {isExpanded ? <ChevronDown className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} /> : <ChevronRight className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} />}
-                      <span className="font-body font-semibold text-sm" style={{ color: "hsl(var(--admin-text))" }}>{name}</span>
-                      <Badge className="font-body text-xs border-0 rounded-full px-2 ml-auto" style={{ background: "hsla(28,100%,50%,0.15)", color: "hsl(28,100%,50%)" }}>
-                        {groupPosts.length} posts
-                      </Badge>
-                    </button>
-                    {isExpanded && (
-                      <div className="space-y-2 mt-2 ml-6">
-                        {groupPosts.map((hp: any) => {
-                          const statusStyle = STATUS_STYLES[hp.status === "published" ? "posted" : hp.status] || STATUS_STYLES.draft;
-                          return (
-                            <div key={hp.id} className="flex gap-3 p-3 rounded-xl border" style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-bg))" }}>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-body line-clamp-2 mb-1" style={{ color: "hsl(var(--admin-text))" }}>{hp.caption || hp.content}</p>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{hp.platform}</span>
-                                  {hp.scheduled_at && (
-                                    <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                                      {new Date(hp.scheduled_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                              <Badge className="font-body text-xs border-0 rounded-full px-2 shrink-0" style={{ background: `${statusStyle.color}22`, color: statusStyle.color }}>
-                                {statusStyle.label}
-                              </Badge>
-                            </div>
-                          );
+          {filteredPosts.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>No posts match your filters. Try adjusting the filters or create a new post.</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Campaigns Tab ──────────────────────────────────────── */}
+      {activeMainTab === 'campaigns' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+              {campaignNames.length} campaign{campaignNames.length !== 1 ? 's' : ''} created
+            </p>
+            <FeatureGate minTier={3} featureName="Campaign Batch Posting" compact>
+              <Button size="sm" onClick={() => setStep("wizard-campaign-setup")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
+                <Plus className="w-4 h-4" /> New Campaign
+              </Button>
+            </FeatureGate>
+          </div>
+
+          {campaignNames.length === 0 ? (
+            <div className="text-center py-12">
+              <Layers className="w-10 h-10 mx-auto mb-3" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.4 }} />
+              <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>No campaigns yet. Create your first campaign to get started.</p>
+            </div>
+          ) : (
+            <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+              <CardContent className="pt-4 space-y-3">
+                {campaignNames.map((name) => {
+                  const isExpanded = expandedCampaigns.has(name);
+                  const groupPosts = campaignGroups[name];
+                  return (
+                    <div key={name}>
+                      <button
+                        onClick={() => setExpandedCampaigns(prev => {
+                          const next = new Set(prev);
+                          if (next.has(name)) next.delete(name); else next.add(name);
+                          return next;
                         })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </CardContent>
-          </Card>
-        );
-      })()}
+                        className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-xl border transition-all hover:bg-muted/30"
+                        style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}
+                      >
+                        {isExpanded ? <ChevronDown className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} /> : <ChevronRight className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} />}
+                        <span className="font-body font-semibold text-sm" style={{ color: "hsl(var(--admin-text))" }}>{name}</span>
+                        <Badge className="font-body text-xs border-0 rounded-full px-2 ml-auto" style={{ background: "hsla(28,100%,50%,0.15)", color: "hsl(28,100%,50%)" }}>
+                          {groupPosts.length} posts
+                        </Badge>
+                      </button>
+                      {isExpanded && (
+                        <div className="space-y-2 mt-2 ml-6">
+                          {groupPosts.map((hp: any) => {
+                            const statusStyle = STATUS_STYLES[hp.status === "published" ? "posted" : hp.status] || STATUS_STYLES.draft;
+                            return (
+                              <div key={hp.id} className="flex gap-3 p-3 rounded-xl border" style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-bg))" }}>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-body line-clamp-2 mb-1" style={{ color: "hsl(var(--admin-text))" }}>{hp.caption || hp.content}</p>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{hp.platform}</span>
+                                    {hp.scheduled_at && (
+                                      <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                                        {new Date(hp.scheduled_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                                <Badge className="font-body text-xs border-0 rounded-full px-2 shrink-0" style={{ background: `${statusStyle.color}22`, color: statusStyle.color }}>
+                                  {statusStyle.label}
+                                </Badge>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
 
+      {/* ── Analytics Tab ──────────────────────────────────────── */}
+      {activeMainTab === 'analytics' && (
+        <FeatureGate minTier={4} featureName="Social Analytics">
+          <div className="space-y-4">
+            <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+              <CardHeader className="pb-2">
+                <CardTitle className="font-body text-base" style={{ color: "hsl(var(--admin-text))" }}>Post History</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {postHistory.length === 0 ? (
+                  <p className="text-sm font-body py-4 text-center" style={{ color: "hsl(var(--admin-text-muted))" }}>No posts yet. Create your first post above.</p>
+                ) : postHistory.map((hp: any) => {
+                  const statusStyle = STATUS_STYLES[hp.status === "published" ? "posted" : hp.status] || STATUS_STYLES.draft;
+                  return (
+                    <div key={hp.id} className="flex gap-3 p-3 rounded-xl border" style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-bg))" }}>
+                      {hp.image_url && <img src={hp.image_url} alt="" className="w-14 h-14 rounded-lg object-cover" />}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-body line-clamp-2 mb-1" style={{ color: "hsl(var(--admin-text))" }}>{hp.caption}</p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{hp.platform}</span>
+                          {hp.published_at && (
+                            <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                              {new Date(hp.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <Badge className="font-body text-xs border-0 rounded-full px-2 shrink-0" style={{ background: `${statusStyle.color}22`, color: statusStyle.color }}>
+                        {statusStyle.label}
+                      </Badge>
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          </div>
+        </FeatureGate>
+      )}
+
+      {/* ── New Post Choice Modal ──────────────────────────────── */}
+      {showNewPostModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowNewPostModal(false)}>
+          <div className="w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl" style={{ background: "hsl(var(--admin-bg))" }} onClick={(e) => e.stopPropagation()}>
+            <div className="px-6 pt-6 pb-2 text-center">
+              <h2 className="font-body font-bold text-lg" style={{ color: "hsl(var(--admin-text))" }}>What would you like to create?</h2>
+              <p className="text-sm font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Choose a post type to get started.</p>
+            </div>
+            <div className="px-6 py-4 grid grid-cols-2 gap-4">
+              {/* Single Post card */}
+              <button
+                onClick={() => { setShowNewPostModal(false); setStep("wizard-topic"); }}
+                className="flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all hover:shadow-lg text-center"
+                style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-card-bg))" }}
+              >
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: "hsla(185,65%,42%,0.15)" }}>
+                  <FileEdit className="w-6 h-6" style={{ color: "hsl(185,65%,42%)" }} />
+                </div>
+                <div>
+                  <p className="font-body font-bold text-base" style={{ color: "hsl(var(--admin-text))" }}>Single Post</p>
+                  <p className="font-body text-xs mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Create and schedule one post for a specific date.</p>
+                </div>
+                <span className="text-xs font-body font-semibold mt-1" style={{ color: "hsl(var(--admin-teal))" }}>Create Single Post →</span>
+              </button>
+              {/* Campaign card */}
+              <button
+                onClick={() => { setShowNewPostModal(false); setActiveMainTab('campaigns'); setStep("wizard-campaign-setup"); }}
+                className="flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all hover:shadow-lg text-center"
+                style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-card-bg))" }}
+              >
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: "hsla(28,100%,50%,0.15)" }}>
+                  <Layers className="w-6 h-6" style={{ color: "hsl(28,100%,50%)" }} />
+                </div>
+                <div>
+                  <p className="font-body font-bold text-base" style={{ color: "hsl(var(--admin-text))" }}>Campaign</p>
+                  <p className="font-body text-xs mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Plan a series of posts around a theme or promotion.</p>
+                </div>
+                <span className="text-xs font-body font-semibold mt-1" style={{ color: "hsl(28,100%,50%)" }}>Start a Campaign →</span>
+              </button>
+            </div>
+            <div className="px-6 pb-5 text-center">
+              <Button variant="outline" size="sm" className="font-body" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text-muted))" }} onClick={() => setShowNewPostModal(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Connections Modal ──────────────────────────────────── */}
       {showConnections && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowConnections(false)}>
           <div className="w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl" style={{ background: "hsl(var(--admin-bg))" }} onClick={(e) => e.stopPropagation()}>
@@ -1324,11 +1650,11 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
             {/* Provider tabs */}
             <div className="flex gap-2 px-6 pt-4">
               {([
-                { key: "export", label: "Export Mode", emoji: "📤" },
-                { key: "diy", label: "DIY", emoji: "🔧" },
-                { key: "buffer", label: "A Little Help", emoji: "🤝" },
-                { key: "ayrshare", label: "I Need a Pro", emoji: "⭐" },
-              ] as const).map(({ key, label, emoji }) => (
+                { key: "hands_on" as const, label: "Hands On" },
+                { key: "diy" as const, label: "DIY" },
+                { key: "semi_auto" as const, label: "Semi-Auto" },
+                { key: "full_autopilot" as const, label: "Full Autopilot" },
+              ]).map(({ key, label }) => (
                 <button
                   key={key}
                   onClick={() => setConnTab(key)}
@@ -1344,7 +1670,6 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                       <Check className="w-2.5 h-2.5 text-white" />
                     </div>
                   )}
-                  <span className="text-base">{emoji}</span>
                   {label}
                 </button>
               ))}
@@ -1352,12 +1677,21 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
 
             {/* Provider content */}
             <div className="px-6 py-4 space-y-4 min-h-[200px]">
-              {connTab === "export" && (
-                <div className="space-y-3">
+              {/* ── Hands On ─────────────────────────────────── */}
+              {connTab === "hands_on" && (
+                <div className="space-y-4">
                   <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                    📤 You're in export mode. Posts are saved to your queue but not sent to any platform. Use this to review and approve content before connecting a social account.
+                    Generate and approve your posts here, then copy the captions to post directly on your Facebook or Instagram account. No accounts to connect, no tools needed — just copy and paste.
                   </p>
-                  {socialProvider === "export" && (
+                  <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl" style={{ background: "hsla(140,55%,42%,0.1)", border: "1px solid hsla(140,55%,42%,0.2)" }}>
+                    <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: "hsl(140,55%,42%)" }} />
+                    <span className="text-sm font-body font-medium" style={{ color: "hsl(140,55%,42%)" }}>This mode is always available</span>
+                  </div>
+                  {socialProvider !== "hands_on" ? (
+                    <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }} onClick={() => saveActiveProvider("hands_on")} disabled={connSaving}>
+                      {connSaving ? "Saving..." : "Set as Active Provider"}
+                    </Button>
+                  ) : (
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
                       <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
@@ -1366,63 +1700,101 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                 </div>
               )}
 
+              {/* ── DIY ──────────────────────────────────────── */}
               {connTab === "diy" && (
                 <div className="space-y-3">
-                  <div>
-                    <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>🔧 DIY — Free, direct connection to Facebook & Instagram</p>
-                    <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Requires a Facebook Business Page. Posts directly via Facebook Graph API — no third-party tools.</p>
-                  </div>
+                  <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                    You're in control. Use your own social media scheduling tools to manage your posts. We'll help you generate great content — you handle the posting.
+                  </p>
                   <div className="space-y-1">
-                    <Label className="font-body text-xs">Facebook Page Access Token</Label>
-                    <Input value={fbSettings.token} onChange={(e) => setFbSettings(f => ({ ...f, token: e.target.value }))} placeholder="Enter Facebook Page Access Token" className="font-body text-sm" />
-                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Get from developers.facebook.com/tools/explorer</p>
+                    <Label className="font-body text-xs">Facebook Access Token</Label>
+                    <Input type="password" value={fbSettings.token} onChange={(e) => setFbSettings(f => ({ ...f, token: e.target.value }))} placeholder="Enter Facebook Access Token" className="font-body text-sm" />
                   </div>
                   <div className="space-y-1">
                     <Label className="font-body text-xs">Facebook Page ID</Label>
                     <Input value={fbSettings.pageId} onChange={(e) => setFbSettings(f => ({ ...f, pageId: e.target.value }))} placeholder="Enter Facebook Page ID" className="font-body text-sm" />
-                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Found in Facebook Business Suite → Page → About</p>
+                  </div>
+                  <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                    Instagram posting requires a connected Facebook Business Page.
+                  </p>
+                  <div className="flex gap-2">
+                    <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-indigo))" }} onClick={saveConnections} disabled={connSaving}>
+                      {connSaving ? "Saving..." : "Save DIY Settings"}
+                    </Button>
+                    {socialProvider !== "diy" && (
+                      <Button size="sm" variant="outline" className="font-body" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }} onClick={() => { saveConnections(); saveActiveProvider("diy"); }} disabled={connSaving}>
+                        Set as Active
+                      </Button>
+                    )}
+                    {socialProvider === "diy" && (
+                      <div className="flex items-center gap-2 ml-2">
+                        <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
+                        <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
 
-              {connTab === "buffer" && (
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>🤝 A Little Help — Buffer scheduling (~$6/mo)</p>
-                    <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Connect Buffer to schedule posts across 3 channels. Good middle ground with a simple dashboard.</p>
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="font-body text-xs">Buffer Access Token</Label>
-                    <Input value={bufferToken} onChange={(e) => setBufferToken(e.target.value)} placeholder="Enter Buffer Access Token" className="font-body text-sm" />
-                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Get from buffer.com → Settings → Apps & API</p>
-                  </div>
-                  <Button size="sm" variant="outline" className="gap-1.5 font-body text-xs" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
-                    onClick={() => window.open("https://buffer.com", "_blank")}>
-                    Sign up for Buffer →
-                  </Button>
+              {/* ── Semi-Auto ────────────────────────────────── */}
+              {connTab === "semi_auto" && (
+                <div className="space-y-4">
+                  <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                    We set this up for you. Your approved posts will be automatically scheduled and sent to your connected Facebook page on a consistent posting schedule — no extra accounts or tools required on your end.
+                  </p>
+                  {socialProvider === "semi_auto" ? (
+                    <div className="flex items-center gap-2">
+                      <Badge className="font-body text-xs border-0 rounded-full px-3 py-1" style={{ background: "hsla(140,55%,42%,0.15)", color: "hsl(140,55%,42%)" }}>
+                        Currently Active
+                      </Badge>
+                    </div>
+                  ) : (
+                    <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }} onClick={() => saveActiveProvider("semi_auto")} disabled={connSaving}>
+                      {connSaving ? "Saving..." : "Set as Active"}
+                    </Button>
+                  )}
                 </div>
               )}
 
-              {connTab === "ayrshare" && (
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>⭐ I Need a Pro — Ayrshare ($29/mo, all platforms)</p>
-                    <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>One API key posts to Facebook, Instagram, TikTok, LinkedIn, Twitter/X, Google Business, and more. Best option for serious growth.</p>
+              {/* ── Full Autopilot ───────────────────────────── */}
+              {connTab === "full_autopilot" && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Full Autopilot</p>
+                    <Badge className="font-body text-xs border-0 rounded-full px-2" style={{
+                      background: socialProvider === "full_autopilot" ? "hsla(140,55%,42%,0.15)" : "hsla(0,0%,50%,0.1)",
+                      color: socialProvider === "full_autopilot" ? "hsl(140,55%,42%)" : "hsl(var(--admin-text-muted))",
+                    }}>
+                      {socialProvider === "full_autopilot" ? "Active" : "Not active"}
+                    </Badge>
                   </div>
-                  <div className="space-y-1">
-                    <Label className="font-body text-xs">Ayrshare API Key</Label>
-                    <Input value={ayrshareKey} onChange={(e) => setAyrshareKey(e.target.value)} placeholder="Enter Ayrshare API Key" className="font-body text-sm" />
-                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Get from app.ayrshare.com → Settings → API Key</p>
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="font-body text-xs">Profile Key (optional — for multi-profile accounts)</Label>
-                    <Input value={ayrshareProfileKey} onChange={(e) => setAyrshareProfileKey(e.target.value)} placeholder="Enter Profile Key (optional)" className="font-body text-sm" />
-                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Only needed if you manage multiple brands in Ayrshare</p>
-                  </div>
-                  <Button size="sm" variant="outline" className="gap-1.5 font-body text-xs" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
-                    onClick={() => window.open("https://app.ayrshare.com", "_blank")}>
-                    Sign up for Ayrshare →
-                  </Button>
+                  <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                    Sit back and let us handle everything. We connect your accounts and manage your posting schedule across Facebook, Instagram, and more. Your posts go out consistently — without you lifting a finger. Included with your Elite plan.
+                  </p>
+                  <ul className="space-y-2">
+                    {[
+                      "Facebook",
+                      "Instagram",
+                      "Google Business Posts",
+                      "Consistent weekly posting schedule",
+                      "AI-generated captions",
+                    ].map((item) => (
+                      <li key={item} className="flex items-center gap-2 text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                        <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: "hsl(140,55%,42%)" }} />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  {socialProvider !== "full_autopilot" ? (
+                    <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }} onClick={() => saveActiveProvider("full_autopilot")} disabled={connSaving}>
+                      {connSaving ? "Saving..." : "Set as Active"}
+                    </Button>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
+                      <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1430,24 +1802,13 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
             {/* Footer */}
             <div className="flex items-center justify-between px-6 py-4 border-t" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ background: socialProvider === connTab ? "hsl(160,70%,40%)" : "hsl(var(--admin-sidebar-border))" }} />
+                <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
                 <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
                   Active provider: <strong style={{ color: "hsl(var(--admin-text))" }}>
-                    {socialProvider === "export" ? "Export Mode" : socialProvider === "diy" ? "Facebook DIY" : socialProvider === "buffer" ? "Buffer" : "Ayrshare"}
+                    {providerDisplayName(socialProvider)}
                   </strong>
                 </span>
               </div>
-              {connTab !== "export" && (
-                <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-indigo))" }} onClick={saveConnections} disabled={connSaving}>
-                  {connSaving ? "Saving…" : "Save"}
-                </Button>
-              )}
-              {connTab === "export" && socialProvider !== "export" && (
-                <Button size="sm" variant="outline" className="font-body text-xs" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}
-                  onClick={() => { setConnTab("export"); saveConnections(); }}>
-                  Switch to Export Mode
-                </Button>
-              )}
             </div>
           </div>
         </div>
