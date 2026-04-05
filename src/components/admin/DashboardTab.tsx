@@ -263,7 +263,7 @@ export default function DashboardTab() {
                 </div>
 
                 <ul className="flex-1 space-y-1.5 mb-4">
-                  {TIER_FEATURES[t].slice(0, 5).map((f) => (
+                  {TIER_FEATURES[t].slice(0, 6).map((f) => (
                     <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground">
                       <Check className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${isCurrent || isLower ? colors.text : 'text-muted-foreground/40'}`} />
                       {f}

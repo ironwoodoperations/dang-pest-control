@@ -221,8 +221,9 @@ export default function SocialTab() {
   const [postHistory, setPostHistory] = useState<any[]>([]);
   const [fbSettings, setFbSettings] = useState<{ token: string; pageId: string; igAccountId: string }>({ token: "", pageId: "", igAccountId: "" });
   const [showConnections, setShowConnections] = useState(false);
-  const [socialProvider, setSocialProvider] = useState<"hands_on" | "diy" | "semi_auto" | "full_autopilot">("semi_auto");
-  const [connTab, setConnTab] = useState<"hands_on" | "diy" | "semi_auto" | "full_autopilot">("semi_auto");
+  // Connection mode is determined by tier — no manual switching
+  const tierProvider = tier === 1 ? "hands_on" : tier === 2 ? "diy" : tier === 3 ? "semi_auto" : "full_autopilot";
+  const [connTab, setConnTab] = useState<"hands_on" | "diy" | "semi_auto" | "full_autopilot">(tierProvider);
   const [connSaving, setConnSaving] = useState(false);
 
   // New states
@@ -241,20 +242,11 @@ export default function SocialTab() {
   const [campaignSummary, setCampaignSummary] = useState('')
   const [expandedCampaigns, setExpandedCampaigns] = useState<Set<string>>(new Set())
 
-  // Load social provider from settings table
+  // Reset connTab when tier changes
   useEffect(() => {
-    if (!tenantId) return;
-    supabase.from("site_config").select("value").eq("key", "social_provider").eq("tenant_id", tenantId).maybeSingle().then(({ data }) => {
-      if (data?.value) {
-        const v = data.value as any;
-        const provider = (typeof v === 'string' ? v : v.provider) as "hands_on" | "diy" | "semi_auto" | "full_autopilot";
-        if (provider) {
-          setSocialProvider(provider);
-          setConnTab(provider);
-        }
-      }
-    });
-  }, [tenantId]);
+    const tp = tier === 1 ? "hands_on" : tier === 2 ? "diy" : tier === 3 ? "semi_auto" : "full_autopilot";
+    setConnTab(tp);
+  }, [tier]);
 
   // Load DIY config from settings table
   useEffect(() => {
@@ -312,26 +304,6 @@ export default function SocialTab() {
     }
   };
 
-  const saveActiveProvider = async (provider: "hands_on" | "diy" | "semi_auto" | "full_autopilot") => {
-    if (!tenantId) return;
-    setConnSaving(true);
-    try {
-      const { data: existing } = await supabase.from("site_config").select("id").eq("key", "social_provider").eq("tenant_id", tenantId).maybeSingle();
-      const val = { provider };
-      if (existing?.id) {
-        await supabase.from("site_config").update({ value: val, updated_at: new Date().toISOString() }).eq("key", "social_provider").eq("tenant_id", tenantId);
-      } else {
-        await supabase.from("site_config").insert({ key: "social_provider", value: val, tenant_id: tenantId });
-      }
-      setSocialProvider(provider);
-      setConnTab(provider);
-      toast({ title: "Active provider updated!" });
-    } catch (err) {
-      toast({ title: "Save failed", description: String(err), variant: "destructive" });
-    } finally {
-      setConnSaving(false);
-    }
-  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
@@ -715,16 +687,8 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
     toast({ title: "Smart Schedule applied!", description: `${draftPosts.length} post(s) spread across the next 7 days.` });
   };
 
-  // Provider display names
-  const providerDisplayName = (p: string) => {
-    switch (p) {
-      case 'hands_on': return 'Hands On';
-      case 'diy': return 'DIY';
-      case 'semi_auto': return 'Semi-Auto';
-      case 'full_autopilot': return 'Full Autopilot';
-      default: return p;
-    }
-  };
+  // Provider display name based on tier
+  const tierProviderName = tier === 1 ? 'Hands On' : tier === 2 ? 'DIY' : tier === 3 ? 'Semi-Auto' : 'Full Autopilot';
 
   if (planLoading) return null
 
@@ -1795,51 +1759,44 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
       {/* ── Connections Modal ──────────────────────────────────── */}
       {showConnections && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowConnections(false)}>
-          <div className="w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl" style={{ background: "hsl(var(--admin-bg))" }} onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col" style={{ background: "hsl(var(--admin-bg))" }} onClick={(e) => e.stopPropagation()}>
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+            <div className="flex items-center justify-between px-6 py-4 border-b shrink-0" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
               <h2 className="font-body font-bold text-lg" style={{ color: "hsl(var(--admin-text))" }}>Social Connections</h2>
               <button onClick={() => setShowConnections(false)} className="p-1 rounded-lg hover:bg-muted transition-colors">
                 <X className="w-5 h-5" style={{ color: "hsl(var(--admin-text-muted))" }} />
               </button>
             </div>
 
-            {/* Provider tabs */}
-            <div className="flex gap-2 px-6 pt-4">
+            {/* All 4 tabs — always clickable */}
+            <div className="flex gap-2 px-6 pt-4 shrink-0">
               {([
-                { key: "hands_on" as const, label: "Hands On", minTier: 1 },
-                { key: "diy" as const, label: "DIY", minTier: 2 },
-                { key: "semi_auto" as const, label: "Semi-Auto", minTier: 3 },
-                { key: "full_autopilot" as const, label: "Full Autopilot", minTier: 4 },
-              ]).map(({ key, label, minTier }) => {
-                const tabLocked = !canAccess(minTier);
+                { key: "hands_on" as const, label: "Hands On" },
+                { key: "diy" as const, label: "DIY" },
+                { key: "semi_auto" as const, label: "Semi-Auto" },
+                { key: "full_autopilot" as const, label: "Full Autopilot" },
+              ]).map(({ key, label }) => {
+                const isActive = connTab === key;
                 return (
                   <button
                     key={key}
-                    onClick={() => { if (!tabLocked) setConnTab(key); }}
-                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border text-xs font-body font-medium flex-1 transition-all relative"
+                    onClick={() => setConnTab(key)}
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border text-xs font-body font-medium flex-1 transition-all"
                     style={{
-                      borderColor: connTab === key ? "hsl(var(--admin-indigo))" : "hsl(var(--admin-sidebar-border))",
-                      background: connTab === key && !tabLocked ? "hsl(var(--admin-indigo))" : "transparent",
-                      color: connTab === key && !tabLocked ? "white" : "hsl(var(--admin-text-muted))",
-                      opacity: tabLocked ? 0.5 : 1,
-                      cursor: tabLocked ? 'not-allowed' : 'pointer',
+                      borderColor: isActive ? "hsl(var(--admin-indigo))" : "hsl(var(--admin-sidebar-border))",
+                      background: isActive ? "hsl(var(--admin-indigo))" : "transparent",
+                      color: isActive ? "white" : "hsl(var(--admin-text-muted))",
+                      cursor: 'pointer',
                     }}
                   >
-                    {socialProvider === key && (
-                      <div className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "hsl(160,70%,40%)" }}>
-                        <Check className="w-2.5 h-2.5 text-white" />
-                      </div>
-                    )}
-                    {tabLocked && <Lock className="w-3 h-3 mb-0.5" />}
                     {label}
                   </button>
                 );
               })}
             </div>
 
-            {/* Provider content */}
-            <div className="px-6 py-4 space-y-4 min-h-[200px]">
+            {/* Tab content */}
+            <div className="px-6 py-4 space-y-4 min-h-[200px] overflow-y-auto">
               {/* ── Hands On ─────────────────────────────────── */}
               {connTab === "hands_on" && (
                 <div className="space-y-4">
@@ -1848,13 +1805,9 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                   </p>
                   <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl" style={{ background: "hsla(140,55%,42%,0.1)", border: "1px solid hsla(140,55%,42%,0.2)" }}>
                     <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: "hsl(140,55%,42%)" }} />
-                    <span className="text-sm font-body font-medium" style={{ color: "hsl(140,55%,42%)" }}>This mode is always available</span>
+                    <span className="text-sm font-body font-medium" style={{ color: "hsl(140,55%,42%)" }}>This mode is always available on all plans</span>
                   </div>
-                  {socialProvider !== "hands_on" ? (
-                    <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }} onClick={() => saveActiveProvider("hands_on")} disabled={connSaving}>
-                      {connSaving ? "Saving..." : "Set as Active Provider"}
-                    </Button>
-                  ) : (
+                  {tierProvider === "hands_on" && (
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
                       <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
@@ -1865,135 +1818,114 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
 
               {/* ── DIY ──────────────────────────────────────── */}
               {connTab === "diy" && (
-                canAccess(2) ? (
-                  <div className="space-y-3">
-                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                      You're in control. Connect your Facebook page and we'll post directly for you — no copy/paste needed.
+                <div className="space-y-3">
+                  <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                    Your Facebook page is connected — posts you approve here will be sent directly to your page. No copy/paste needed.
+                  </p>
+                  {tierProvider === "diy" && (
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
+                      <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
+                    </div>
+                  )}
+                  {/* Credential fields — always visible */}
+                  <div className="space-y-1">
+                    <Label className="font-body text-xs">Facebook Access Token</Label>
+                    <Input type="password" value={fbSettings.token} onChange={(e) => setFbSettings(f => ({ ...f, token: e.target.value }))} placeholder="Enter Facebook Access Token" className="font-body text-sm" disabled={!canAccess(2)} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="font-body text-xs">Facebook Page ID</Label>
+                    <Input value={fbSettings.pageId} onChange={(e) => setFbSettings(f => ({ ...f, pageId: e.target.value }))} placeholder="Enter Facebook Page ID" className="font-body text-sm" disabled={!canAccess(2)} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="font-body text-xs">Instagram Account ID</Label>
+                    <Input value={fbSettings.igAccountId} onChange={(e) => setFbSettings(f => ({ ...f, igAccountId: e.target.value }))} placeholder="Enter Instagram Account ID" className="font-body text-sm" disabled={!canAccess(2)} />
+                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                      Requires a connected Facebook Business Page
                     </p>
-                    <div className="space-y-1">
-                      <Label className="font-body text-xs">Facebook Access Token</Label>
-                      <Input type="password" value={fbSettings.token} onChange={(e) => setFbSettings(f => ({ ...f, token: e.target.value }))} placeholder="Enter Facebook Access Token" className="font-body text-sm" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="font-body text-xs">Facebook Page ID</Label>
-                      <Input value={fbSettings.pageId} onChange={(e) => setFbSettings(f => ({ ...f, pageId: e.target.value }))} placeholder="Enter Facebook Page ID" className="font-body text-sm" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="font-body text-xs">Instagram Account ID</Label>
-                      <Input value={fbSettings.igAccountId} onChange={(e) => setFbSettings(f => ({ ...f, igAccountId: e.target.value }))} placeholder="Enter Instagram Account ID" className="font-body text-sm" />
-                      <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                        Requires a connected Facebook Business Page
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-indigo))" }} onClick={saveConnections} disabled={connSaving}>
-                        {connSaving ? "Saving..." : "Save DIY Settings"}
-                      </Button>
-                      {socialProvider !== "diy" && (
-                        <Button size="sm" variant="outline" className="font-body" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }} onClick={() => { saveConnections(); saveActiveProvider("diy"); }} disabled={connSaving}>
-                          Set as Active
-                        </Button>
-                      )}
-                      {socialProvider === "diy" && (
-                        <div className="flex items-center gap-2 ml-2">
-                          <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
-                          <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
-                        </div>
-                      )}
-                    </div>
                   </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Lock className="w-8 h-8 mx-auto mb-2" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.4 }} />
-                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>DIY connections require the Grow plan or higher.</p>
-                  </div>
-                )
+                  {canAccess(2) ? (
+                    <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-indigo))" }} onClick={saveConnections} disabled={connSaving}>
+                      {connSaving ? "Saving..." : "Save Connection Settings"}
+                    </Button>
+                  ) : (
+                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                      Upgrade to Grow to use this connection
+                    </p>
+                  )}
+                  {canAccess(3) && tierProvider !== "diy" && (
+                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Included in your plan</p>
+                  )}
+                </div>
               )}
 
               {/* ── Semi-Auto ────────────────────────────────── */}
               {connTab === "semi_auto" && (
-                canAccess(3) ? (
-                  <div className="space-y-4">
-                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                      We set this up for you. Your approved posts will be automatically scheduled and sent to your connected Facebook page on a consistent posting schedule.
-                    </p>
-                    {socialProvider === "semi_auto" ? (
-                      <div className="flex items-center gap-2">
-                        <Badge className="font-body text-xs border-0 rounded-full px-3 py-1" style={{ background: "hsla(140,55%,42%,0.15)", color: "hsl(140,55%,42%)" }}>
-                          Currently Active
-                        </Badge>
-                      </div>
-                    ) : (
-                      <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }} onClick={() => saveActiveProvider("semi_auto")} disabled={connSaving}>
-                        {connSaving ? "Saving..." : "Set as Active"}
-                      </Button>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Lock className="w-8 h-8 mx-auto mb-2" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.4 }} />
-                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Semi-Auto connections require the Pro plan or higher.</p>
-                  </div>
-                )
+                <div className="space-y-4">
+                  <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                    We set this up for you. Your approved posts are automatically scheduled and sent to your connected Facebook page on a consistent posting schedule.
+                  </p>
+                  {tierProvider === "semi_auto" && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
+                      <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
+                    </div>
+                  )}
+                  {!canAccess(3) && (
+                    <div className="px-4 py-3 rounded-xl text-center" style={{ background: "hsla(260,55%,55%,0.08)", border: "1px solid hsla(260,55%,55%,0.15)" }}>
+                      <p className="text-sm font-body font-medium" style={{ color: "hsl(260,55%,55%)" }}>Available on Pro plan ($349/mo)</p>
+                      <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Upgrade to unlock</p>
+                    </div>
+                  )}
+                  {tier === 4 && (
+                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Included in your plan</p>
+                  )}
+                </div>
               )}
 
               {/* ── Full Autopilot ───────────────────────────── */}
               {connTab === "full_autopilot" && (
-                canAccess(4) ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Full Autopilot</p>
-                      <Badge className="font-body text-xs border-0 rounded-full px-2" style={{
-                        background: socialProvider === "full_autopilot" ? "hsla(140,55%,42%,0.15)" : "hsla(0,0%,50%,0.1)",
-                        color: socialProvider === "full_autopilot" ? "hsl(140,55%,42%)" : "hsl(var(--admin-text-muted))",
-                      }}>
-                        {socialProvider === "full_autopilot" ? "Active" : "Not active"}
-                      </Badge>
+                <div className="space-y-4">
+                  <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                    Sit back and let us handle everything. We manage posting across Facebook, Instagram, Google Business and more — without you lifting a finger.
+                  </p>
+                  <ul className="space-y-2">
+                    {[
+                      "Facebook",
+                      "Instagram",
+                      "Google Business Posts",
+                      "Consistent weekly posting schedule",
+                      "AI-generated captions tailored to your business",
+                    ].map((item) => (
+                      <li key={item} className="flex items-center gap-2 text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                        <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: "hsl(140,55%,42%)" }} />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  {tierProvider === "full_autopilot" && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
+                      <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
                     </div>
-                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                      Sit back and let us handle everything. We manage posting across Facebook, Instagram, Google Business and more — without you lifting a finger.
-                    </p>
-                    <ul className="space-y-2">
-                      {[
-                        "Facebook",
-                        "Instagram",
-                        "Google Business Posts",
-                        "Consistent weekly posting schedule",
-                        "AI-generated captions tailored to your business",
-                      ].map((item) => (
-                        <li key={item} className="flex items-center gap-2 text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                          <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: "hsl(140,55%,42%)" }} />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                    {socialProvider !== "full_autopilot" ? (
-                      <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }} onClick={() => saveActiveProvider("full_autopilot")} disabled={connSaving}>
-                        {connSaving ? "Saving..." : "Set as Active"}
-                      </Button>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
-                        <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Lock className="w-8 h-8 mx-auto mb-2" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.4 }} />
-                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Full Autopilot requires the Elite plan.</p>
-                  </div>
-                )
+                  )}
+                  {!canAccess(4) && (
+                    <div className="px-4 py-3 rounded-xl text-center" style={{ background: "hsla(260,55%,55%,0.08)", border: "1px solid hsla(260,55%,55%,0.15)" }}>
+                      <p className="text-sm font-body font-medium" style={{ color: "hsl(260,55%,55%)" }}>Available on Elite plan ($499/mo)</p>
+                      <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Upgrade to unlock</p>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between px-6 py-4 border-t" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+            <div className="flex items-center justify-between px-6 py-4 border-t shrink-0" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
                 <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
                   Active provider: <strong style={{ color: "hsl(var(--admin-text))" }}>
-                    {providerDisplayName(socialProvider)}
+                    {tierProviderName}
                   </strong>
                 </span>
               </div>
