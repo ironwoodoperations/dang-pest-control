@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye, Upload, Image, X, History, Settings, Check, Calendar, Layers, ChevronDown, ChevronRight, Zap, Pencil, Linkedin, Twitter, BarChart3, Filter } from "lucide-react";
+import { Facebook, Instagram, Star, Plus, Trash2, Send, Clock, CheckCircle2, FileEdit, Sparkles, ArrowLeft, Globe, Eye, Upload, Image, X, History, Settings, Check, Calendar, Layers, ChevronDown, ChevronRight, Zap, Pencil, Linkedin, Twitter, BarChart3, Filter, Lock, Copy } from "lucide-react";
 import PageHelpBanner from "./PageHelpBanner";
 import { FeatureGate } from './FeatureGate';
 import { usePlan } from './usePlan';
@@ -206,7 +206,7 @@ const SAMPLE_POSTS: SocialPost[] = [
 export default function SocialTab() {
   const { toast } = useToast();
   const { tenantId } = useTenant();
-  const { canAccess, loading: planLoading } = usePlan();
+  const { tier, canAccess, loading: planLoading } = usePlan();
   const [posts, setPosts] = useState<SocialPost[]>(SAMPLE_POSTS);
   const [step, setStep] = useState<Step>("queue");
   const [topic, setTopic] = useState("");
@@ -397,8 +397,28 @@ export default function SocialTab() {
     );
   };
 
+  const checkAiLimit = async (): Promise<boolean> => {
+    if (canAccess(3)) return true; // Pro+ unlimited
+    if (!tenantId) return false;
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const { count } = await supabase
+      .from('social_posts' as any)
+      .select('*', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId)
+      .eq('ai_generated', true)
+      .gte('created_at', todayStart.toISOString());
+    if ((count || 0) >= 2) {
+      toast({ title: "AI generation limit reached", description: "2/day on your plan. Upgrade to Pro for unlimited.", variant: "destructive" });
+      return false;
+    }
+    return true;
+  };
+
   const handleGenerate = async () => {
     if (!topic.trim()) return;
+    const allowed = await checkAiLimit();
+    if (!allowed) return;
     setStep("wizard-generating");
     try {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -705,18 +725,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
     }
   };
 
-  // ── TIER-2 GATE ───────────────────────────────────────────────
   if (planLoading) return null
-  if (!canAccess(2)) {
-    return (
-      <div className="space-y-6">
-        <PageHelpBanner tab="social" />
-        <FeatureGate minTier={2} featureName="Social Media Scheduler">
-          <div />
-        </FeatureGate>
-      </div>
-    )
-  }
 
   // ── FACEBOOK PREVIEW ──────────────────────────────────────────
   if (step === "facebook-preview") {
@@ -938,37 +947,46 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
             <p className="text-xs mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>{generatedCaption.length} characters</p>
           </CardContent>
         </Card>
-        {/* Image Upload */}
-        <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
-          <CardContent className="pt-5 space-y-3">
-            <p className="text-xs font-body font-semibold uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Image (optional)</p>
-            <div className="flex gap-2">
-              <Label className="flex-1">
-                <div className="flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer hover:bg-muted/30 transition-colors" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
-                  <Upload className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} />
-                  <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                    {imageUploading ? "Uploading..." : "Upload Image"}
-                  </span>
-                </div>
-                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={imageUploading} />
-              </Label>
-              <Input
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="Or paste image URL..."
-                className="font-body text-sm flex-1"
-              />
-            </div>
-            {imageUrl && (
-              <div className="relative inline-block">
-                <img src={imageUrl} alt="Preview" className="w-24 h-24 object-cover rounded-lg" />
-                <button onClick={() => setImageUrl("")} className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-white flex items-center justify-center">
-                  <X className="w-3 h-3" />
-                </button>
+        {/* Image Upload — Grow+ only */}
+        {canAccess(2) ? (
+          <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+            <CardContent className="pt-5 space-y-3">
+              <p className="text-xs font-body font-semibold uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Image (optional)</p>
+              <div className="flex gap-2">
+                <Label className="flex-1">
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer hover:bg-muted/30 transition-colors" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
+                    <Upload className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} />
+                    <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                      {imageUploading ? "Uploading..." : "Upload Image"}
+                    </span>
+                  </div>
+                  <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={imageUploading} />
+                </Label>
+                <Input
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="Or paste image URL..."
+                  className="font-body text-sm flex-1"
+                />
               </div>
-            )}
-          </CardContent>
-        </Card>
+              {imageUrl && (
+                <div className="relative inline-block">
+                  <img src={imageUrl} alt="Preview" className="w-24 h-24 object-cover rounded-lg" />
+                  <button onClick={() => setImageUrl("")} className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-white flex items-center justify-center">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+            <CardContent className="pt-5 flex items-center gap-3">
+              <Lock className="w-4 h-4" style={{ color: "hsl(var(--admin-text-muted))" }} />
+              <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Image upload available on Grow plan and above</p>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="flex gap-2">
           <Button onClick={() => setStep("wizard-template")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
@@ -1051,6 +1069,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
       { days: 14, label: "14 Days", posts: 28 },
       { days: 30, label: "30 Days", posts: 30 },
     ];
+    const filteredDurations = canAccess(4) ? DURATIONS : DURATIONS.filter(d => d.days <= 7);
     const canGenerate = campaignTitle.trim() && campaignTopic.trim() && campaignPlatforms.length > 0;
 
     return (
@@ -1075,7 +1094,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
             <div>
               <Label className="font-body text-xs font-semibold uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Duration</Label>
               <div className="flex gap-2 mt-2">
-                {DURATIONS.map(({ days, label, posts }) => (
+                {filteredDurations.map(({ days, label, posts }) => (
                   <button key={days} onClick={() => setCampaignDuration(days)}
                     className="flex-1 flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl border text-xs font-body font-semibold transition-all"
                     style={{
@@ -1088,6 +1107,9 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                   </button>
                 ))}
               </div>
+              {tier === 3 && (
+                <p className="text-xs font-body mt-1" style={{ color: "hsl(var(--admin-text-muted))" }}>Max 7-day campaigns on Pro plan. Upgrade to Elite for unlimited.</p>
+              )}
             </div>
             <div>
               <Label className="font-body text-xs font-semibold uppercase tracking-wider" style={{ color: "hsl(var(--admin-text-muted))" }}>Platforms</Label>
@@ -1232,11 +1254,14 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                 ))}
               </div>
             </div>
-            <FeatureGate minTier={3} featureName="AI Post Generation" compact>
-              <Button onClick={handleGenerate} disabled={!topic.trim()} className="font-body gap-2 w-full" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
-                <Sparkles className="w-4 h-4" /> Generate Post with AI
-              </Button>
-            </FeatureGate>
+            <Button onClick={handleGenerate} disabled={!topic.trim()} className="font-body gap-2 w-full" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
+              <Sparkles className="w-4 h-4" /> Generate Post with AI
+            </Button>
+            {!canAccess(3) && (
+              <p className="text-xs font-body text-center" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                2 AI generations per day on your plan
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -1268,16 +1293,14 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
           <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Compose, schedule, and manage posts across all platforms.</p>
         </div>
         <div className="flex gap-2">
-          <FeatureGate minTier={3} featureName="Social Media Connections" compact>
-            <Button
-              onClick={() => setShowConnections(true)}
-              variant="outline"
-              className="font-body gap-2"
-              style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
-            >
-              <Settings className="w-4 h-4" /> Connections
-            </Button>
-          </FeatureGate>
+          <Button
+            onClick={() => setShowConnections(true)}
+            variant="outline"
+            className="font-body gap-2"
+            style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }}
+          >
+            <Settings className="w-4 h-4" /> Connections
+          </Button>
           <Button onClick={() => setShowNewPostModal(true)} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
             <Plus className="w-4 h-4" /> New Post
           </Button>
@@ -1308,30 +1331,37 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
       {/* ── 3 Tabs ─────────────────────────────────────────────── */}
       <div className="flex gap-1 border-b" style={{ borderColor: "hsl(var(--admin-sidebar-border))" }}>
         {([
-          { key: 'campaigns', label: 'Campaigns', icon: Layers },
-          { key: 'queue', label: 'Content Queue', icon: FileEdit },
-          { key: 'analytics', label: 'Analytics', icon: BarChart3 },
-        ] as const).map(({ key, label, icon: Icon }) => (
-          <button
-            key={key}
-            onClick={() => setActiveMainTab(key)}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-body font-medium border-b-2 transition-all -mb-[1px]"
-            style={{
-              borderColor: activeMainTab === key ? "hsl(var(--admin-teal))" : "transparent",
-              color: activeMainTab === key ? "hsl(var(--admin-teal))" : "hsl(var(--admin-text-muted))",
-            }}
-          >
-            <Icon className="w-4 h-4" />
-            {label}
-          </button>
-        ))}
+          { key: 'campaigns', label: 'Campaigns', icon: Layers, minTier: 3 },
+          { key: 'queue', label: 'Content Queue', icon: FileEdit, minTier: 1 },
+          { key: 'analytics', label: 'Analytics', icon: BarChart3, minTier: 1 },
+        ] as const).map(({ key, label, icon: Icon, minTier }) => {
+          const locked = !canAccess(minTier);
+          return (
+            <button
+              key={key}
+              onClick={() => { if (!locked) setActiveMainTab(key); }}
+              className="flex items-center gap-2 px-4 py-2.5 text-sm font-body font-medium border-b-2 transition-all -mb-[1px]"
+              style={{
+                borderColor: activeMainTab === key ? "hsl(var(--admin-teal))" : "transparent",
+                color: locked ? "hsl(var(--admin-text-muted))" : activeMainTab === key ? "hsl(var(--admin-teal))" : "hsl(var(--admin-text-muted))",
+                opacity: locked ? 0.5 : 1,
+                cursor: locked ? 'not-allowed' : 'pointer',
+              }}
+              title={locked ? `${label} requires Pro plan` : undefined}
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+              {locked && <Lock className="w-3 h-3" />}
+            </button>
+          );
+        })}
       </div>
 
       {/* ── Content Queue Tab ──────────────────────────────────── */}
       {activeMainTab === 'queue' && (
         <div className="space-y-4">
           {/* Draft banner */}
-          {drafts.length > 0 && (
+          {canAccess(3) && drafts.length > 0 && (
             <div className="flex items-center justify-between px-4 py-3 rounded-xl" style={{ background: "hsla(140, 55%, 42%, 0.1)", border: "1px solid hsla(140, 55%, 42%, 0.2)" }}>
               <p className="text-sm font-body font-medium" style={{ color: "hsl(140, 55%, 42%)" }}>
                 {drafts.length} draft post{drafts.length !== 1 ? 's' : ''} ready for review
@@ -1427,7 +1457,7 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
                       >
                         Preview
                       </button>
-                      {post.status === 'draft' && (
+                      {post.status === 'draft' && canAccess(3) && (
                         <button
                           onClick={() => setPosts(prev => prev.map(p => p.id === post.id ? { ...p, status: 'approved' as const } : p))}
                           className="text-xs font-body font-medium px-2 py-1 rounded-lg hover:bg-muted/30 transition-colors"
@@ -1478,11 +1508,9 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
             <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
               {campaignNames.length} campaign{campaignNames.length !== 1 ? 's' : ''} created
             </p>
-            <FeatureGate minTier={3} featureName="Campaign Batch Posting" compact>
-              <Button size="sm" onClick={() => setStep("wizard-campaign-setup")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
-                <Plus className="w-4 h-4" /> New Campaign
-              </Button>
-            </FeatureGate>
+            <Button size="sm" onClick={() => setStep("wizard-campaign-setup")} className="font-body gap-2" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }}>
+              <Plus className="w-4 h-4" /> New Campaign
+            </Button>
           </div>
 
           {campaignNames.length === 0 ? (
@@ -1549,41 +1577,92 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
 
       {/* ── Analytics Tab ──────────────────────────────────────── */}
       {activeMainTab === 'analytics' && (
-        <FeatureGate minTier={4} featureName="Social Analytics">
-          <div className="space-y-4">
-            <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
-              <CardHeader className="pb-2">
-                <CardTitle className="font-body text-base" style={{ color: "hsl(var(--admin-text))" }}>Post History</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {postHistory.length === 0 ? (
-                  <p className="text-sm font-body py-4 text-center" style={{ color: "hsl(var(--admin-text-muted))" }}>No posts yet. Create your first post above.</p>
-                ) : postHistory.map((hp: any) => {
-                  const statusStyle = STATUS_STYLES[hp.status === "published" ? "posted" : hp.status] || STATUS_STYLES.draft;
-                  return (
-                    <div key={hp.id} className="flex gap-3 p-3 rounded-xl border" style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-bg))" }}>
-                      {hp.image_url && <img src={hp.image_url} alt="" className="w-14 h-14 rounded-lg object-cover" />}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-body line-clamp-2 mb-1" style={{ color: "hsl(var(--admin-text))" }}>{hp.caption}</p>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{hp.platform}</span>
-                          {hp.published_at && (
-                            <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                              {new Date(hp.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                            </span>
-                          )}
+        <>
+          {/* Starter/Grow: locked */}
+          {!canAccess(3) && (
+            <div className="text-center py-16">
+              <Lock className="w-10 h-10 mx-auto mb-3" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.4 }} />
+              <p className="text-sm font-body font-semibold mb-1" style={{ color: "hsl(var(--admin-text))" }}>Analytics available on Pro plan and above</p>
+              <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Upgrade to see post performance, engagement metrics, and more.</p>
+            </div>
+          )}
+          {/* Pro: basic analytics */}
+          {tier === 3 && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  { label: "Total Posts", value: postHistory.length, color: "hsl(260, 55%, 55%)" },
+                  { label: "Total Likes", value: "—", color: "hsl(210, 70%, 50%)" },
+                  { label: "Total Impressions", value: "—", color: "hsl(28, 100%, 50%)" },
+                ].map(({ label, value, color }) => (
+                  <Card key={label} style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+                    <CardContent className="p-4 text-center">
+                      <p className="text-2xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>{value}</p>
+                      <p className="text-xs font-body" style={{ color }}>{label}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <p className="text-xs font-body text-center" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                Upgrade to Elite for full analytics with reach, CTR, and per-post breakdown.
+              </p>
+            </div>
+          )}
+          {/* Elite: full analytics */}
+          {tier === 4 && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  { label: "Total Posts", value: postHistory.length, color: "hsl(260, 55%, 55%)" },
+                  { label: "Total Likes", value: "—", color: "hsl(210, 70%, 50%)" },
+                  { label: "Total Impressions", value: "—", color: "hsl(28, 100%, 50%)" },
+                  { label: "Reach", value: "—", color: "hsl(140, 55%, 42%)" },
+                  { label: "Click-Through Rate", value: "—", color: "hsl(45, 95%, 52%)" },
+                  { label: "Engagement Rate", value: "—", color: "hsl(185, 65%, 42%)" },
+                ].map(({ label, value, color }) => (
+                  <Card key={label} style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+                    <CardContent className="p-4 text-center">
+                      <p className="text-2xl font-bold font-body" style={{ color: "hsl(var(--admin-text))" }}>{value}</p>
+                      <p className="text-xs font-body" style={{ color }}>{label}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {/* Post history */}
+              <Card style={{ background: "hsl(var(--admin-card-bg))", borderColor: "hsl(var(--admin-sidebar-border))" }} className="border rounded-2xl">
+                <CardHeader className="pb-2">
+                  <CardTitle className="font-body text-base" style={{ color: "hsl(var(--admin-text))" }}>Post History</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {postHistory.length === 0 ? (
+                    <p className="text-sm font-body py-4 text-center" style={{ color: "hsl(var(--admin-text-muted))" }}>No posts yet.</p>
+                  ) : postHistory.map((hp: any) => {
+                    const statusStyle = STATUS_STYLES[hp.status === "published" ? "posted" : hp.status] || STATUS_STYLES.draft;
+                    return (
+                      <div key={hp.id} className="flex gap-3 p-3 rounded-xl border" style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-bg))" }}>
+                        {hp.image_url && <img src={hp.image_url} alt="" className="w-14 h-14 rounded-lg object-cover" />}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-body line-clamp-2 mb-1" style={{ color: "hsl(var(--admin-text))" }}>{hp.caption}</p>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>{hp.platform}</span>
+                            {hp.published_at && (
+                              <span className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                                {new Date(hp.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                              </span>
+                            )}
+                          </div>
                         </div>
+                        <Badge className="font-body text-xs border-0 rounded-full px-2 shrink-0" style={{ background: `${statusStyle.color}22`, color: statusStyle.color }}>
+                          {statusStyle.label}
+                        </Badge>
                       </div>
-                      <Badge className="font-body text-xs border-0 rounded-full px-2 shrink-0" style={{ background: `${statusStyle.color}22`, color: statusStyle.color }}>
-                        {statusStyle.label}
-                      </Badge>
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
-          </div>
-        </FeatureGate>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </>
       )}
 
       {/* ── New Post Choice Modal ──────────────────────────────── */}
@@ -1612,10 +1691,21 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
               </button>
               {/* Campaign card */}
               <button
-                onClick={() => { setShowNewPostModal(false); setActiveMainTab('campaigns'); setStep("wizard-campaign-setup"); }}
-                className="flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all hover:shadow-lg text-center"
-                style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-card-bg))" }}
+                onClick={() => {
+                  if (!canAccess(3)) {
+                    toast({ title: "Pro plan required", description: "Campaign creation is available on Pro and above.", variant: "destructive" });
+                    return;
+                  }
+                  setShowNewPostModal(false); setActiveMainTab('campaigns'); setStep("wizard-campaign-setup");
+                }}
+                className="flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all hover:shadow-lg text-center relative"
+                style={{ borderColor: "hsl(var(--admin-sidebar-border))", background: "hsl(var(--admin-card-bg))", opacity: canAccess(3) ? 1 : 0.6 }}
               >
+                {!canAccess(3) && (
+                  <Badge className="absolute top-2 right-2 font-body text-xs border-0 rounded-full px-2" style={{ background: "hsla(0,0%,50%,0.15)", color: "hsl(var(--admin-text-muted))" }}>
+                    <Lock className="w-3 h-3 mr-1 inline" /> Pro+
+                  </Badge>
+                )}
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: "hsla(28,100%,50%,0.15)" }}>
                   <Layers className="w-6 h-6" style={{ color: "hsl(28,100%,50%)" }} />
                 </div>
@@ -1650,29 +1740,35 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
             {/* Provider tabs */}
             <div className="flex gap-2 px-6 pt-4">
               {([
-                { key: "hands_on" as const, label: "Hands On" },
-                { key: "diy" as const, label: "DIY" },
-                { key: "semi_auto" as const, label: "Semi-Auto" },
-                { key: "full_autopilot" as const, label: "Full Autopilot" },
-              ]).map(({ key, label }) => (
-                <button
-                  key={key}
-                  onClick={() => setConnTab(key)}
-                  className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border text-xs font-body font-medium flex-1 transition-all relative"
-                  style={{
-                    borderColor: connTab === key ? "hsl(var(--admin-indigo))" : "hsl(var(--admin-sidebar-border))",
-                    background: connTab === key ? "hsl(var(--admin-indigo))" : "transparent",
-                    color: connTab === key ? "white" : "hsl(var(--admin-text-muted))",
-                  }}
-                >
-                  {socialProvider === key && (
-                    <div className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "hsl(160,70%,40%)" }}>
-                      <Check className="w-2.5 h-2.5 text-white" />
-                    </div>
-                  )}
-                  {label}
-                </button>
-              ))}
+                { key: "hands_on" as const, label: "Hands On", minTier: 1 },
+                { key: "diy" as const, label: "DIY", minTier: 2 },
+                { key: "semi_auto" as const, label: "Semi-Auto", minTier: 3 },
+                { key: "full_autopilot" as const, label: "Full Autopilot", minTier: 4 },
+              ]).map(({ key, label, minTier }) => {
+                const tabLocked = !canAccess(minTier);
+                return (
+                  <button
+                    key={key}
+                    onClick={() => { if (!tabLocked) setConnTab(key); }}
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border text-xs font-body font-medium flex-1 transition-all relative"
+                    style={{
+                      borderColor: connTab === key ? "hsl(var(--admin-indigo))" : "hsl(var(--admin-sidebar-border))",
+                      background: connTab === key && !tabLocked ? "hsl(var(--admin-indigo))" : "transparent",
+                      color: connTab === key && !tabLocked ? "white" : "hsl(var(--admin-text-muted))",
+                      opacity: tabLocked ? 0.5 : 1,
+                      cursor: tabLocked ? 'not-allowed' : 'pointer',
+                    }}
+                  >
+                    {socialProvider === key && (
+                      <div className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "hsl(160,70%,40%)" }}>
+                        <Check className="w-2.5 h-2.5 text-white" />
+                      </div>
+                    )}
+                    {tabLocked && <Lock className="w-3 h-3 mb-0.5" />}
+                    {label}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Provider content */}
@@ -1702,100 +1798,121 @@ Make the captions varied, engaging, and specific to pest control services. Avoid
 
               {/* ── DIY ──────────────────────────────────────── */}
               {connTab === "diy" && (
-                <div className="space-y-3">
-                  <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                    You're in control. Use your own social media scheduling tools to manage your posts. We'll help you generate great content — you handle the posting.
-                  </p>
-                  <div className="space-y-1">
-                    <Label className="font-body text-xs">Facebook Access Token</Label>
-                    <Input type="password" value={fbSettings.token} onChange={(e) => setFbSettings(f => ({ ...f, token: e.target.value }))} placeholder="Enter Facebook Access Token" className="font-body text-sm" />
+                canAccess(2) ? (
+                  <div className="space-y-3">
+                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                      You're in control. Use your own social media scheduling tools to manage your posts. We'll help you generate great content — you handle the posting.
+                    </p>
+                    <div className="space-y-1">
+                      <Label className="font-body text-xs">Facebook Access Token</Label>
+                      <Input type="password" value={fbSettings.token} onChange={(e) => setFbSettings(f => ({ ...f, token: e.target.value }))} placeholder="Enter Facebook Access Token" className="font-body text-sm" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="font-body text-xs">Facebook Page ID</Label>
+                      <Input value={fbSettings.pageId} onChange={(e) => setFbSettings(f => ({ ...f, pageId: e.target.value }))} placeholder="Enter Facebook Page ID" className="font-body text-sm" />
+                    </div>
+                    <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
+                      Instagram posting requires a connected Facebook Business Page.
+                    </p>
+                    <div className="flex gap-2">
+                      <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-indigo))" }} onClick={saveConnections} disabled={connSaving}>
+                        {connSaving ? "Saving..." : "Save DIY Settings"}
+                      </Button>
+                      {socialProvider !== "diy" && (
+                        <Button size="sm" variant="outline" className="font-body" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }} onClick={() => { saveConnections(); saveActiveProvider("diy"); }} disabled={connSaving}>
+                          Set as Active
+                        </Button>
+                      )}
+                      {socialProvider === "diy" && (
+                        <div className="flex items-center gap-2 ml-2">
+                          <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
+                          <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <Label className="font-body text-xs">Facebook Page ID</Label>
-                    <Input value={fbSettings.pageId} onChange={(e) => setFbSettings(f => ({ ...f, pageId: e.target.value }))} placeholder="Enter Facebook Page ID" className="font-body text-sm" />
+                ) : (
+                  <div className="text-center py-8">
+                    <Lock className="w-8 h-8 mx-auto mb-2" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.4 }} />
+                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>DIY connections require the Grow plan or higher.</p>
                   </div>
-                  <p className="text-xs font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>
-                    Instagram posting requires a connected Facebook Business Page.
-                  </p>
-                  <div className="flex gap-2">
-                    <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-indigo))" }} onClick={saveConnections} disabled={connSaving}>
-                      {connSaving ? "Saving..." : "Save DIY Settings"}
-                    </Button>
-                    {socialProvider !== "diy" && (
-                      <Button size="sm" variant="outline" className="font-body" style={{ borderColor: "hsl(var(--admin-sidebar-border))", color: "hsl(var(--admin-text))" }} onClick={() => { saveConnections(); saveActiveProvider("diy"); }} disabled={connSaving}>
-                        Set as Active
+                )
+              )}
+
+              {/* ── Semi-Auto ────────────────────────────────── */}
+              {connTab === "semi_auto" && (
+                canAccess(3) ? (
+                  <div className="space-y-4">
+                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                      We set this up for you. Your approved posts will be automatically scheduled and sent to your connected Facebook page on a consistent posting schedule — no extra accounts or tools required on your end.
+                    </p>
+                    {socialProvider === "semi_auto" ? (
+                      <div className="flex items-center gap-2">
+                        <Badge className="font-body text-xs border-0 rounded-full px-3 py-1" style={{ background: "hsla(140,55%,42%,0.15)", color: "hsl(140,55%,42%)" }}>
+                          Currently Active
+                        </Badge>
+                      </div>
+                    ) : (
+                      <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }} onClick={() => saveActiveProvider("semi_auto")} disabled={connSaving}>
+                        {connSaving ? "Saving..." : "Set as Active"}
                       </Button>
                     )}
-                    {socialProvider === "diy" && (
-                      <div className="flex items-center gap-2 ml-2">
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Lock className="w-8 h-8 mx-auto mb-2" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.4 }} />
+                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Semi-Auto connections require the Pro plan or higher.</p>
+                  </div>
+                )
+              )}
+
+              {/* ── Full Autopilot ───────────────────────────── */}
+              {connTab === "full_autopilot" && (
+                canAccess(4) ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Full Autopilot</p>
+                      <Badge className="font-body text-xs border-0 rounded-full px-2" style={{
+                        background: socialProvider === "full_autopilot" ? "hsla(140,55%,42%,0.15)" : "hsla(0,0%,50%,0.1)",
+                        color: socialProvider === "full_autopilot" ? "hsl(140,55%,42%)" : "hsl(var(--admin-text-muted))",
+                      }}>
+                        {socialProvider === "full_autopilot" ? "Active" : "Not active"}
+                      </Badge>
+                    </div>
+                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                      Sit back and let us handle everything. We connect your accounts and manage your posting schedule across Facebook, Instagram, and more. Your posts go out consistently — without you lifting a finger. Included with your Elite plan.
+                    </p>
+                    <ul className="space-y-2">
+                      {[
+                        "Facebook",
+                        "Instagram",
+                        "Google Business Posts",
+                        "Consistent weekly posting schedule",
+                        "AI-generated captions",
+                      ].map((item) => (
+                        <li key={item} className="flex items-center gap-2 text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
+                          <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: "hsl(140,55%,42%)" }} />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    {socialProvider !== "full_autopilot" ? (
+                      <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }} onClick={() => saveActiveProvider("full_autopilot")} disabled={connSaving}>
+                        {connSaving ? "Saving..." : "Set as Active"}
+                      </Button>
+                    ) : (
+                      <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
                         <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
                       </div>
                     )}
                   </div>
-                </div>
-              )}
-
-              {/* ── Semi-Auto ────────────────────────────────── */}
-              {connTab === "semi_auto" && (
-                <div className="space-y-4">
-                  <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                    We set this up for you. Your approved posts will be automatically scheduled and sent to your connected Facebook page on a consistent posting schedule — no extra accounts or tools required on your end.
-                  </p>
-                  {socialProvider === "semi_auto" ? (
-                    <div className="flex items-center gap-2">
-                      <Badge className="font-body text-xs border-0 rounded-full px-3 py-1" style={{ background: "hsla(140,55%,42%,0.15)", color: "hsl(140,55%,42%)" }}>
-                        Currently Active
-                      </Badge>
-                    </div>
-                  ) : (
-                    <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }} onClick={() => saveActiveProvider("semi_auto")} disabled={connSaving}>
-                      {connSaving ? "Saving..." : "Set as Active"}
-                    </Button>
-                  )}
-                </div>
-              )}
-
-              {/* ── Full Autopilot ───────────────────────────── */}
-              {connTab === "full_autopilot" && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-body font-semibold" style={{ color: "hsl(var(--admin-text))" }}>Full Autopilot</p>
-                    <Badge className="font-body text-xs border-0 rounded-full px-2" style={{
-                      background: socialProvider === "full_autopilot" ? "hsla(140,55%,42%,0.15)" : "hsla(0,0%,50%,0.1)",
-                      color: socialProvider === "full_autopilot" ? "hsl(140,55%,42%)" : "hsl(var(--admin-text-muted))",
-                    }}>
-                      {socialProvider === "full_autopilot" ? "Active" : "Not active"}
-                    </Badge>
+                ) : (
+                  <div className="text-center py-8">
+                    <Lock className="w-8 h-8 mx-auto mb-2" style={{ color: "hsl(var(--admin-text-muted))", opacity: 0.4 }} />
+                    <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text-muted))" }}>Full Autopilot requires the Elite plan.</p>
                   </div>
-                  <p className="text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                    Sit back and let us handle everything. We connect your accounts and manage your posting schedule across Facebook, Instagram, and more. Your posts go out consistently — without you lifting a finger. Included with your Elite plan.
-                  </p>
-                  <ul className="space-y-2">
-                    {[
-                      "Facebook",
-                      "Instagram",
-                      "Google Business Posts",
-                      "Consistent weekly posting schedule",
-                      "AI-generated captions",
-                    ].map((item) => (
-                      <li key={item} className="flex items-center gap-2 text-sm font-body" style={{ color: "hsl(var(--admin-text))" }}>
-                        <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: "hsl(140,55%,42%)" }} />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                  {socialProvider !== "full_autopilot" ? (
-                    <Button size="sm" className="font-body" style={{ background: "hsl(var(--admin-teal))", color: "#fff" }} onClick={() => saveActiveProvider("full_autopilot")} disabled={connSaving}>
-                      {connSaving ? "Saving..." : "Set as Active"}
-                    </Button>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full" style={{ background: "hsl(160,70%,40%)" }} />
-                      <span className="text-sm font-body font-medium" style={{ color: "hsl(160,70%,40%)" }}>Currently Active</span>
-                    </div>
-                  )}
-                </div>
+                )
               )}
             </div>
 
