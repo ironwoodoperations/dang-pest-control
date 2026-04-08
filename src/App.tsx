@@ -8,8 +8,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 const Index = lazy(() => import("./pages/Index"));
 const QuotePage = lazy(() => import("./pages/QuotePage"));
 const About = lazy(() => import("./pages/About"));
-const AdminPage = lazy(() => import("./pages/AdminPage"));
-const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminRedirect = lazy(() => import("./pages/AdminRedirect"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const SlugRouter = lazy(() => import("./pages/SlugRouter"));
 const RedirectLegacy = lazy(() => import("./pages/RedirectLegacy"));
@@ -19,9 +18,6 @@ const BlogPage = lazy(() => import("./pages/BlogPage"));
 const FAQPage = lazy(() => import("./pages/FAQPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
-const AdminOnboarding = lazy(() => import("./pages/AdminOnboarding"));
-const Onboarding = lazy(() => import("./pages/admin/Onboarding"));
-const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 const FloatingTextUs = lazy(() => import("./components/FloatingTextUs"));
 const MosquitoControl = lazy(() => import("./pages/MosquitoControl"));
 const SpiderControl = lazy(() => import("./pages/SpiderControl"));
@@ -64,10 +60,7 @@ const App = () => (
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/accessibility" element={<AccessibilityPage />} />
-            <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-            <Route path="/admin/setup" element={<AdminOnboarding />} />
+            <Route path="/admin/*" element={<AdminRedirect />} />
             {/* Legacy redirects: /services/:slug → /:slug, /locations/:slug → /:slug */}
             <Route path="/services/:slug" element={<RedirectLegacy />} />
             <Route path="/locations/:slug" element={<RedirectLegacy />} />
